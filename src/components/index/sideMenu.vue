@@ -22,8 +22,13 @@
             <span slot="title">知识库录入</span>
           </el-menu-item>
         </router-link>
-
-        <el-submenu index="1-3">
+        <router-link to="/home/newsManage">
+          <el-menu-item index="1-3" :class="isThisNav == '新闻管理'?'is-active':''" @click="switchNav('新闻管理')">
+            <i class="fa fa-newspaper-o"></i>
+            <span slot="title">新闻管理</span>
+          </el-menu-item>
+        </router-link>
+        <el-submenu index="1-4">
           <template slot="title">
             <i class="fa fa-database"></i>
             <span slot="title">互联网线索管理</span>
@@ -31,13 +36,13 @@
           <el-menu-item-group>
             <template slot="title" id="menu-group-title" style="display:none"></template>
             <router-link to="/home/internetCueManageNo">
-              <el-menu-item index="1-3-1" :class="isThisNav == '互联网未处理'?'is-active':''" @click="switchNav('互联网未处理')">
+              <el-menu-item index="1-4-1" :class="isThisNav == '互联网未处理'?'is-active':''" @click="switchNav('互联网未处理')">
                 <i class="fa fa-window-restore"></i>
                 <span slot="title">互联网未处理</span>
               </el-menu-item>
             </router-link>
             <router-link to="/home/internetCueManageYes">
-              <el-menu-item index="1-3-2" :class="isThisNav == '互联网已处理'?'is-active':''" @click="switchNav('互联网已处理')">
+              <el-menu-item index="1-4-2" :class="isThisNav == '互联网已处理'?'is-active':''" @click="switchNav('互联网已处理')">
                 <i class="fa fa-window-restore"></i>
                 <span slot="title">互联网已处理</span>
               </el-menu-item>

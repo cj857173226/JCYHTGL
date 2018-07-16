@@ -22,6 +22,7 @@ import reviewInternetCue from '../components/manage/reviewInternetCue' //审核�
 import knowledgeInput from '../components/manage/knowledgeManage' //知识库录入
 import internetCueManageNo from '../components/manage/internetCueManageNo' //互联网线索管理未审批
 import internetCueManageYes from '../components/manage/internetCueManageYes' //互联网线索管理已审批
+import newsManage from '../components/manage/newsManage'  //新闻管理
 Vue.use(Router)
 
 let router =  new Router({
@@ -79,6 +80,14 @@ let router =  new Router({
           component:knowledgeInput,
           meta:{
             name: '知识库录入',
+          }
+        },
+        {
+          path:'newsManage',
+          name:newsManage,
+          component:newsManage,
+          meta:{
+            name:'新闻管理'
           }
         },
         {
