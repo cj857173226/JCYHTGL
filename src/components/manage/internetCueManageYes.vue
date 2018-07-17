@@ -938,8 +938,8 @@
         }
         .cue-list{
           margin-top: 16px;
-          height: calc( 100% - 350px);
-          max-height: calc( 100% - 350px);
+          height: calc( 100% - 365px);
+          max-height: calc( 100% - 365px);
           overflow-y: hidden;
         }
         .page-wrap{
