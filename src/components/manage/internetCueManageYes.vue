@@ -30,7 +30,7 @@
             采集网站:
           </div>
           <div class="right">
-            <div v-show="siteList.length>0" class="site-item" :class="{'site-item-on':site == item }" @click="clueSiteOder(item)" v-for="(item,index) in siteList" >{{item}}</div>
+            <div v-show="siteList.length>0" class="site-item" :class="{'site-item-on':site == item }" @click="clueSiteOder(item)" v-for="(item,index) in siteList" :key=index>{{item}}</div>
             <div v-show="siteList.length==0"> 无 </div>
           </div>
         </div>
@@ -52,7 +52,7 @@
             <div class="right">
               <el-radio v-model="SJDL" label="1">公益诉讼</el-radio>
               <el-radio v-model="SJDL" label="2">贪污腐败</el-radio>
-              <el-radio v-model="SJDL" label="3">全部</el-radio>
+              <el-radio v-model="SJDL" label="">全部</el-radio>
             </div>
           </div>
           <div class="cue-sort-wrap">
@@ -61,7 +61,7 @@
               所属领域:
             </div>
             <div class="right">
-              <el-select v-model="SJLB" :disabled="SJDL == 2||SJDL == 3">
+              <el-select v-model="SJLB" :disabled="SJDL == 2||SJDL == ''">
                 <el-option :key="item" v-for="item in typeList" :value="item">{{item}}</el-option>
               </el-select>
             </div>
@@ -75,7 +75,7 @@
             </div>
             <div class="right">
               <template>
-                <el-radio v-model="isDirtyData" label="all">全部</el-radio>
+                <el-radio v-model="isDirtyData" label="">全部</el-radio>
                 <el-radio v-model="isDirtyData" label="yes">是</el-radio>
                 <el-radio v-model="isDirtyData" label="no">否</el-radio>
               </template>
@@ -88,7 +88,7 @@
             </div>
             <div class="right">
               <template>
-                <el-radio v-model="isStorage" label="all">全部</el-radio>
+                <el-radio v-model="isStorage" label="">全部</el-radio>
                 <el-radio v-model="isStorage" label="yes">是</el-radio>
                 <el-radio v-model="isStorage" label="no">否</el-radio>
               </template>
@@ -102,9 +102,14 @@
               排序字段:
             </div>
             <div class="right">
-              <div class="sort-item" :class='{"sort-item-on":order== "cjsj"}' @click="clueOrder('cjsj')">采集时间</div>
-              <div class="sort-item" :class='{"sort-item-on":order== "fbsj"}' @click="clueOrder('fbsj')">发布时间</div>
-              <div class="sort-item-tip">(倒序排列)</div>
+              <template>
+                <el-radio v-model="order" label="cjsj">采集时间</el-radio>
+                <el-radio v-model="order" label="fbsj">发布时间</el-radio>
+                <div class="sort-item-tip">(倒序排列)</div>
+              </template>
+              <!-- <div class="sort-item" :class='{"sort-item-on":order== "cjsj"}' @click="clueOrder('cjsj')">采集时间</div>
+              <div class="sort-item" :class='{"sort-item-on":order== "fbsj"}' @click="clueOrder('fbsj')">发布时间</div> -->
+            
             </div>
           </div>
           <div class="cue-sort-wrap">
@@ -293,9 +298,13 @@
         pageSize: 20,//页面大小,最大100
         isLoad:false,//数据是否在加载
         timeSearch: '',//时间范围
-        SJDL: '3',//数据大类
-        isStorage: 'all',//是否暂存
-        isDirtyData: 'all',//是否脏数据
+        SJDL: '',//数据大类
+        SJLB: '',//数据类别
+        isStorage: '',//是否暂存
+        isDirtyData: '',//是否脏数据
+        province: "",//省份
+        city: "",//城市
+        county:'',//区县
         isChooseCity:false,
         pca: pca,
         pcaa: pcaa,
@@ -466,21 +475,21 @@
 
         })
       },
-      //线索排序
-      clueOrder(order){
-        let _this = this;
-        if(_this.isLoad == false){
-          if(_this.order != order){
-            _this.page = 1;
-            _this.order = order;
-            if(_this.internetCueList.length<=0){
-              return
-            }else {
-              _this.getInternetCueList();
-            }
-          }
-        }
-      },
+      // //线索排序
+      // clueOrder(order){
+      //   let _this = this;
+      //   if(_this.isLoad == false){
+      //     if(_this.order != order){
+      //       _this.page = 1;
+      //       _this.order = order;
+      //       if(_this.internetCueList.length<=0){
+      //         return
+      //       }else {
+      //         _this.getInternetCueList();
+      //       }
+      //     }
+      //   }
+      // },
       //按线索来源筛选
       clueSiteOder(site){
         let _this = this;
