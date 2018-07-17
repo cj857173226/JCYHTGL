@@ -21,10 +21,19 @@
                 <i class="iconfont icon-caiji"></i>
                 采集网站:
             </div>
-            <div class="right">
-                <div v-show="siteList.length>0" class="site-item" :class="{'site-item-on':currSite == item }" @click="clueSiteOder(item)" v-for="(item,index) in siteList" >{{item}}</div>
+            <div class="right" style="overflow: inherit;position: relative;">
+                <!-- <div v-show="siteList.length>0" class="site-item" :class="{'site-item-on':currSite == item }" @click="clueSiteOder(item)" v-for="(item,index) in siteList" >{{item}}</div> -->
                 <div v-show="siteList.length==0"> 无 </div>
-                <div class=""></div>
+                <el-select @change="clueSiteOder()" v-model="currSite" style="margin-left:10px;width: 50%">
+                  <el-option v-for="(item,index) in siteList" :value="item">{{item}}</el-option>
+                </el-select>
+                <!-- <div v-show="siteList.length > 0" @click="moreSiteFloat"> 更多 </div>
+                <div class="float-box" v-show="moreSite">
+                  <div v-show="siteList.length>0" class="site-item" :class="{'site-item-on':currSite == item }" @click="clueSiteOder(item)" v-for="(item,index) in siteList" >{{item}}</div>
+                  <span class="close-float" @click="closeFloat">
+                    <i class="fa fa-times-circle"></i>
+                  </span>
+                </div> -->
             </div>
           </div>
           <div class="cue-sort clearfix">
@@ -32,8 +41,9 @@
               <i class="iconfont icon-paixu01"></i>
               选择省市:
             </div>
-            <div class="right">
-
+            <div class="right" style="overflow: inherit;position: relative;">
+              <area-select v-if="clearCity" style="line-height: 15px" type="text" :level="2" v-model="place" :data="pcaa"></area-select>
+              <span class="clear-city" @click="cleanCity">清空</span>
             </div>
           </div>
           <div class="cue-sort clearfix">
@@ -47,6 +57,7 @@
                     type="daterange"
                     align="right"
                     range-separator="-"
+                    unlink-panels
                     start-placeholder="开始日期"
                     end-placeholder="结束日期"
                     format="yyyy-MM-dd"
@@ -173,34 +184,6 @@ export default {
             isLoad:false,
             tableH:0, //表格高度
             internetCueList: [  //互联网线索列表
-                {
-                    ZY:'来访方式：来信案件编号：06-242案件标题：梁平县重庆泰山电缆厂噪声振动扰民来信时间：2006-05-20发布时间：2006-06-02来访者：张先',//内容
-                    FBSJ:'2014-04-28 00:00:00', //发布时间
-                    CJSJ:'2018-06-21 07:17:14', //采集时间
-                    XSLY:'互联网线索', //线索来源
-                    SSDY:'请选择',
-                    XSLB:'', //所属领域
-                    XSML:'', //所属门类
-                    GJC:'', //关键词
-                    RENM:'', //人名
-                    DIM:'', //地名
-                    JIGOUM:'', //机构名
-                    ZY:'', //摘要
-                },
-                {
-                    ZY:'来访方式：来信案件编号：06-242案件标题：梁平县重庆泰山电缆厂噪声振动扰民来信时间：2006-05-20发布时间：2006-06-02来访者：张先',//内容
-                    FBSJ:'2014-04-28 00:00:00', //发布时间
-                    CJSJ:'2018-06-21 07:17:14', //采集时间
-                    XSLY:'互联网线索', //线索来源
-                    SSDY:'请选择',
-                    XSLB:'', //所属领域
-                    XSML:'', //所属门类
-                    GJC:'', //关键词
-                    RENM:'', //人名
-                    DIM:'', //地名
-                    JIGOUM:'', //机构名
-                    ZY:'', //摘要
-                }
             ],
             siteList:[],   //采集网站
             currSite:'', //当前选择网站
@@ -218,7 +201,14 @@ export default {
             BH: '' , //选择数据编号
             pca: pca,
             pcaa: pcaa,
-            citySelected:[],
+            place:[], //获取地域
+
+            province:'',
+            city:'',
+            county:'',
+
+            clearCity:true,
+            moreSite:false,
         }
     },
     mounted(){
@@ -227,6 +217,14 @@ export default {
         this.tableResize();//表格高度自适应
     },
     methods:{
+        //显示更多网站
+        moreSiteFloat(){
+          this.moreSite = true;
+        },
+        //关闭网站选择
+        closeFloat(){
+          this.moreSite = false;
+        },
         //获取省市
         getProvince(){
             this.axios({
@@ -242,9 +240,30 @@ export default {
 
             })
         },
+        //清空城市
+        cleanCity(){
+          var _this = this;
+          this.clearCity = false;
+          setTimeout(function(){
+            _this.clearCity = true;
+          },100)
+          this.place = [];
+          console.log(this.place);
+        },
         //时间搜索
         search(){
             console.log(this.timeSearch);
+            console.log(this.place);
+            if(this.place.length){
+              this.province = this.place[0];
+              this.city = this.place[1];
+              this.county = this.place[2];
+            }else{
+              this.province = '';
+              this.city = '';
+              this.county = '';
+            }
+            this.getInternetCueList(this.currSite);
         },
         //修改详情
         checkDetail(index){
@@ -280,70 +299,57 @@ export default {
             let _this = this;
             var param = {
                 site:site, //网站
-                province:'', //
-                city:'', //
-                county: '', //
-                keyword: '', //
+                province:_this.province, //
+                city:_this.city, //
+                county: _this.county, //
+                keyword: _this.keyword, //
                 beginDate: _this.timeSearch[0], //
                 endDate: _this.timeSearch[1], //
                 p: _this.page, // 
                 ps: _this.pageSize, //
             }
-            let url = webApi.WebData.GetUntreatedData.format(param);
+            let url = webApi.WebData.GetUntreatedData.format(param); 
             _this.isLoad = true;
-            _this.axios({
-                methods:'get',
-                url:url
-            }).then(function(res){
-                _this.isLoad = false;
-                if(res.data.code == 0){
-                let data = res.data.data;
-                let ZYstr = '';
-                // for(let i = 0;i < data.length; i++){
-                //     let str = data[i].ZY.split("<br/>");
-                //     for(let j= 0;j<str.length;j++){
-                //         ZYstr += str[j];
-                //     }
-                //     data[i].ZY = ZYstr;
-                // }
-                _this.internetCueList = data;
-            }else {
-                _this.$message.error(res.data.errorMessage);
+            //获取总量
+            function count(){
+              return _this.axios({
+                      method:'get',
+                      url:webApi.WebData.CountUntreatedData.format(param),
+                      timeout: 10000
+                    })
             }
-            }).catch(function(err){
-            _this.isLoad = false;
-            })
+            
+            //获取数据
+            function data(){
+              return _this.axios({
+                        method:'get',
+                        url:webApi.WebData.GetUntreatedData.format(param),
+                        timeout: 10000
+                    })
+            }
+
+            _this.axios.all([count(),data()])
+              .then(_this.axios.spread(function(count,data){
+                _this.isLoad = false;
+                _this.internetCueList = data.data.data;
+                _this.totalPages = count.data.data;
+              })).catch(function(error){
+                _this.isLoad = false;
+              });
             
         },
       //按线索来源筛选
-        clueSiteOder(site){
+        clueSiteOder(){
             let _this = this;
             if(_this.isLoad == false){
-                if(_this.currSite == site){
-                    return
-                }else{
-                    _this.currSite = site;
-                    _this.getInternetCueList(_this.currSite);
-                }
+              _this.getInternetCueList(_this.currSite);
             }   
-        },
-        //关闭选择城市
-        closeCity(){
-            this.citySelected = [];
-        },
-        //查看详情
-        chooseCity(){
-            if(this.citySelected.length != 0){
-                this.SSDY = this.citySelected[0] + this.citySelected[1];
-            }
-            this.citySelected = [];
-            this.isChooseCity = !this.isChooseCity;
         },
         // 页码跳转
         pageTo(curr) {
             let _this = this ;
             _this.page = curr;
-            _this.getInternetCueList();
+            _this.getInternetCueList(_this.currSite);
         },
         //表格高度自适应
         tableResize(){
@@ -566,6 +572,29 @@ export default {
             overflow:hidden;
             text-overflow:ellipsis;
             white-space:nowrap;
+            .float-box{
+              position: absolute;
+              z-index: 99999999;
+              background: #fff;
+              left: 0;
+              padding: 0 10px;
+              border-bottom: solid 1px #ddd;
+              box-shadow: 0px 2px 10px #c4c4c4;
+              .close-float{
+                position: absolute;
+                top: -16px;
+                right: -8px;
+                font-size: 18px;
+                cursor: pointer;
+              }
+            }
+            .clear-city{
+              position: absolute;
+              top: 0;
+              left: 550px;
+              color: #65afea;
+              cursor: pointer;
+            }
             .comfirm-btn{
                 cursor: pointer;
                 color: #65c7ea;

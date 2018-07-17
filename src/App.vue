@@ -153,8 +153,9 @@ button:active{
       white-space: nowrap;
     }
     .el-input__inner {
-      height: 32px;
-      line-height: 32px;
+      height: 30px;
+      line-height: 30px;
+      vertical-align: top;
     }
 
   }
