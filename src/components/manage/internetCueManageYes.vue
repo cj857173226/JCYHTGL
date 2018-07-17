@@ -42,7 +42,7 @@
             <div class="right" style="overflow: inherit;position: relative;">
                 <!-- <div v-show="siteList.length>0" class="site-item" :class="{'site-item-on':currSite == item }" @click="clueSiteOder(item)" v-for="(item,index) in siteList" >{{item}}</div> -->
                 <div v-show="siteList.length==0"> 无 </div>
-                <el-select  v-model="site" style="margin-left:10px;width: 50%">
+                <el-select  v-model="site" style="margin-left:10px;width: 50%;vertical-align: text-bottom;">
                   <el-option value="">全部</el-option>
                   <el-option v-for="(item,index) in siteList" :value="item" :key='index'>{{item}}</el-option>
                 </el-select>
@@ -55,7 +55,7 @@
             选择省/市:
           </div>
           <div class="right" style="overflow:inherit;">
-            <area-select style="line-height:100%;" :level='2' type="text" :data = "pcaa" v-model="citySelected"></area-select>
+            <area-select style="line-height:100%;height:100%;" :level='2' type="text" :data = "pcaa" v-model="citySelected"></area-select>
           </div>
         </div>
         <div class="cue-sort clearfix">
@@ -110,20 +110,18 @@
             </div>
           </div>
         </div>
+       
         <div class="cue-sort clearfix">
           <div class="cue-sort-wrap">
             <div class="left-title">
               <i class="iconfont icon-paixu01"></i>
-              排序字段:
+              日期类型:
             </div>
             <div class="right">
               <template>
-                <el-radio v-model="order" label="cjsj">采集时间</el-radio>
-                <el-radio v-model="order" label="fbsj">发布时间</el-radio>
-              </template>
-              <!-- <div class="sort-item" :class='{"sort-item-on":order== "cjsj"}' @click="clueOrder('cjsj')">采集时间</div>
-              <div class="sort-item" :class='{"sort-item-on":order== "fbsj"}' @click="clueOrder('fbsj')">发布时间</div> -->
-            
+                <el-radio v-model="rqlx" label="cjsj">采集日期</el-radio>
+                <el-radio v-model="rqlx" label="fbsj">发布日期</el-radio>
+              </template>        
             </div>
           </div>
           <div class="cue-sort-wrap">
@@ -143,6 +141,21 @@
               </el-date-picker>
             </div>
           </div>
+        </div>
+         <div class="cue-sort clearfix">
+           <div class="left-title">
+              <i class="iconfont icon-paixu01"></i>
+              排序字段:
+            </div>
+            <div class="right">
+              <template>
+                <el-radio v-model="order" label="cjsj">采集时间</el-radio>
+                <el-radio v-model="order" label="fbsj">发布时间</el-radio>
+              </template>
+              <!-- <div class="sort-item" :class='{"sort-item-on":order== "cjsj"}' @click="clueOrder('cjsj')">采集时间</div>
+              <div class="sort-item" :class='{"sort-item-on":order== "fbsj"}' @click="clueOrder('fbsj')">发布时间</div> -->
+            
+            </div>
         </div>
         <div class="cue-source clearfix" style="border:none;margin-top:10px;">
             <el-button @click="confirmFilter" type="success" plain>确认</el-button>
@@ -336,7 +349,7 @@
     methods:{
       //确认筛选条件
       confirmFilter() {
-        if(this.citySelected){
+        if(this.citySelected.length>0){
           this.province = this.citySelected[0];
           this.city = this.citySelected[1];
           this.county = this.citySelected[2];
@@ -560,7 +573,7 @@
       .manage-icon{
         position: absolute;
         right: 14px;
-        top: 0;
+        top: 50px;
         font-size: 25px;
         &:hover {
           cursor: pointer;
