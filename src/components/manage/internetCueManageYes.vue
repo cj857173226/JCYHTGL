@@ -201,7 +201,7 @@
             width="100">
             <template slot-scope="scope">
               <el-button type="text" size="small">提交</el-button>
-              <el-button @click='editDetail' type="text" size="small">详情</el-button>
+              <el-button @click='editDetail(scope.row)' type="text" size="small">详情</el-button>
             </template>
           </el-table-column>
         </el-table>
@@ -346,12 +346,13 @@
       },
       addInternet(){//新增
         this.interInputProps.isShow = true;
-        this.interInputProps.dataId = '123';
+        this.interInputProps.dataId = '';
         this.interInputProps.operation = "Add";
       },
-      editDetail() {//编辑详情
+      editDetail(id) {//编辑详情
+        console.log(id);
         this.interInputProps.isShow = true;
-        this.interInputProps.dataId = '1234';
+        this.interInputProps.dataId = id;
         this.interInputProps.operation = "edit";
       },
       getDefaultDate() {//设置默认日期

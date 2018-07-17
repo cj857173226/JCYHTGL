@@ -427,8 +427,11 @@
     },
     watch: {
       dataId() {
-        console.log(this.dataId);
-        this.getData();
+        if(this.dataId == ''){
+        
+        }else{
+            this.getData();
+        }
       }
     }
   }
