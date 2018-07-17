@@ -32,8 +32,8 @@
               <i class="iconfont icon-paixu01"></i>
               选择省市:
             </div>
-            <div class="right">
-
+            <div class="right"> 
+              <area-select style="height: 15px;line-height: 15px" type="text" :level="2" v-model="place" :data="pcaa"></area-select>
             </div>
           </div>
           <div class="cue-sort clearfix">
@@ -173,34 +173,6 @@ export default {
             isLoad:false,
             tableH:0, //表格高度
             internetCueList: [  //互联网线索列表
-                {
-                    ZY:'来访方式：来信案件编号：06-242案件标题：梁平县重庆泰山电缆厂噪声振动扰民来信时间：2006-05-20发布时间：2006-06-02来访者：张先',//内容
-                    FBSJ:'2014-04-28 00:00:00', //发布时间
-                    CJSJ:'2018-06-21 07:17:14', //采集时间
-                    XSLY:'互联网线索', //线索来源
-                    SSDY:'请选择',
-                    XSLB:'', //所属领域
-                    XSML:'', //所属门类
-                    GJC:'', //关键词
-                    RENM:'', //人名
-                    DIM:'', //地名
-                    JIGOUM:'', //机构名
-                    ZY:'', //摘要
-                },
-                {
-                    ZY:'来访方式：来信案件编号：06-242案件标题：梁平县重庆泰山电缆厂噪声振动扰民来信时间：2006-05-20发布时间：2006-06-02来访者：张先',//内容
-                    FBSJ:'2014-04-28 00:00:00', //发布时间
-                    CJSJ:'2018-06-21 07:17:14', //采集时间
-                    XSLY:'互联网线索', //线索来源
-                    SSDY:'请选择',
-                    XSLB:'', //所属领域
-                    XSML:'', //所属门类
-                    GJC:'', //关键词
-                    RENM:'', //人名
-                    DIM:'', //地名
-                    JIGOUM:'', //机构名
-                    ZY:'', //摘要
-                }
             ],
             siteList:[],   //采集网站
             currSite:'', //当前选择网站
@@ -218,7 +190,7 @@ export default {
             BH: '' , //选择数据编号
             pca: pca,
             pcaa: pcaa,
-            citySelected:[],
+            place:[], //获取地域
         }
     },
     mounted(){
@@ -326,18 +298,6 @@ export default {
                     _this.getInternetCueList(_this.currSite);
                 }
             }   
-        },
-        //关闭选择城市
-        closeCity(){
-            this.citySelected = [];
-        },
-        //查看详情
-        chooseCity(){
-            if(this.citySelected.length != 0){
-                this.SSDY = this.citySelected[0] + this.citySelected[1];
-            }
-            this.citySelected = [];
-            this.isChooseCity = !this.isChooseCity;
         },
         // 页码跳转
         pageTo(curr) {
