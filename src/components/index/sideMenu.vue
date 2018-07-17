@@ -81,7 +81,7 @@
     data(){
       return{
         IdentityType: localStorage.getItem('IdentityType'),//身份信息
-        openeds: ['1'],
+        openeds: ['1','1-4'],
         isThisNav: '',
       }
     },

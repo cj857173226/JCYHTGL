@@ -100,7 +100,6 @@
             </span>
               <span  class="item-title">摘要</span>
               <textarea class="textarea " v-model="ZY"></textarea>
-              <el-button @click="analysis" type="success">分析</el-button>
             </div>
           </div>
           <div class="detail-item">
@@ -158,6 +157,7 @@
         place:[],
 
         YSSJBH:'', //原始数据编号
+        BH:'', //数据编号
         CJNR:'', //采集内容
         FBSJ:'', //发布时间
         SJDL:'1', //数据大类
@@ -316,19 +316,34 @@
         this.isDetailLoad = true;
         this.axios({
           method:'get',
-          url:webApi.WebData.GetSourceData.format({id:this.dataId,site:this.site}),
+          url:webApi.WebData.Get.format({id:this.dataId}),
           timeout:10000
         }).then(function(response){
           _this.isDetailLoad = false;
           if(response.data.code == 0){
             console.log(response.data.data);
-            _this.YSSJBH = response.data.data._id;
-            _this.CJNR = response.data.data.Content;
-            _this.CJSJ = response.data.data.CreatedTime;
-            _this.SJDZ = response.data.data.Site;
-            _this.SSSF = response.data.data.Province;
-            _this.FBSJ = response.data.data.PublishTime;
-            _this.SJLY = response.data.data.SiteName;
+            _this.YSSJBH = response.data.data[0].YSSJBH;
+            _this.BH = response.data.data[0].BH;
+            _this.CJNR = response.data.data[0].CJNR;
+            _this.CJSJ = response.data.data[0].CJSJ;
+            _this.SJDZ = response.data.data[0].SJDZ;
+            _this.SSSF = response.data.data[0].SSSF;
+            _this.FBSJ = response.data.data[0].FBSJ;
+            _this.SJLY = response.data.data[0].SJLY;
+            _this.GJC = response.data.data[0].GJC;
+            _this.RENM = response.data.data[0].RENM;
+            _this.JIGOUM = response.data.data[0].JIGOUM;
+            _this.SSCS = response.data.data[0].SSCS;
+            _this.SSQX = response.data.data[0].SSQX;
+            _this.ZY = response.data.data[0].ZY;
+            _this.SJLY = response.data.data[0].SJLY;
+            _this.SFZC = response.data.data[0].SFZC;
+            _this.SFSJGZ = response.data.data[0].SFSJGZ;
+            _this.SJDL = response.data.data[0].SJDL;
+            _this.SJLB = response.data.data[0].SJLB;
+            _this.BZ = response.data.data[0].BZ;
+            _this.SFZSJ = response.data.data[0].SFZSJ;
+            _this.place = [_this.SSSF,_this.SSCS,_this.SSQX]
           }else{
 
           }
@@ -338,6 +353,7 @@
         })
       },
       submit() {//提交
+      var _this = this;
         if(this.place.length == 0){
            this.$message({
              message:'请选择所属地域',
@@ -383,6 +399,7 @@
         console.log('是否含有事件跟踪:',this.SFSJGZ);
         var bodyParam = {
           YSSJBH:this.YSSJBH,
+          BH:this.BH,
           CJNR: this.CJNR,
           FBSJ: this.FBSJ,
           SJDL: this.SJDL,
@@ -404,31 +421,79 @@
           SJKZ: this.SJKZ,
           SFSJGZ: this.SFSJGZ
         }
-        this.axios({
-          method: 'post',
-          url:webApi.Host + webApi.WebData.Confirm,
-          data:bodyParam,
-          timeout:10000
-        }).then(function(response){
-          _this.isDetailLoad = false;
-          if(response.data.code == 0){
-            _this.$message({
-              message:'提交成功',
-              type: 'success'
-            })
-          }else{
-
-          }
-        }).catch(function(error){
-          _this.isDetailLoad = false;
-
-        })
+        console.log(bodyParam);
+        if(this.dataId == ''){//修改
+          this.axios({
+            method: 'post',
+            url:webApi.Host + webApi.WebData.Add,
+            data:bodyParam,
+            timeout:10000
+          }).then(function(response){
+            _this.isDetailLoad = false;
+            if(response.data.code == 0){
+              _this.$message({
+                message:'修改成功',
+                type: 'success'
+              })
+            }else{
+  
+            }
+          }).catch(function(error){
+            _this.isDetailLoad = false;
+  
+          })
+        }else{
+          //修改
+          this.axios({
+            method: 'post',
+            url:webApi.Host + webApi.WebData.Update,
+            data:bodyParam,
+            timeout:10000
+          }).then(function(response){
+            _this.isDetailLoad = false;
+            if(response.data.code == 0){
+              _this.$message({
+                message:'修改成功',
+                type: 'success'
+              })
+            }else{
+  
+            }
+          }).catch(function(error){
+            _this.isDetailLoad = false;
+          })
+        }
       }
     },
     watch: {
       dataId() {
         if(this.dataId == ''){
-        
+          this.place = [];
+          this.YSSJBH = ''; //原始数据编号
+          this.BH = ''; //数据编号
+          this.CJNR = ''; //采集内容
+          this.FBSJ = ''; //发布时间
+          this.SJDL = '1'; //数据大类
+          this.SJLB = ''; //数据类别
+          this.SJLY = ''; //数据来源
+          this.SJDZ = ''; //数据地址
+          this.BZ = ''; //备注
+          this.SSSF = ''; //省份
+          this.SSCS = ''; //地市
+          this.SSQX = ''; //区县
+          this.SSSFDM = ''; //省份代码
+          this.SSCSDM = ''; //地市代码
+          this.SSQXDM = ''; //区县代码
+          this.ZY = ''; //摘要
+          this.GJC = ''; //关键词
+          this.DIM = ''; //地名
+          this.RENM = ''; //人名
+          this.JIGOUM = ''; //机构名
+          this.CJSJ = ''; //采集时间
+          this.SFZSJ = '0'; //是否脏数据
+          this.SFZC = '0'; //是否暂存
+          this.SJKZ = ''; //快照
+          this.SFSJGZ = '0'; //是否含有事件跟踪
         }else{
             this.getData();
         }

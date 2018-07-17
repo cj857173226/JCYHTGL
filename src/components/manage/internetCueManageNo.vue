@@ -24,7 +24,7 @@
             <div class="right" style="overflow: inherit;position: relative;">
                 <!-- <div v-show="siteList.length>0" class="site-item" :class="{'site-item-on':currSite == item }" @click="clueSiteOder(item)" v-for="(item,index) in siteList" >{{item}}</div> -->
                 <div v-show="siteList.length==0"> 无 </div>
-                <el-select @change="clueSiteOder()" v-model="currSite" style="margin-left:10px;width: 50%">
+                <el-select @change="clueSiteOder()" v-model="currSite" style="margin-left:10px;width: 50%;height: 32px">
                   <el-option v-for="(item,index) in siteList" :value="item">{{item}}</el-option>
                 </el-select>
                 <!-- <div v-show="siteList.length > 0" @click="moreSiteFloat"> 更多 </div>
@@ -41,14 +41,14 @@
               <i class="iconfont icon-paixu01"></i>
               选择省市:
             </div>
-            <div class="right" style="overflow: inherit;position: relative;">
+            <div class="right city-right" style="overflow: inherit;position: relative;">
               <area-select v-if="clearCity" style="line-height: 15px" type="text" :level="2" v-model="place" :data="pcaa"></area-select>
               <span class="clear-city" @click="cleanCity">清空</span>
             </div>
           </div>
           <div class="cue-sort clearfix">
             <div class="left-title">
-              <i class="iconfont icon-paixu01"></i>
+              <i class="fa fa-calendar" style="margin-right: 12px;"></i>
               时间段:
             </div>
             <div class="right">
@@ -544,8 +544,8 @@ export default {
         margin-top: 24px;
         .cue-source,
         .cue-sort{
-          height: 40px;
-          line-height: 40px;
+          height: 45px;
+          line-height: 45px;
           border:1px solid #dcdcdc;
           .left-title{
             float: left;
@@ -640,6 +640,9 @@ export default {
               margin-right: 0;
             }
           }
+          .city-right{
+            padding-top: 5px;
+          }
         }
         .cue-sort{
           border-top:none;
@@ -647,8 +650,8 @@ export default {
       }
       .cue-list{
         margin-top: 24px;
-        height: calc(100% - 144px - 64px);
-        max-height: calc(100% - 144px - 64px);
+        height: calc(100% - 144px - 64px - 15px);
+        max-height: calc(100% - 144px - 64px - 15px);
         overflow-y: hidden;
         .isRead{
           color: #F66;
@@ -747,6 +750,9 @@ export default {
             border:1px solid #dcdcdc;
             .right{
               font-size: 14px;
+            }
+            .city-right{
+              padding-top: 0;
             }
           }
           .cue-sort{

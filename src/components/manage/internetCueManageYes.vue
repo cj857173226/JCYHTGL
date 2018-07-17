@@ -206,7 +206,7 @@
             width="100">
             <template slot-scope="scope">
               <el-button type="text" size="small">提交</el-button>
-              <el-button @click='editDetail(scope.row)' type="text" size="small">详情</el-button>
+              <el-button @click='editDetail(scope.row.BH)' type="text" size="small">详情</el-button>
             </template>
           </el-table-column>
         </el-table>
@@ -256,34 +256,6 @@
         tableH:0, //表格高度
         totalPages:0,//总条数
         internetCueList: [  //互联网线索列表
-          {
-            ZY:'来访方式：来信案件编号：06-242案件标题：梁平县重庆泰山电缆厂噪声振动扰民来信时间：2006-05-20发布时间：2006-06-02来访者：张先',//内容
-            FBSJ:'2014-04-28 00:00:00', //发布时间
-            CJSJ:'2018-06-21 07:17:14', //采集时间
-            XSLY:'互联网线索', //线索来源
-            SSDY:'请选择',
-            XSLB:'', //所属领域
-            XSML:'', //所属门类
-            GJC:'', //关键词
-            RENM:'', //人名
-            DIM:'', //地名
-            JIGOUM:'', //机构名
-            ZY:'', //摘要
-          },
-          {
-            ZY:'来访方式：来信案件编号：06-242案件标题：梁平县重庆泰山电缆厂噪声振动扰民来信时间：2006-05-20发布时间：2006-06-02来访者：张先',//内容
-            FBSJ:'2014-04-28 00:00:00', //发布时间
-            CJSJ:'2018-06-21 07:17:14', //采集时间
-            XSLY:'互联网线索', //线索来源
-            SSDY:'请选择',
-            XSLB:'', //所属领域
-            XSML:'', //所属门类
-            GJC:'', //关键词
-            RENM:'', //人名
-            DIM:'', //地名
-            JIGOUM:'', //机构名
-            ZY:'', //摘要
-          }
         ],
 
         typeList: [],//线索门类
@@ -859,8 +831,8 @@
       }
       .cue-list{
         margin-top: 24px;
-        height: calc( 100% - 444px);
-        max-height: calc( 100% - 444px);
+        height: calc( 100% - 403px);
+        max-height: calc( 100% - 403px);
         overflow-y: hidden;
         .isRead{
           color: #F66;
