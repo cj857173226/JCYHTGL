@@ -1,157 +1,262 @@
 <template>
-  <div id="internetManage">
-    <div id="header">
-      <div class="header-icon">
-        <i class="iconfont icon-boshimao"></i>
+  <div id="internetCue">
+    <div class="internet-cue-head clearfix">
+      <div class="title-wrap clearfix">
+        <div class="title-icon">
+          <i class="iconfont icon-boshimao"></i>
+        </div>
+        <div class="title">互联网线索管理</div>
       </div>
-      <div class="header-title">互联网线索管理</div>
       <div class="search-wrap clearfix">
         <input class="search-ipt" type="text" v-model="keyword" placeholder="请输入内容" @keyup.13="getInternetCueList">
         <span class="search-btn" @click="getInternetCueList()">
-                    <i class="iconfont icon-sousuo"></i>
-                </span>
-      </div>
-    </div>
-    <!-- <div id="add-icon">
-    </div> -->
-
-    <div class="cue-filter-wrap">
-      <div class="cue-source clearfix">
-        <div class="left-title">
-          <i class="iconfont icon-caiji"></i>
-          采集网站:
-        </div>
-        <div class="right">
-          <div v-show="siteList.length>0" class="site-item" :class="{'site-item-on':site == item }" @click="clueSiteOder(item)" v-for="(item,index) in siteList" >{{item}}</div>
-          <div v-show="siteList.length==0"> 无 </div>
-        </div>
-      </div>
-      <div class="cue-sort clearfix">
-        <div class="left-title">
-          <i class="iconfont icon-paixu01"></i>
-          日期选择:
-        </div>
-        <div class="right">
-          <el-date-picker style="height: 100%;border:none;padding:0"
-                          v-model="timeSearch"
-                          type="daterange"
-                          align="right"
-                          range-separator="-"
-                          start-placeholder="开始日期"
-                          end-placeholder="结束日期">
-
-          </el-date-picker>
-        </div>
+            <i class="iconfont icon-sousuo"></i>
+          </span>
       </div>
       <div class="manage-icon">
         <i @click="addInternet"  class="el-icon-circle-plus-outline"></i>
       </div>
     </div>
-    <div id="content" ref="cueList" v-loading = "isLoad">
-      <el-table
-        ref="oTable"
-        :data=" internetCueList"
-        :max-height="tableH"
-        :height="tableH"
-        style="width: 100%">
-        <el-table-column
-          prop="ZY"
-          label="内容"
-          min-width="300">
-          <template slot-scope="scope">
-            <el-popover trigger="click" placement="top" >
-              <p style="text-indent: 2em;">{{ scope.row.ZY }}</p>
-              <div slot="reference" class="td-content">
-                {{ scope.row.ZY}}
-              </div>
-            </el-popover>
-          </template>
-        </el-table-column>
-        <el-table-column
-          prop="FBSJ"
-          label="发布时间"
-          min-width="170">
-        </el-table-column>
-        <el-table-column
-          prop="CJSJ"
-          label="采集时间"
-          min-width="170">
-        </el-table-column>
-        <el-table-column
-          prop="XSLY"
-          label="线索来源"
-          width="150">
-        </el-table-column>
-        <el-table-column
-          label="所属地域"
-          min-width="100">
-          <template slot-scope="scope">
-            <p>四川省成都市</p>
-          </template>
-        </el-table-column>
-        <el-table-column
-          label="所属领域"
-          min-width="130">
-          <template slot-scope="scope">
-            <el-select v-model="XSLB">
-              <el-option value="食药安全">食药安全</el-option>
-              <el-option value="英烈保护">英烈保护</el-option>
-              <el-option value="国有财产">国有财产</el-option>
-              <el-option value="食品安全">食品安全</el-option>
-              <el-option value="国土资源">国土资源</el-option>
-              <el-option value="环境保护">环境保护</el-option>
-              <el-option value="其他">其他</el-option>
-            </el-select>
-          </template>
-        </el-table-column>
-        <el-table-column
-          label="所属门类"
-          min-width="130">
-          <template slot-scope="scope">
-            <el-select v-model="XSML">
-              <el-option value="公益诉讼">公益诉讼</el-option>
-              <el-option value="贪污腐败">贪污腐败</el-option>
-            </el-select>
-          </template>
-        </el-table-column>
-        <el-table-column
-          label="关键词"
-          width="200">
-          <template slot-scope="scope">
+    <div class="main-body">
+      <div class="cue-types-wrap">
+        <div class="title-wrap">
+          <i class="iconfont icon-leibieguanli"></i>
+          <span>所属领域</span>
+        </div>
+        <div class="types-wrap clearfix">
+          <div v-for="(item ,index) in typeList" class="type-item" :class="{'type-item-on':type == item}" @click = "clueTypeOder(item)">
+            <div class="type-icon">
+              <i v-if="item == '食药安全'" class="iconfont icon-shipinshengchanqiye"></i>
+              <i v-else-if="item == '英烈保护'" class="iconfont icon-44"></i>
+              <i v-else-if="item == '国有财产'" class="iconfont icon-jinqian"></i>
+              <i v-else-if="item ==  '食品安全'" class="iconfont icon-shouyeshipin"></i>
+              <i v-else-if="item ==  '国土资源'" class="iconfont icon-diqiuyi"></i>
+              <i v-else-if="item ==  '环境保护'" class="iconfont icon-huanjingbaohu"></i>
+            </div>
+            <div class="type-name">
+              {{item}}
+            </div>
+          </div>
+          <div class="pushBtn">
+            <el-button @click="chooseCity" type="success" plain>成功按钮</el-button>
+          </div>
+        </div>
+      </div>
+      <div class="cue-filter-wrap">
+        <div class="cue-source clearfix">
+          <div class="left-title">
+            <i class="iconfont icon-caiji"></i>
+            采集网站:
+          </div>
+          <div class="right">
+            <div v-show="siteList.length>0" class="site-item" :class="{'site-item-on':site == item }" @click="clueSiteOder(item)" v-for="(item,index) in siteList" >{{item}}</div>
+            <div v-show="siteList.length==0"> 无 </div>
+          </div>
+        </div>
+        <div class="cue-source clearfix">
+          <div class="left-title">
+            <i class="iconfont icon-caiji"></i>
+            选择省/市:
+          </div>
+          <div class="right" style="position: relative">
+            <area-select  type="text" :data = "pcaa" v-model="citySelected"></area-select>
+          </div>
+        </div>
+        <div class="cue-sort clearfix">
+          <div class="cue-sort-wrap">
+            <div class="left-title">
+              <i class="iconfont icon-paixu01"></i>
+              线索大类:
+            </div>
+            <div class="right">
 
-          </template>
-        </el-table-column>
-        <el-table-column
-          fixed="right"
-          label="操作"
-          width="100">
-          <template slot-scope="scope">
-            <el-button type="text" size="small">提交</el-button>
-            <el-button @click='editDetail' type="text" size="small">详情</el-button>
-          </template>
-        </el-table-column>
-      </el-table>
-    </div>
-    <div class="page-wrap">
-      <el-pagination
-        @current-change="pageTo"
-        :page-size="pageSize"
-        :current-page="page"
-        layout="total, prev, pager, next, jumper"
-        :total="totalPages">
-      </el-pagination>
+            </div>
+          </div>
+          <div class="cue-sort-wrap">
+            <div class="left-title">
+              <i class="iconfont icon-paixu01"></i>
+              线索类型:
+            </div>
+            <div class="right">
+
+            </div>
+          </div>
+        </div>
+        <div class="cue-sort clearfix">
+          <div class="cue-sort-wrap">
+            <div class="left-title">
+              <i class="iconfont icon-paixu01"></i>
+              是否脏数据:
+            </div>
+            <div class="right">
+              <template>
+                <el-radio v-model="isDirtyData" label="all">全部</el-radio>
+                <el-radio v-model="isDirtyData" label="yes">是</el-radio>
+                <el-radio v-model="isDirtyData" label="no">否</el-radio>
+              </template>
+            </div>
+          </div>
+          <div class="cue-sort-wrap">
+            <div class="left-title">
+              <i class="iconfont icon-paixu01"></i>
+              是否暂存:
+            </div>
+            <div class="right">
+              <template>
+                <el-radio v-model="isStorage" label="all">全部</el-radio>
+                <el-radio v-model="isStorage" label="yes">是</el-radio>
+                <el-radio v-model="isStorage" label="no">否</el-radio>
+              </template>
+            </div>
+          </div>
+        </div>
+        <div class="cue-sort clearfix">
+          <div class="cue-sort-wrap">
+            <div class="left-title">
+              <i class="iconfont icon-paixu01"></i>
+              排序字段:
+            </div>
+            <div class="right">
+              <div class="sort-item" :class='{"sort-item-on":order== "cjsj"}' @click="clueOrder('cjsj')">采集时间</div>
+              <div class="sort-item" :class='{"sort-item-on":order== "fbsj"}' @click="clueOrder('fbsj')">发布时间</div>
+              <div class="sort-item-tip">(倒序排列)</div>
+            </div>
+          </div>
+          <div class="cue-sort-wrap">
+            <div class="left-title">
+              <i class="iconfont icon-paixu01"></i>
+              日期选择:
+            </div>
+            <div class="right">
+              <el-date-picker style="height: 100%;border:none;padding:0"
+                              v-model="timeSearch"
+                              type="daterange"
+                              align="right"
+                              range-separator="-"
+                              start-placeholder="开始日期"
+                              end-placeholder="结束日期">
+
+              </el-date-picker>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="cue-list" ref="cueList" v-loading="isLoad">
+        <el-table
+          ref="oTable"
+          :data=" internetCueList"
+          :max-height="tableH"
+          :height="tableH"
+          style="width: 100%">
+          <el-table-column
+            prop="ZY"
+            label="内容"
+            min-width="300">
+            <template slot-scope="scope">
+              <el-popover trigger="click" placement="top" >
+                <p style="text-indent: 2em;">{{ scope.row.ZY }}</p>
+                <div slot="reference" class="td-content">
+                  {{ scope.row.ZY}}
+                </div>
+              </el-popover>
+            </template>
+          </el-table-column>
+          <el-table-column
+            prop="FBSJ"
+            label="发布时间"
+            min-width="170">
+          </el-table-column>
+          <el-table-column
+            prop="CJSJ"
+            label="采集时间"
+            min-width="170">
+          </el-table-column>
+          <el-table-column
+            prop="SJLY"
+            label="线索来源"
+            width="150">
+          </el-table-column>
+          <el-table-column
+            label="所属地域"
+            min-width="300">
+            <template slot-scope="scope">
+              <el-button style="padding:0" type = "text" @click="chooseCity">{{scope.row.SSDY}}</el-button>
+            </template>
+          </el-table-column>
+          <el-table-column
+            label="所属门类"
+            min-width="130">
+            <template slot-scope="scope">
+              <el-select v-model="scope.row.XSML">
+                <el-option value="公益诉讼">公益诉讼</el-option>
+                <el-option value="贪污腐败">贪污腐败</el-option>
+              </el-select>
+            </template>
+          </el-table-column>
+          <el-table-column
+            label="所属领域"
+            min-width="130">
+            <template slot-scope="scope">
+              <el-select v-model="scope.row.XSLB">
+                <el-option value="食药安全">食药安全</el-option>
+                <el-option value="英烈保护">英烈保护</el-option>
+                <el-option value="国有财产">国有财产</el-option>
+                <el-option value="食品安全">食品安全</el-option>
+                <el-option value="国土资源">国土资源</el-option>
+                <el-option value="环境保护">环境保护</el-option>
+                <el-option value="其他">其他</el-option>
+              </el-select>
+            </template>
+          </el-table-column>
+          <el-table-column
+            label="关键词"
+            width="200">
+            <template slot-scope="scope">
+
+            </template>
+          </el-table-column>
+          <el-table-column
+            fixed="right"
+            label="操作"
+            width="100">
+            <template slot-scope="scope">
+              <el-button type="text" size="small">提交</el-button>
+              <el-button @click='editDetail' type="text" size="small">详情</el-button>
+            </template>
+          </el-table-column>
+        </el-table>
+      </div>
+      <div class="page-wrap">
+        <el-pagination
+          @current-change="pageTo"
+          :page-size="pageSize"
+          :current-page="page"
+          layout="total, prev, pager, next, jumper"
+          :total="totalPages">
+        </el-pagination>
+      </div>
     </div>
     <inter-input @inputClose="responseClose"
                  :operation='interInputProps.operation'
                  :isShow="interInputProps.isShow"
                  :dataId="interInputProps.dataId"></inter-input>
+
+    <el-dialog @close="closeCity" width="600px" title="选择省市" :visible.sync="isChooseCity">
+      <div id="choose-city" style="height: 55px">
+        <area-select  :level="2" type="text" :data = "pcaa" v-model="citySelected"></area-select>
+        <el-button style="float:right" type="text" @click="confirmPush">确认推送</el-button>
+      </div>
+    </el-dialog>
   </div>
+
 </template>
 
 <script>
   import interInput from '../pubilcComponents/manageComponents/internetInput'
+  import { pca, pcaa } from 'area-data';
   export default {
     components: {interInput},
+    name:'cue-list',
     data(){
       return{
         interInputProps: {
@@ -159,48 +264,96 @@
           dataId: '',//数据id
           operation: '',//操作
         },
-        isLoad:false,
+        //来源地址
+        outerVisible:false,
+        siteList:[
+        ],
         tableH:0, //表格高度
+        totalPages:0,//总条数
         internetCueList: [  //互联网线索列表
           {
             ZY:'来访方式：来信案件编号：06-242案件标题：梁平县重庆泰山电缆厂噪声振动扰民来信时间：2006-05-20发布时间：2006-06-02来访者：张先',//内容
             FBSJ:'2014-04-28 00:00:00', //发布时间
             CJSJ:'2018-06-21 07:17:14', //采集时间
             XSLY:'互联网线索', //线索来源
+            SSDY:'请选择',
+            XSLB:'', //所属领域
+            XSML:'', //所属门类
+            GJC:'', //关键词
+            RENM:'', //人名
+            DIM:'', //地名
+            JIGOUM:'', //机构名
+            ZY:'', //摘要
+          },
+          {
+            ZY:'来访方式：来信案件编号：06-242案件标题：梁平县重庆泰山电缆厂噪声振动扰民来信时间：2006-05-20发布时间：2006-06-02来访者：张先',//内容
+            FBSJ:'2014-04-28 00:00:00', //发布时间
+            CJSJ:'2018-06-21 07:17:14', //采集时间
+            XSLY:'互联网线索', //线索来源
+            SSDY:'请选择',
+            XSLB:'', //所属领域
+            XSML:'', //所属门类
+            GJC:'', //关键词
+            RENM:'', //人名
+            DIM:'', //地名
+            JIGOUM:'', //机构名
+            ZY:'', //摘要
           }
         ],
-        siteList:[   //采集网站
-        ],
-        page:1, //页码
-        pageSize: 20,//每页条数
-        totalPages:1,//总条数
-        keyword: '' , //关键字
+
+        typeList: ["食药安全","英烈保护",
+          "国有财产","食品安全","国土资源","环境保护"],//线索门类
         type:'', //线索类型
-        site:'',//来源站点
-        order:'cjsj',//排序方式
-        timeSearch:'', //时间范围
 
+        rqlx: "cjsj",//日期类型
+        qsrq: '',//起始日期
+        jzrq: '',//截至日期
+        order: '',//排序字段,默认时采集日期
+        keyword:'',//查询列表关键字
+        site:'',//采集站点名称
+        page:1, //页码
+        pageSize: 20,//页面大小,最大100
+        isLoad:false,//数据是否在加载
+        timeSearch: '',//时间范围
 
-        FBSJ:'', //发布时间
-        CJSJ:'', //采集时间
-        XSLY:'', //线索来源
-
-        SSDY:'', //所属地域
-        XSLB:'', //所属领域
-        XSML:'', //所属门类
-        GJC:'', //关键词
-        RENM:'', //人名
-        DIM:'', //地名
-        JIGOUM:'', //机构名
-        ZY:'', //摘要
+        isStorage: 'all',//是否暂存
+        isDirtyData: 'all',//是否脏数据
+        isChooseCity:false,
+        pca: pca,
+        pcaa: pcaa,
+        citySelected:[],
       }
     },
     mounted(){
       let _this = this;
       _this.tableResize();//表格高度自适应
-      // _this.getInternetCueList(); //获取互联网线索列表
+      // _this.getClueSites(); //获取来源网站
+      // _this.getClueType(); //获取线索类型
+      _this.getDefaultDate();//设置默认日期
+      _this.getInternetCueList(); //获取互联网线索列表
     },
     methods:{
+      //推送检察院
+      confirmPush() {
+        if(this.citySelected.length == 0){
+            return;
+        }
+        var param = {
+          province:this.citySelected[0],
+          city: this.citySelected[1],
+          county: this.citySelected[2]
+        }
+        console.log(param);
+        this.axios({
+          method: "post",
+          url: webApi.WebData.PushData.format(param),
+          timeout: 10000
+        }).then(function(response){
+          console.log(response.data.data);
+        }).catch(function(error){
+
+        })
+      },
       //响应弹出层关闭
       responseClose(res) {
         let _this = this;
@@ -209,13 +362,193 @@
           _this.getInternetCueList();
         }
       },
-      //提交数据
-      submitData() {
-
+      addInternet(){//新增
+        this.interInputProps.isShow = true;
+        this.interInputProps.dataId = '123';
+        this.interInputProps.operation = "Add";
       },
-      //编辑数据
-      editData() {
+      editDetail() {//编辑详情
+        this.interInputProps.isShow = true;
+        this.interInputProps.dataId = '1234';
+        this.interInputProps.operation = "edit";
+      },
+      getDefaultDate() {//设置默认日期
+        let _this = this;
+        let endDate = new Date();
+        let beginDate = new Date(endDate.getTime() - 3600 * 1000 * 24 * 30);
+        _this.timeSearch = [beginDate,endDate]
+      },
+      timeFormat(date) {
+        let time = date;
+        let year = time.getFullYear();
+        let month = time.getMonth() + 1;
+        let day = time.getDate();
+        if(month < 10) {
+          month =  '0' + month;
+        }
+        if(day < 10 ) {
+          day =  '0' + day;
+        }
+        time = year + '-' + month + '-' + day;
+        return time;
+      },
+      //获取互联网线索列表
+      getInternetCueList(){
+        let _this = this;
+        if(_this.isLoad ==false){
+          _this.isLoad = true;
+          let url = webApi.WebData.Get.format({
+            rqlx: _this.rqlx,//日期类型
+            qsrq: _this.timeFormat(_this.timeSearch[0]),//起始日期
+            jzrq: _this.timeFormat(_this.timeSearch[1]),//截至日期
+            order:_this.order,//采集字段,默认采集日期
+            province: "",//省份
+            city: "",//城市
+            county:'',//区县
+            keyword: _this.keyword,//关键词
+            type1: "",//数据大类
+            type2: "",//线索类型
+            sfzsj: "",//是否脏数据
+            sfzc: "",//是否暂存
+            clr:"",//处理人
+            site: "",//采集站点名称
+            p:_this.page,//页码
+            ps:_this.pageSize//页面大小,最大100
+          })
+          console.log(url)
+          _this.axios({
+            methods:'get',
+            url:url,
+            timeout: 10000
+          }).then(function(res){
+            _this.isLoad = false;
+            if(res.data.code == 0){
+              let data = res.data.data.data;
+              // let ZYstr = '';
+              // for(let i = 0;i < data.length; i++){
+              //   let str = data[i].ZY.split("<br/>");
+              //   for(let j= 0;j<str.length;j++){
+              //     ZYstr += str[j];
+              //   }
+              //   data[i].ZY = ZYstr;
+              // }
+              _this.internetCueList = data;
+            }else {
+              _this.$message.error(res.data.errorMessage);
+            }
+          }).catch(function(err){
+            _this.isLoad = false;
+          })
+        }
+      },
+      //获取举报门类
+      getClueType(){
+        let _this = this;
+        _this.axios({
+          methods:'get',
+          url:webApi.Host + webApi.Clue.GetReportCluesTypes
+        }).then(function(res){
+          if(res.data.code == 0){
+            let data = res.data.data;
+            _this.typeList = data;
+          }
+        }).catch(function(err){
 
+        })
+      },
+
+      //获取线索来源网站
+      getClueSites(){
+        let _this = this;
+        _this.axios({
+          methods:'get',
+          url:webApi.Host + webApi.Clue.GetClueSites
+        }).then(function(res){
+          if(res.data.code == 0){
+            let data = res.data.data;
+            _this.siteList = data;
+          }else {
+            _this.siteList = [];
+          }
+        }).catch(function(){
+
+        })
+      },
+      //线索排序
+      clueOrder(order){
+        let _this = this;
+        if(_this.isLoad == false){
+          if(_this.order != order){
+            _this.page = 1;
+            _this.order = order;
+            if(_this.internetCueList.length<=0){
+              return
+            }else {
+              _this.getInternetCueList();
+            }
+          }
+        }
+      },
+      //按线索来源筛选
+      clueSiteOder(site){
+        let _this = this;
+        if(_this.isLoad == false){
+          if(_this.site!= site){
+            _this.page = 1;
+            _this.site = site;
+            if(_this.internetCueList.length<=0){
+              return
+            }else {
+              _this.getInternetCueList();
+            }
+          }else{
+            _this.site = '';
+            _this.page = 1;
+            if(_this.internetCueList.length<=0){
+              return
+            }else {
+              _this.getInternetCueList();
+            }
+          }
+        }
+      },
+
+      //按举报类型筛选
+      clueTypeOder(type){
+        let _this = this;
+        if(_this.isLoad == false){
+          if(_this.type!= type){
+            _this.page = 1;
+            _this.type = type;
+            if(_this.internetCueList.length<=0){
+              return
+            }else {
+              _this.getInternetCueList();
+            }
+          }else{
+            _this.type = '';
+            _this.page = 1;
+            if(_this.internetCueList.length<=0){
+              return
+            }else {
+              _this.getInternetCueList();
+            }
+          }
+        }
+      },
+      //关闭选择城市
+      closeCity(){
+        this.citySelected = [];
+      },
+      //查看详情
+      chooseCity(){
+        if(this.citySelected.length != 0){
+          console.log(this.citySelected);
+          this.SSDY = this.citySelected[0] + this.citySelected[1];
+        }
+        this.citySelected = [];
+        console.log(this.citySelected);
+        this.isChooseCity = !this.isChooseCity;
       },
       // 页码跳转
       pageTo(curr) {
@@ -223,9 +556,12 @@
         _this.page = curr;
         _this.getInternetCueList();
       },
-      //获取互联网线索列表
-      getInternetCueList(){
-
+      // 查看详情
+      details(index,id){
+        this.$router.push({
+          path:'/home/cueDetail',
+          query:{type:2,id:id}
+        });
       },
       //表格高度自适应
       tableResize(){
@@ -238,51 +574,65 @@
       resize(){
         let _this = this;
         _this.tableH = _this.$refs.cueList.clientHeight;
-      },
-      addInternet(){//新增
-        this.interInputProps.isShow = true;
-        this.interInputProps.dataId = '123';
-        this.interInputProps.operation = "Add";
-      },
-      editDetail() {//编辑详情
-        this.interInputProps.isShow = true;
-        this.interInputProps.dataId = '1234';
-        this.interInputProps.operation = "edit";
       }
     },
+
     //实例销毁钩子
     destroyed(){
       window.removeEventListener('resize',this.resize)
     }
+
   }
 </script>
 
-
 <style lang="scss" scoped>
-  #internetManage{
+  #internetCue{
     position: relative;
     height: 100%;
     max-height:100%;
     min-width: 750px;
     overflow-y:hidden;
-    #header{
+    .internet-cue-head{
       height: 50px;
       width: 100%;
       line-height: 50px;
       background: #EEEEEE;
       border-bottom: 1px solid #dcdcdc;
-      .header-icon{
-        display: inline-block;
-        height: 100%;
-        width: 40px;
-        text-align: center;
-        border-right:solid 1px #ddd;
+      .manage-icon{
+        position: absolute;
+        right: 14px;
+        top: 0;
+        font-size: 25px;
+        &:hover {
+          cursor: pointer;
+        }
+        i {
+          color: green;
+        }
       }
-      .header-title{
-        display: inline-block;
+      /*标题*/
+      .title-wrap{
+        float: left;
         height: 100%;
-        padding-left: 10px;
+        .title-icon{
+          float: left;
+          height: 100%;
+          text-align: center;
+          width: 50px;
+          border-right: 1px solid #dcdcdc;
+          .iconfont{
+            font-size: 26px;
+            color: #666666;
+          }
+        }
+        .title{
+          float: left;
+          padding-left: 10px;
+          font-size: 16px;
+          color: #666666;
+        }
       }
+
       /*搜索框*/
       .search-wrap{
         float: right;
@@ -325,113 +675,306 @@
           background: #dcdcdc;
         }
       }
+
     }
-    .cue-filter-wrap{
-      width: 90%;
-      margin: 24px 0px;
-      padding-left: 24px;
-      position: relative;
-      .cue-source,
-      .cue-sort{
+    .main-body{
+      margin-top: 24px;
+      height: calc(100% - 74px);
+      max-height: calc(100% - 74px);
+      padding: 0 50px;
+      .cue-types-wrap{
+        border: 1px solid #dcdcdc;
+        .title-wrap{
+          background: #EEEEEE;
+          padding-left: 20px;
+          height: 40px;
+          line-height: 40px;
+          font-size: 16px;
+          color: #333333;
+          border-bottom: 1px solid #dcdcdc;
+          .iconfont{
+            font-weight: 800;
+            color: #333;
+          }
+        }
+        .types-wrap{
+          height: 80px;
+          overflow-y: auto;
+          .type-item{
+            position: relative;
+            float: left;
+            width: 90px;
+            height: 100%;
+            text-align: center;
+            font-size: 14px;
+            cursor: pointer;
+            .type-icon{
+              padding-top: 14px;
+              .iconfont{
+                -webkit-transition: all 0.3s;
+                -moz-transition: all 0.3s;
+                -ms-transition: all 0.3s;
+                -o-transition: all 0.3s;
+                transition: all 0.3s;
+                color: #333333;
+                font-size: 30px;
+              }
+            }
+            .type-name{
+              -webkit-transition: all 0.3s;
+              -moz-transition: all 0.3s;
+              -ms-transition: all 0.3s;
+              -o-transition: all 0.3s;
+              transition: all 0.3s;
+              padding-top: 4px;
+              color: #333333;
+            }
+          }
+          .type-item:after{
+            position: absolute;
+            content: '';
+            width: 1px;
+            height: 50px;
+            background: #dcdcdc;
+            top: 16px;
+            right: 0;
+          }
+
+          .type-item:last-child:after{
+            display: none;
+          }
+          .type-item-on{
+            .type-icon{
+              .iconfont{
+                color: #0B8E45;
+              }
+            }
+            .type-name{
+              color: #0B8E45!important;
+            }
+          }
+          .type-item:hover {
+            .type-icon{
+              .iconfont{
+                color: #0B8E45;
+              }
+            }
+            .type-name{
+              color: #0B8E45;
+            }
+          }
+        }
+
+      }
+      .cue-filter-wrap{
+        margin-top: 24px;
+        .cue-source,
+        .cue-sort{
+          height: 40px;
+          line-height: 40px;
+          border:1px solid #dcdcdc;
+          .cue-sort-wrap {
+            width: 50%;
+            height: 100%;
+            &:first-child {
+              float: left;
+            }
+            &:last-child {
+              float: right;
+            }
+          }
+          .left-title{
+            float: left;
+            padding-left: 20px;
+            height: 100%;
+            width: 144px;
+            background:#EEEEEE;
+            font-size: 16px;
+            color: #333;
+            border-right: 1px solid #dcdcdc;
+            .iconfont{
+              font-size: 16px;
+              font-weight: 800;
+              margin-right: 10px;
+            }
+          }
+          .right{
+            float: left;
+            font-size: 16px;
+            height: 100%;
+            width: calc(100% - 144px);
+            padding: 0 20px;
+            color: #333;
+            overflow:hidden;
+            text-overflow:ellipsis;
+            white-space:nowrap;
+            .site-item{
+              height: 100%;
+              float: left;
+              margin-right: 20px;
+              cursor: pointer;
+              -webkit-transition: all 0.3s;
+              -moz-transition: all 0.3s;
+              -ms-transition: all 0.3s;
+              -o-transition: all 0.3s;
+              transition: all 0.3s;
+            }
+            .site-item-on{
+              color: #FF6600;
+            }
+            .site-item:hover{
+              color: #FF6600;
+            }
+            .sort-item-tip{
+              height: 100%;
+              float: left;
+              cursor: default;
+            }
+            .sort-item{
+              height: 100%;
+              float: left;
+              margin-right: 40px;
+              cursor: pointer;
+              -webkit-transition: all 0.3s;
+              -moz-transition: all 0.3s;
+              -ms-transition: all 0.3s;
+              -o-transition: all 0.3s;
+              transition: all 0.3s;
+            }
+            .sort-item:hover,
+            .sort-item-on{
+              color: #FF6600;
+            }
+            .sort-item:last-child{
+              margin-right: 0;
+            }
+          }
+        }
+        .cue-sort{
+          border-top:none;
+        }
+      }
+      .cue-list{
+        margin-top: 24px;
+        height: calc( 100% - 444px);
+        max-height: calc( 100% - 444px);
+        overflow-y: hidden;
+        .isRead{
+          color: #F66;
+        }
+      }
+      .page-wrap{
+        margin-top: 24px;
+        height: 40px;
+      }
+    }
+  }
+
+
+  @media (max-width: 1440px) {
+
+    #internetCue{
+      .internet-cue-head{
         height: 40px;
         line-height: 40px;
-        border:1px solid #dcdcdc;
-        .left-title{
-          float: left;
-          padding-left: 20px;
-          height: 100%;
-          width: 144px;
-          background:#EEEEEE;
-          font-size: 16px;
-          color: #333;
-          border-right: 1px solid #dcdcdc;
-          .iconfont{
+        /*标题*/
+        .title-wrap{
+          .title-icon{
+            width: 40px;
+            .iconfont{
+              font-size: 22px;
+            }
+          }
+          .title{
             font-size: 16px;
-            font-weight: 800;
-            margin-right: 10px;
           }
         }
-        .right{
-          float: left;
-          font-size: 16px;
-          height: 100%;
-          width: calc(100% - 144px);
-          padding: 0 20px;
-          color: #333;
-          overflow:hidden;
-          text-overflow:ellipsis;
-          white-space:nowrap;
-          .site-item{
-            height: 100%;
-            float: left;
-            margin-right: 20px;
-            cursor: pointer;
-            -webkit-transition: all 0.3s;
-            -moz-transition: all 0.3s;
-            -ms-transition: all 0.3s;
-            -o-transition: all 0.3s;
-            transition: all 0.3s;
+
+        /*搜索框*/
+        .search-wrap{
+          height: 32px;
+          width: 300px;
+          .search-ipt{
+            width: 260px;
+            font-size: 14px;
           }
-          .site-item-on{
-            color: #FF6600;
+          .search-btn{
+            line-height: 32px;
+            width: 38px;
           }
-          .site-item:hover{
-            color: #FF6600;
-          }
-          .sort-item-tip{
-            height: 100%;
-            float: left;
-            cursor: default;
-          }
-          .sort-item{
-            height: 100%;
-            float: left;
-            margin-right: 40px;
-            cursor: pointer;
-            -webkit-transition: all 0.3s;
-            -moz-transition: all 0.3s;
-            -ms-transition: all 0.3s;
-            -o-transition: all 0.3s;
-            transition: all 0.3s;
-          }
-          .sort-item:hover,
-          .sort-item-on{
-            color: #FF6600;
-          }
-          .sort-item:last-child{
-            margin-right: 0;
+          .search-btn:after{
+            content: '';
+            left: 0;
+            top: 8px;
+            width: 2px;
+            height: 14px;
           }
         }
       }
-      .manage-icon{
-        position: absolute;
-        right: 0;
-        top: 50%;
-        margin-top: -18px;
-        margin-right: -62px;
-        font-size: 25px;
-        &:hover {
-          cursor: pointer;
+      .main-body{
+        margin-top: 16px;
+        height: calc(100% - 56px);
+        max-height: calc(100% - 56px);
+        .cue-types-wrap{
+          .title-wrap{
+            height: 32px;
+            line-height: 32px;
+          }
+          .types-wrap{
+            height: 68px;
+            .type-item{
+              width: 86px;
+              font-size: 14px;
+              cursor: pointer;
+              .type-icon{
+                padding-top: 8px;
+                .iconfont{
+                  font-size: 24px;
+                }
+              }
+              .type-name{
+                color: #333333;
+              }
+            }
+            .type-item:after{
+              position: absolute;
+              content: '';
+              width: 1px;
+              height: 44px;
+              background: #dcdcdc;
+              top: 16px;
+              right: 0;
+            }
+          }
         }
-        i {
-          color: green;
+        .cue-filter-wrap{
+          margin-top: 16px;
+          .cue-source,
+          .cue-sort{
+            height: 32px;
+            line-height: 32px;
+            border:1px solid #dcdcdc;
+            .right{
+              font-size: 14px;
+            }
+          }
+          .cue-sort{
+            border-top:none;
+
+          }
         }
-      }
-      .cue-sort{
-        border-top:none;
+        .cue-list{
+          margin-top: 16px;
+          height: calc( 100% - 350px);
+          max-height: calc( 100% - 350px);
+          overflow-y: hidden;
+        }
+        .page-wrap{
+          margin-top: 16px;
+          height: 40px;
+        }
       }
     }
-    #content{
-      height: calc( 100% - 50px - 64px - 128px);
-      overflow-y: hidden;
-      padding: 0 24px;
-      .isRead{
-        color: #F66;
-      }
-    }
-    .page-wrap{
-      margin-top: 24px;
-      height: 40px;
-    }
+
   }
 </style>

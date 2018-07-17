@@ -15,27 +15,6 @@
       </div>
     </div>
     <div class="main-body">
-      <div class="cue-types-wrap">
-        <div class="title-wrap">
-          <i class="iconfont icon-leibieguanli"></i>
-          <span>所属领域</span>
-        </div>
-        <div class="types-wrap clearfix">
-          <div v-for="(item ,index) in typeList" class="type-item" :class="{'type-item-on':type == item}" @click = "clueTypeOder(item)">
-            <div class="type-icon">
-              <i v-if="item == '食药安全'" class="iconfont icon-shipinshengchanqiye"></i>
-              <i v-else-if="item == '英烈保护'" class="iconfont icon-44"></i>
-              <i v-else-if="item == '国有财产'" class="iconfont icon-jinqian"></i>
-              <i v-else-if="item ==  '食品安全'" class="iconfont icon-shouyeshipin"></i>
-              <i v-else-if="item ==  '国土资源'" class="iconfont icon-diqiuyi"></i>
-              <i v-else-if="item ==  '环境保护'" class="iconfont icon-huanjingbaohu"></i>
-            </div>
-            <div class="type-name">
-              {{item}}
-            </div>
-          </div>
-        </div>
-      </div>
       <div class="cue-filter-wrap">
           <div class="cue-source clearfix">
             <div class="left-title">
@@ -43,19 +22,38 @@
                 采集网站:
             </div>
             <div class="right">
-                <div v-show="siteList.length>0" class="site-item" :class="{'site-item-on':site == item }" @click="clueSiteOder(item)" v-for="(item,index) in siteList" >{{item}}</div>
+                <div v-show="siteList.length>0" class="site-item" :class="{'site-item-on':currSite == item }" @click="clueSiteOder(item)" v-for="(item,index) in siteList" >{{item}}</div>
                 <div v-show="siteList.length==0"> 无 </div>
+                <div class=""></div>
             </div>
           </div>
           <div class="cue-sort clearfix">
             <div class="left-title">
               <i class="iconfont icon-paixu01"></i>
-              排序字段:
+              选择省市:
             </div>
             <div class="right">
-                <div class="sort-item" :class='{"sort-item-on":order== "cjsj"}' @click="clueOrder('cjsj')">采集时间</div>
-                <div class="sort-item" :class='{"sort-item-on":order== "fbsj"}' @click="clueOrder('fbsj')">发布时间</div>
-                <div class="sort-item-tip">(倒序排列)</div>
+
+            </div>
+          </div>
+          <div class="cue-sort clearfix">
+            <div class="left-title">
+              <i class="iconfont icon-paixu01"></i>
+              时间段:
+            </div>
+            <div class="right">
+                <el-date-picker
+                    v-model="timeSearch"
+                    type="daterange"
+                    align="right"
+                    range-separator="-"
+                    start-placeholder="开始日期"
+                    end-placeholder="结束日期"
+                    format="yyyy-MM-dd"
+                    value-format="yyyy-MM-dd" style="border:none;line-height: 25px;vertical-align: top;">
+
+                </el-date-picker>
+                <span class="comfirm-btn" @click="search">确定</span>
             </div>
           </div>
       </div>
@@ -67,34 +65,34 @@
             :height="tableH"
             style="width: 100%">
             <el-table-column
-                prop="ZY"
+                prop="Content"
                 label="内容"
                 min-width="300">
                 <template slot-scope="scope">
                 <el-popover trigger="click" placement="top" >
-                    <p style="text-indent: 2em;">{{ scope.row.ZY }}</p>
+                    <p style="text-indent: 2em;">{{ scope.row.Content }}</p>
                     <div slot="reference" class="td-content">
-                    {{ scope.row.ZY}}
+                    {{ scope.row.Content}}
                     </div>
                 </el-popover>
                 </template>
             </el-table-column>
             <el-table-column
-                prop="FBSJ"
+                prop="PublishTime"
                 label="发布时间"
                 min-width="170">
             </el-table-column>
             <el-table-column
-                prop="CJSJ"
+                prop="CreatedTime"
                 label="采集时间"
                 min-width="170">
             </el-table-column>
             <el-table-column
-                prop="XSLY"
+                prop="SiteName"
                 label="线索来源"
                 width="150">
             </el-table-column>
-            <el-table-column
+            <!-- <el-table-column
                 label="所属地域"
                 min-width="300">
                 <template slot-scope="scope">
@@ -132,14 +130,14 @@
                 <template slot-scope="scope">
 
                 </template>
-            </el-table-column>
+            </el-table-column> -->
             <el-table-column
                 fixed="right"
                 label="操作"
                 width="100">
                 <template slot-scope="scope">
-                    <el-button type="text" size="small">提交</el-button>
-                    <el-button type="text" size="small">详情</el-button>
+                    <!-- <el-button type="text" size="small">提交</el-button> -->
+                    <el-button @click="checkDetail(scope.row._id)" type="text" size="small">详情</el-button>
                 </template>
             </el-table-column>
         </el-table>
@@ -155,20 +153,21 @@
       </div>
     </div>
 
-
-    <el-dialog @close="closeCity" width="250px" title="选择省市" :visible.sync="isChooseCity">
-        <div id="choose-city" style="height: 55px"> 
-            <area-cascader type="text" :data = "pca" v-model="citySelected"></area-cascader>
-            <el-button style="float:right" type="text" @click="chooseCity">确定</el-button>
-        </div>
-    </el-dialog>
+    <internet-input-d-b 
+        @inputClose="inputClose"
+        :isShow="isCheckDetail"
+        :dataId="BH"
+        :site = "currSite"
+    ></internet-input-d-b>
 
   </div>
 </template>
 
 <script>
 import { pca, pcaa } from 'area-data';
+import internetInputDB from '../pubilcComponents/manageComponents/internetInputDB';
 export default {
+    components:{internetInputDB},
     data(){
         return{
             isLoad:false,
@@ -203,65 +202,110 @@ export default {
                     ZY:'', //摘要
                 }
             ],
-            siteList:[   //采集网站
-            ],
+            siteList:[],   //采集网站
+            currSite:'', //当前选择网站
             page:1, //页码
             pageSize: 20,//每页条数
-            totalPages:1,//总条数
-            typeList:[], //线索类型列表
+            totalPages:1000,//总条数
             keyword: '' , //关键字
-            type:'', //线索类型
-            site:'',//来源站点
-            order:'cjsj',//排序方式
-            timeSearch:'', //时间范围
+            timeSearch:[
+                '2018-01-01',
+                '2018-07-16'
+            ], //时间范围
 
             isChooseCity:false,
+            isCheckDetail:false, //是否查看详情
+            BH: '' , //选择数据编号
             pca: pca,
             pcaa: pcaa,
             citySelected:[],
         }
     },
     mounted(){
-        let _this = this;
-        _this.tableResize();//表格高度自适应
-        _this.getInternetCueList(); //获取互联网线索列表
-        _this.getClueSites(); //获取来源网站
-        _this.getClueType(); //获取线索类型
+        this.getProvince(); //获取省市
+        this.getCueCollection(); //获取可用数据
+        this.tableResize();//表格高度自适应
     },
     methods:{
+        //获取省市
+        getProvince(){
+            this.axios({
+                method:'get',
+                url:webApi.Host + webApi.WebData.GetCities,
+                timeout: 10000
+            }).then(function(response){
+                if(response.data.code == 0){
+                }else{
+
+                }
+            }).catch(function(error){
+
+            })
+        },
+        //时间搜索
+        search(){
+            console.log(this.timeSearch);
+        },
+        //修改详情
+        checkDetail(index){
+            console.log(index);
+            this.isCheckDetail = true;
+            this.BH = index;
+        },
+        //关闭详情
+        inputClose(){
+            this.isCheckDetail = false;
+        },
+        //获取可用数据门类
+        getCueCollection(){
+            var _this = this;
+            this.axios({
+                method:'get',
+                url: webApi.Host + webApi.WebData.GetCollections,
+                timeout: 10000
+            }).then(function(response){
+                if(response.data.code == 0){
+                    _this.siteList = response.data.data;
+                    _this.currSite = _this.siteList[0];
+                    _this.getInternetCueList(_this.currSite);
+                }else {
+                    _this.siteList = [];
+                }
+            }).catch(function(error){
+
+            })
+        },
         //获取互联网线索列表
-        getInternetCueList(){
+        getInternetCueList(site){
             let _this = this;
-            _this.isLoad = true;
             var param = {
-                site:'', //网站
-                cjqsrq:'', //
-                cjjzrq:'', //
+                site:site, //网站
                 province:'', //
                 city:'', //
                 county: '', //
                 keyword: '', //
-                beginDate: '', //
-                endDate: '', //
-                p: '', // 
-                ps: '', //
+                beginDate: _this.timeSearch[0], //
+                endDate: _this.timeSearch[1], //
+                p: _this.page, // 
+                ps: _this.pageSize, //
             }
             let url = webApi.WebData.GetUntreatedData.format(param);
+            _this.isLoad = true;
             _this.axios({
                 methods:'get',
                 url:url
             }).then(function(res){
                 _this.isLoad = false;
                 if(res.data.code == 0){
-                let data = res.data.data.data;
+                let data = res.data.data;
                 let ZYstr = '';
-                for(let i = 0;i < data.length; i++){
-                    let str = data[i].ZY.split("<br/>");
-                    for(let j= 0;j<str.length;j++){
-                        ZYstr += str[j];
-                    }
-                    data[i].ZY = ZYstr;
-                }
+                // for(let i = 0;i < data.length; i++){
+                //     let str = data[i].ZY.split("<br/>");
+                //     for(let j= 0;j<str.length;j++){
+                //         ZYstr += str[j];
+                //     }
+                //     data[i].ZY = ZYstr;
+                // }
                 _this.internetCueList = data;
             }else {
                 _this.$message.error(res.data.errorMessage);
@@ -271,60 +315,17 @@ export default {
             })
             
         },
-        //获取线索来源网站
-        getClueSites(){
-            let _this = this;
-            _this.axios({
-                methods:'get',
-                url:webApi.Host + webApi.WebData.GetCollections
-            }).then(function(res){
-                if(res.data.code == 0){
-                    let data = res.data.data;
-                    _this.siteList = data;
-                }else {
-                    _this.siteList = [];
-                }
-            }).catch(function(){
-
-            })
-        },
       //按线索来源筛选
         clueSiteOder(site){
             let _this = this;
             if(_this.isLoad == false){
-                if(_this.site!= site){
-                    _this.page = 1;
-                    _this.site = site;
-                if(_this.internetCueList.length<=0){
+                if(_this.currSite == site){
                     return
-                }else {
-                    _this.getInternetCueList();
-                }
                 }else{
-                    _this.site = '';
-                    _this.page = 1;
-                    if(_this.internetCueList.length<=0){
-                        return
-                    }else {
-                        _this.getInternetCueList();
-                    }
+                    _this.currSite = site;
+                    _this.getInternetCueList(_this.currSite);
                 }
             }   
-        },
-        //获取举报门类
-        getClueType(){
-            let _this = this;
-            _this.axios({
-            methods:'get',
-            url:webApi.Host + webApi.WebData.GetTypes
-            }).then(function(res){
-            if(res.data.code == 0){
-                let data = res.data.data;
-                _this.typeList = data;
-            }
-            }).catch(function(err){
-
-            })
         },
         //关闭选择城市
         closeCity(){
@@ -333,11 +334,9 @@ export default {
         //查看详情
         chooseCity(){
             if(this.citySelected.length != 0){
-                console.log(this.citySelected);
                 this.SSDY = this.citySelected[0] + this.citySelected[1];
             }
             this.citySelected = [];
-            console.log(this.citySelected);
             this.isChooseCity = !this.isChooseCity;
         },
         // 页码跳转
@@ -345,10 +344,6 @@ export default {
             let _this = this ;
             _this.page = curr;
             _this.getInternetCueList();
-        },
-        //获取互联网线索列表
-        getInternetCueList(){
-
         },
         //表格高度自适应
         tableResize(){
@@ -362,9 +357,6 @@ export default {
             let _this = this;
             _this.tableH = _this.$refs.cueList.clientHeight;
         },
-        addInternet(){
-
-        }
     },
     //实例销毁钩子
     destroyed(){
@@ -574,6 +566,10 @@ export default {
             overflow:hidden;
             text-overflow:ellipsis;
             white-space:nowrap;
+            .comfirm-btn{
+                cursor: pointer;
+                color: #65c7ea;
+            }
             .site-item{
               height: 100%;
               float: left;
@@ -622,8 +618,8 @@ export default {
       }
       .cue-list{
         margin-top: 24px;
-        height: calc( 100% - 314px);
-        max-height: calc( 100% - 314px);
+        height: calc(100% - 144px - 64px);
+        max-height: calc(100% - 144px - 64px);
         overflow-y: hidden;
         .isRead{
           color: #F66;
@@ -730,10 +726,10 @@ export default {
           }
         }
         .cue-list{
-          margin-top: 16px;
-          height: calc( 100% - 254px);
-          max-height: calc( 100% - 254px);
-          overflow-y: hidden;
+            margin-top: 16px;
+            height: calc( 100% - 48px - 40px - 16px - 62px);
+            max-height: calc( 100% - 48px - 40px - 16px - 62px);
+            overflow-y: hidden;
         }
         .page-wrap{
           margin-top: 16px;
