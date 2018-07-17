@@ -24,7 +24,7 @@
           </div>
       </div>
       <div class="cue-filter-wrap">
-        <div class="cue-source clearfix">
+        <!-- <div class="cue-source clearfix">
           <div class="left-title">
             <i class="iconfont icon-caiji"></i>
             采集网站:
@@ -33,14 +33,29 @@
             <div v-show="siteList.length>0" class="site-item" :class="{'site-item-on':site == item }" @click="clueSiteOder(item)" v-for="(item,index) in siteList" :key=index>{{item}}</div>
             <div v-show="siteList.length==0"> 无 </div>
           </div>
-        </div>
+        </div> -->
+        <div class="cue-source clearfix">
+            <div class="left-title">
+                <i class="iconfont icon-caiji"></i>
+                采集网站:
+            </div>
+            <div class="right" style="overflow: inherit;position: relative;">
+                <!-- <div v-show="siteList.length>0" class="site-item" :class="{'site-item-on':currSite == item }" @click="clueSiteOder(item)" v-for="(item,index) in siteList" >{{item}}</div> -->
+                <div v-show="siteList.length==0"> 无 </div>
+                <el-select  v-model="site" style="margin-left:10px;width: 50%;vertical-align: text-bottom;">
+                  <el-option value="">全部</el-option>
+                  <el-option v-for="(item,index) in siteList" :value="item" :key='index'>{{item}}</el-option>
+                </el-select>
+              
+            </div>
+          </div>
         <div class="cue-source clearfix">
           <div class="left-title">
             <i class="iconfont icon-caiji"></i>
             选择省/市:
           </div>
           <div class="right" style="overflow:inherit;">
-            <area-select style="line-height:100%;margin-top: 3px;" :level='2' type="text" :data = "pcaa" v-model="citySelected"></area-select>
+            <area-select style="line-height:100%;height:100%;" :level='2' type="text" :data = "pcaa" v-model="citySelected"></area-select>
           </div>
         </div>
         <div class="cue-sort clearfix">
@@ -76,8 +91,8 @@
             <div class="right">
               <template>
                 <el-radio v-model="isDirtyData" label="">全部</el-radio>
-                <el-radio v-model="isDirtyData" label="yes">是</el-radio>
-                <el-radio v-model="isDirtyData" label="no">否</el-radio>
+                <el-radio v-model="isDirtyData" label="1">是</el-radio>
+                <el-radio v-model="isDirtyData" label="0">否</el-radio>
               </template>
             </div>
           </div>
@@ -89,27 +104,24 @@
             <div class="right">
               <template>
                 <el-radio v-model="isStorage" label="">全部</el-radio>
-                <el-radio v-model="isStorage" label="yes">是</el-radio>
-                <el-radio v-model="isStorage" label="no">否</el-radio>
+                <el-radio v-model="isStorage" label="1">是</el-radio>
+                <el-radio v-model="isStorage" label="0">否</el-radio>
               </template>
             </div>
           </div>
         </div>
+       
         <div class="cue-sort clearfix">
           <div class="cue-sort-wrap">
             <div class="left-title">
               <i class="iconfont icon-paixu01"></i>
-              排序字段:
+              日期类型:
             </div>
             <div class="right">
               <template>
-                <el-radio v-model="order" label="cjsj">采集时间</el-radio>
-                <el-radio v-model="order" label="fbsj">发布时间</el-radio>
-                <div class="sort-item-tip">(倒序排列)</div>
-              </template>
-              <!-- <div class="sort-item" :class='{"sort-item-on":order== "cjsj"}' @click="clueOrder('cjsj')">采集时间</div>
-              <div class="sort-item" :class='{"sort-item-on":order== "fbsj"}' @click="clueOrder('fbsj')">发布时间</div> -->
-            
+                <el-radio v-model="rqlx" label="cjsj">采集日期</el-radio>
+                <el-radio v-model="rqlx" label="fbsj">发布日期</el-radio>
+              </template>        
             </div>
           </div>
           <div class="cue-sort-wrap">
@@ -129,6 +141,21 @@
               </el-date-picker>
             </div>
           </div>
+        </div>
+         <div class="cue-sort clearfix">
+           <div class="left-title">
+              <i class="iconfont icon-paixu01"></i>
+              排序字段:
+            </div>
+            <div class="right">
+              <template>
+                <el-radio v-model="order" label="cjsj">采集时间</el-radio>
+                <el-radio v-model="order" label="fbsj">发布时间</el-radio>
+              </template>
+              <!-- <div class="sort-item" :class='{"sort-item-on":order== "cjsj"}' @click="clueOrder('cjsj')">采集时间</div>
+              <div class="sort-item" :class='{"sort-item-on":order== "fbsj"}' @click="clueOrder('fbsj')">发布时间</div> -->
+            
+            </div>
         </div>
         <div class="cue-source clearfix" style="border:none;margin-top:10px;">
             <el-button @click="confirmFilter" type="success" plain>确认</el-button>
@@ -286,7 +313,7 @@
     mounted(){
       let _this = this;
       _this.tableResize();//表格高度自适应
-      // _this.getClueSites(); //获取来源网站
+      _this.getClueSites(); //获取来源网站
       _this.getClueType(); //获取线索类型
       _this.getDefaultDate();//设置默认日期
       _this.getInternetCueList(); //获取互联网线索列表
@@ -294,7 +321,13 @@
     methods:{
       //确认筛选条件
       confirmFilter() {
-
+        if(this.citySelected.length>0){
+          this.province = this.citySelected[0];
+          this.city = this.citySelected[1];
+          this.county = this.citySelected[2];
+        } 
+        this.page = 1;
+        this.getInternetCueList();
       },
       //推送检察院
       confirmPush() {
@@ -306,7 +339,7 @@
           city: this.citySelected[1],
           county: this.citySelected[2]
         }
-        console.log(param);
+        
         this.axios({
           method: "post",
           url: webApi.WebData.PushData.format(param),
@@ -366,16 +399,16 @@
             qsrq: _this.timeFormat(_this.timeSearch[0]),//起始日期
             jzrq: _this.timeFormat(_this.timeSearch[1]),//截至日期
             order:_this.order,//采集字段,默认采集日期
-            province: "",//省份
-            city: "",//城市
-            county:'',//区县
+            province: _this.province,//省份
+            city: _this.city,//城市
+            county:_this.county,//区县
             keyword: _this.keyword,//关键词
-            type1: "",//数据大类
-            type2: "",//线索类型
-            sfzsj: "",//是否脏数据
-            sfzc: "",//是否暂存
-            clr:"",//处理人
-            site: "",//采集站点名称
+            type1: _this.SJDL,//数据大类
+            type2: _this.SJLB,//线索类型
+            sfzsj: _this.isDirtyData,//是否脏数据
+            sfzc: _this.isStorage,//是否暂存
+            clr: "",//处理人
+            site: _this.site,//采集站点名称
             p:_this.page,//页码
             ps:_this.pageSize//页面大小,最大100
           })
@@ -398,14 +431,14 @@
                     data[i].FBSJ=data[i].FBSJ.split(" ")[0];
                 }
               }
-              // let ZYstr = '';
-              // for(let i = 0;i < data.length; i++){
-              //   let str = data[i].ZY.split("<br/>");
-              //   for(let j= 0;j<str.length;j++){
-              //     ZYstr += str[j];
-              //   }
-              //   data[i].ZY = ZYstr;
-              // }
+              let ZYstr = '';
+              for(let i = 0;i < data.length; i++){
+                let str = data[i].ZY.split("<br/>");
+                for(let j= 0;j<str.length;j++){
+                  ZYstr += str[j];
+                }
+                data[i].ZY = ZYstr;
+              }
               _this.internetCueList = data;
             }else {
               _this.$message.error(res.data.errorMessage);
@@ -436,7 +469,7 @@
         let _this = this;
         _this.axios({
           methods:'get',
-          url:webApi.Host + webApi.Clue.GetClueSites
+          url:webApi.Host + webApi.WebData.GetSites
         }).then(function(res){
           if(res.data.code == 0){
             let data = res.data.data;
@@ -448,68 +481,7 @@
 
         })
       },
-      // //线索排序
-      // clueOrder(order){
-      //   let _this = this;
-      //   if(_this.isLoad == false){
-      //     if(_this.order != order){
-      //       _this.page = 1;
-      //       _this.order = order;
-      //       if(_this.internetCueList.length<=0){
-      //         return
-      //       }else {
-      //         _this.getInternetCueList();
-      //       }
-      //     }
-      //   }
-      // },
-      //按线索来源筛选
-      clueSiteOder(site){
-        let _this = this;
-        if(_this.isLoad == false){
-          if(_this.site!= site){
-            _this.page = 1;
-            _this.site = site;
-            if(_this.internetCueList.length<=0){
-              return
-            }else {
-              _this.getInternetCueList();
-            }
-          }else{
-            _this.site = '';
-            _this.page = 1;
-            if(_this.internetCueList.length<=0){
-              return
-            }else {
-              _this.getInternetCueList();
-            }
-          }
-        }
-      },
-
-      //按举报类型筛选
-      clueTypeOder(type){
-        let _this = this;
-        if(_this.isLoad == false){
-          if(_this.type!= type){
-            _this.page = 1;
-            _this.type = type;
-            if(_this.internetCueList.length<=0){
-              return
-            }else {
-              _this.getInternetCueList();
-            }
-          }else{
-            _this.type = '';
-            _this.page = 1;
-            if(_this.internetCueList.length<=0){
-              return
-            }else {
-              _this.getInternetCueList();
-            }
-          }
-        }
-      },
+  
       //关闭选择城市
       closeCity(){
         this.citySelected = [];
@@ -561,7 +533,6 @@
 
 <style lang="scss" scoped>
   #internetCue{
-    position: relative;
     height: 100%;
     max-height:100%;
     min-width: 750px;
@@ -575,7 +546,7 @@
       .manage-icon{
         position: absolute;
         right: 14px;
-        top: 0;
+        top: 50px;
         font-size: 25px;
         &:hover {
           cursor: pointer;
@@ -940,8 +911,8 @@
         }
         .cue-list{
           margin-top: 16px;
-          height: calc( 100% - 350px);
-          max-height: calc( 100% - 350px);
+          height: calc( 100% - 365px);
+          max-height: calc( 100% - 365px);
           overflow-y: hidden;
         }
         .page-wrap{
