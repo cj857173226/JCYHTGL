@@ -338,6 +338,9 @@
         })
       },
       submit() {//提交
+        if(isDetailLoad||isAnalysis){
+          return;
+        }
         if(this.place.length == 0){
            this.$message({
              message:'请选择所属地域',
