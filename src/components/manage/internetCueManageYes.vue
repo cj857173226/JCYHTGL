@@ -623,7 +623,7 @@
 
     }
     .main-body{
-      margin-top: 24px;
+      margin-top: 5px;
       height: calc(100% - 74px);
       max-height: calc(100% - 74px);
       padding: 0 50px;
@@ -712,7 +712,7 @@
 
       }
       .cue-filter-wrap{
-        margin-top: 24px;
+        margin-top: 5px;
         .cue-source,
         .cue-sort{
           height: 40px;
@@ -801,7 +801,7 @@
         }
       }
       .cue-list{
-        margin-top: 24px;
+        margin-top: 10px;
         height: calc( 100% - 403px);
         max-height: calc( 100% - 403px);
         overflow-y: hidden;
@@ -910,7 +910,7 @@
           }
         }
         .cue-list{
-          margin-top: 16px;
+          margin-top: 10px;
           height: calc( 100% - 365px);
           max-height: calc( 100% - 365px);
           overflow-y: hidden;
