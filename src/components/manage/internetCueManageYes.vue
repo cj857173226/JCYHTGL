@@ -18,29 +18,10 @@
       </div>
     </div>
     <div class="main-body">
-      <div class="cue-types-wrap">
-        <div class="title-wrap">
-          <i class="iconfont icon-leibieguanli"></i>
-          <span>所属领域</span>
-        </div>
-        <div class="types-wrap clearfix">
-          <div v-for="(item ,index) in typeList" class="type-item" :class="{'type-item-on':type == item}" @click = "clueTypeOder(item)">
-            <div class="type-icon">
-              <i v-if="item == '食药安全'" class="iconfont icon-shipinshengchanqiye"></i>
-              <i v-else-if="item == '英烈保护'" class="iconfont icon-44"></i>
-              <i v-else-if="item == '国有财产'" class="iconfont icon-jinqian"></i>
-              <i v-else-if="item ==  '食品安全'" class="iconfont icon-shouyeshipin"></i>
-              <i v-else-if="item ==  '国土资源'" class="iconfont icon-diqiuyi"></i>
-              <i v-else-if="item ==  '环境保护'" class="iconfont icon-huanjingbaohu"></i>
-            </div>
-            <div class="type-name">
-              {{item}}
-            </div>
+      <div class="cue-types-wrap" style="border:none;">
+        <div class="pushBtn">
+            <el-button @click="chooseCity" type="success" plain>推送检察院</el-button>
           </div>
-          <div class="pushBtn">
-            <el-button @click="chooseCity" type="success" plain>成功按钮</el-button>
-          </div>
-        </div>
       </div>
       <div class="cue-filter-wrap">
         <div class="cue-source clearfix">
@@ -58,8 +39,8 @@
             <i class="iconfont icon-caiji"></i>
             选择省/市:
           </div>
-          <div class="right" style="position: relative">
-            <area-select  type="text" :data = "pcaa" v-model="citySelected"></area-select>
+          <div class="right" style="overflow:inherit;">
+            <area-select style="line-height:100%;margin-top: 3px;" :level='2' type="text" :data = "pcaa" v-model="citySelected"></area-select>
           </div>
         </div>
         <div class="cue-sort clearfix">
@@ -69,16 +50,20 @@
               线索大类:
             </div>
             <div class="right">
-
+              <el-radio v-model="SJDL" label="1">公益诉讼</el-radio>
+              <el-radio v-model="SJDL" label="2">贪污腐败</el-radio>
+              <el-radio v-model="SJDL" label="3">全部</el-radio>
             </div>
           </div>
           <div class="cue-sort-wrap">
             <div class="left-title">
               <i class="iconfont icon-paixu01"></i>
-              线索类型:
+              所属领域:
             </div>
             <div class="right">
-
+              <el-select v-model="SJLB" :disabled="SJDL == 2||SJDL == 3">
+                <el-option :key="item" v-for="item in typeList" :value="item">{{item}}</el-option>
+              </el-select>
             </div>
           </div>
         </div>
@@ -140,6 +125,9 @@
             </div>
           </div>
         </div>
+        <div class="cue-source clearfix" style="border:none;margin-top:10px;">
+            <el-button @click="confirmFilter" type="success" plain>确认</el-button>
+        </div>
       </div>
       <div class="cue-list" ref="cueList" v-loading="isLoad">
         <el-table
@@ -180,39 +168,31 @@
             label="所属地域"
             min-width="300">
             <template slot-scope="scope">
-              <el-button style="padding:0" type = "text" @click="chooseCity">{{scope.row.SSDY}}</el-button>
+              {{scope.row.SSSF}}/{{scope.row.SSCS}}/{{scope.row.SSQX}}
+              <!-- <el-button style="padding:0" type = "text" @click="chooseCity"></el-button> -->
             </template>
           </el-table-column>
           <el-table-column
+            prop="SJDL"
             label="所属门类"
             min-width="130">
-            <template slot-scope="scope">
-              <el-select v-model="scope.row.XSML">
-                <el-option value="公益诉讼">公益诉讼</el-option>
-                <el-option value="贪污腐败">贪污腐败</el-option>
-              </el-select>
-            </template>
           </el-table-column>
           <el-table-column
+            prop="SJLB"
             label="所属领域"
             min-width="130">
-            <template slot-scope="scope">
-              <el-select v-model="scope.row.XSLB">
-                <el-option value="食药安全">食药安全</el-option>
-                <el-option value="英烈保护">英烈保护</el-option>
-                <el-option value="国有财产">国有财产</el-option>
-                <el-option value="食品安全">食品安全</el-option>
-                <el-option value="国土资源">国土资源</el-option>
-                <el-option value="环境保护">环境保护</el-option>
-                <el-option value="其他">其他</el-option>
-              </el-select>
-            </template>
           </el-table-column>
-          <el-table-column
+           <el-table-column
+            prop="GJC"
             label="关键词"
-            width="200">
+            min-width="200">
             <template slot-scope="scope">
-
+              <el-popover trigger="click" placement="top" >
+                <p style="text-indent: 2em;">{{ scope.row.GJC }}</p>
+                <div slot="reference" class="td-content">
+                  {{ scope.row.GJC}}
+                </div>
+              </el-popover>
             </template>
           </el-table-column>
           <el-table-column
@@ -301,10 +281,8 @@
           }
         ],
 
-        typeList: ["食药安全","英烈保护",
-          "国有财产","食品安全","国土资源","环境保护"],//线索门类
+        typeList: [],//线索门类
         type:'', //线索类型
-
         rqlx: "cjsj",//日期类型
         qsrq: '',//起始日期
         jzrq: '',//截至日期
@@ -315,7 +293,7 @@
         pageSize: 20,//页面大小,最大100
         isLoad:false,//数据是否在加载
         timeSearch: '',//时间范围
-
+        SJDL: '3',//数据大类
         isStorage: 'all',//是否暂存
         isDirtyData: 'all',//是否脏数据
         isChooseCity:false,
@@ -328,11 +306,15 @@
       let _this = this;
       _this.tableResize();//表格高度自适应
       // _this.getClueSites(); //获取来源网站
-      // _this.getClueType(); //获取线索类型
+      _this.getClueType(); //获取线索类型
       _this.getDefaultDate();//设置默认日期
       _this.getInternetCueList(); //获取互联网线索列表
     },
     methods:{
+      //确认筛选条件
+      confirmFilter() {
+
+      },
       //推送检察院
       confirmPush() {
         if(this.citySelected.length == 0){
@@ -397,7 +379,7 @@
         let _this = this;
         if(_this.isLoad ==false){
           _this.isLoad = true;
-          let url = webApi.WebData.Get.format({
+          let url = (webApi.WebData.GetAll).format({
             rqlx: _this.rqlx,//日期类型
             qsrq: _this.timeFormat(_this.timeSearch[0]),//起始日期
             jzrq: _this.timeFormat(_this.timeSearch[1]),//截至日期
@@ -424,6 +406,16 @@
             _this.isLoad = false;
             if(res.data.code == 0){
               let data = res.data.data.data;
+              for(let i =0; i<data.length;i++) {
+                if(data[i].SJDL=='1'){
+                  data[i].SJDL = '公益诉讼';
+                }else if(data[i].SJDL=='2') {
+                  data[i].SJDL = '贪污腐败';
+                }
+                if(data[i].FBSJ.split(" ")[1]=="00:00:00") {
+                    data[i].FBSJ=data[i].FBSJ.split(" ")[0];
+                }
+              }
               // let ZYstr = '';
               // for(let i = 0;i < data.length; i++){
               //   let str = data[i].ZY.split("<br/>");
@@ -446,7 +438,7 @@
         let _this = this;
         _this.axios({
           methods:'get',
-          url:webApi.Host + webApi.Clue.GetReportCluesTypes
+          url:webApi.Host + webApi.WebData.GetGyssClueTypes
         }).then(function(res){
           if(res.data.code == 0){
             let data = res.data.data;
@@ -808,6 +800,7 @@
             overflow:hidden;
             text-overflow:ellipsis;
             white-space:nowrap;
+        
             .site-item{
               height: 100%;
               float: left;
