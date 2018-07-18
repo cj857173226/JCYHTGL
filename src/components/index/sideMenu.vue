@@ -43,7 +43,7 @@
             </router-link>
             <router-link to="/home/internetCueManageYes">
               <el-menu-item index="1-4-2" :class="isThisNav == '互联网已处理'?'is-active':''" @click="switchNav('互联网已处理')">
-                <i class="fa fa-window-restore"></i>
+                <i class="fa fa-connectdevelop"></i>
                 <span slot="title">互联网已处理</span>
               </el-menu-item>
             </router-link>
