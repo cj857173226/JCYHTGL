@@ -233,7 +233,7 @@
             label="操作"
             width="100">
             <template slot-scope="scope">
-              <!-- <el-button type="text" size="small">提交</el-button> -->
+              <el-button @click="deleteClue(scope.row.BH)" style="color:red;" type="text" size="small">删除</el-button>
               <el-button @click='editDetail(scope.row.BH)' type="text" size="small">详情</el-button>
             </template>
           </el-table-column>
@@ -321,6 +321,32 @@
       _this.getInternetCueList(); //获取互联网线索列表
     },
     methods:{
+      //删除数据
+      deleteClue(id) {
+        let _this = this;
+        this.axios({
+          method: "post",
+          url: (webApi.WebData.Delete).format({
+            id: id
+          }),
+          timeout: 10000
+        }).then(function(res){
+          if(res.data.code==0){
+            _this.$message({
+             message:'成功',
+             type:'success'
+           });
+           _this.getInternetCueList();
+          }
+        }).catch(function(err){
+          console.log(err)
+          _this.$message({
+             message:'失败',
+             type:'error'
+           });
+        })
+
+      },
       //清空城市
         cleanCity(){
           var _this = this;

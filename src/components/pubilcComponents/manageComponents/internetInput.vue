@@ -468,6 +468,7 @@
                 message:'添加成功',
                 type: 'success'
               })
+               _this.$emit('inputClose',{isShow:true,isUpdate:true});
             }else{
   
             }
@@ -493,6 +494,7 @@
                 message:'修改成功',
                 type: 'success'
               })
+              _this.$emit('inputClose',{isShow:true,isUpdate:true});
             }else{
   
             }
