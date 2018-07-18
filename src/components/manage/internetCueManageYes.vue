@@ -3,7 +3,7 @@
     <div class="internet-cue-head clearfix">
       <div class="title-wrap clearfix">
         <div class="title-icon">
-          <i class="iconfont icon-boshimao"></i>
+          <i class="fa fa-connectdevelop"></i>
         </div>
         <div class="title">互联网线索管理</div>
       </div>
@@ -20,7 +20,7 @@
     <div class="main-body">
       <div class="cue-types-wrap" style="border:none;">
         <div class="pushBtn">
-            <el-button @click="chooseCity" type="success" plain>推送检察院</el-button>
+            <el-button @click="chooseCity" type="success" plain>推送至检察院</el-button>
           </div>
       </div>
       <div class="cue-filter-wrap">
@@ -42,7 +42,7 @@
             <div class="right" style="overflow: inherit;position: relative;">
                 <!-- <div v-show="siteList.length>0" class="site-item" :class="{'site-item-on':currSite == item }" @click="clueSiteOder(item)" v-for="(item,index) in siteList" >{{item}}</div> -->
                 <div v-show="siteList.length==0"> 无 </div>
-                <el-select  v-model="site" style="margin-left:10px;width: 50%;vertical-align: text-bottom;">
+                <el-select  placeholder="全部" v-model="site" style="width: 50%;vertical-align: text-bottom;">
                   <el-option value="">全部</el-option>
                   <el-option v-for="(item,index) in siteList" :value="item" :key='index'>{{item}}</el-option>
                 </el-select>
@@ -51,18 +51,19 @@
           </div>
         <div class="cue-source clearfix">
           <div class="left-title">
-            <i class="iconfont icon-caiji"></i>
-            选择省/市:
+            <i class="fa fa-map-marker"></i>
+            选择省/市/区:
           </div>
-          <div class="right" style="overflow:inherit;">
-            <area-select style="line-height:100%;height:100%;" :level='2' type="text" :data = "pcaa" v-model="citySelected"></area-select>
+          <div class="right" style="margin-left: -10px;padding-top: 3px;overflow:inherit;">
+            <area-select v-if="clearCity" style="margin-left:0;line-height:100%;height:100%;" :level='2' type="text" :data = "pcaa" v-model="citySelected"></area-select>
+            <span class="clear-city" @click="cleanCity">清空</span>
           </div>
         </div>
         <div class="cue-sort clearfix">
           <div class="cue-sort-wrap">
             <div class="left-title">
-              <i class="iconfont icon-paixu01"></i>
-              线索大类:
+              <i class="fa fa-th"></i>
+              线索类别:
             </div>
             <div class="right">
               <el-radio v-model="SJDL" label="1">公益诉讼</el-radio>
@@ -72,7 +73,7 @@
           </div>
           <div class="cue-sort-wrap">
             <div class="left-title">
-              <i class="iconfont icon-paixu01"></i>
+              <i class="fa fa-th"></i>
               所属领域:
             </div>
             <div class="right">
@@ -85,8 +86,8 @@
         <div class="cue-sort clearfix">
           <div class="cue-sort-wrap">
             <div class="left-title">
-              <i class="iconfont icon-paixu01"></i>
-              是否脏数据:
+              <i class="fa fa-asterisk"></i>
+              脏数据:
             </div>
             <div class="right">
               <template>
@@ -98,8 +99,8 @@
           </div>
           <div class="cue-sort-wrap">
             <div class="left-title">
-              <i class="iconfont icon-paixu01"></i>
-              是否暂存:
+              <i class="fa fa-hdd-o "></i>
+              暂存:
             </div>
             <div class="right">
               <template>
@@ -114,7 +115,7 @@
         <div class="cue-sort clearfix">
           <div class="cue-sort-wrap">
             <div class="left-title">
-              <i class="iconfont icon-paixu01"></i>
+              <i class="fa fa-list-alt"></i>
               日期类型:
             </div>
             <div class="right">
@@ -126,8 +127,8 @@
           </div>
           <div class="cue-sort-wrap">
             <div class="left-title">
-              <i class="iconfont icon-paixu01"></i>
-              日期选择:
+              <i class="fa fa-calendar"></i>
+              时间段:
             </div>
             <div class="right">
               <el-date-picker style="height: 100%;border:none;padding:0"
@@ -144,13 +145,13 @@
         </div>
          <div class="cue-sort clearfix">
            <div class="left-title">
-              <i class="iconfont icon-paixu01"></i>
-              排序字段:
+              <i class="fa fa-sort"></i>
+              排序方式:
             </div>
             <div class="right">
               <template>
-                <el-radio v-model="order" label="cjsj">采集时间</el-radio>
-                <el-radio v-model="order" label="fbsj">发布时间</el-radio>
+                <el-radio v-model="order" label="asc">升序</el-radio>
+                <el-radio v-model="order" label="desc">降序</el-radio>
               </template>
               <!-- <div class="sort-item" :class='{"sort-item-on":order== "cjsj"}' @click="clueOrder('cjsj')">采集时间</div>
               <div class="sort-item" :class='{"sort-item-on":order== "fbsj"}' @click="clueOrder('fbsj')">发布时间</div> -->
@@ -232,7 +233,7 @@
             label="操作"
             width="100">
             <template slot-scope="scope">
-              <el-button type="text" size="small">提交</el-button>
+              <!-- <el-button type="text" size="small">提交</el-button> -->
               <el-button @click='editDetail(scope.row.BH)' type="text" size="small">详情</el-button>
             </template>
           </el-table-column>
@@ -290,7 +291,7 @@
         rqlx: "cjsj",//日期类型
         qsrq: '',//起始日期
         jzrq: '',//截至日期
-        order: '',//排序字段,默认时采集日期
+        order: 'desc',//排序字段
         keyword:'',//查询列表关键字
         site:'',//采集站点名称
         page:1, //页码
@@ -308,6 +309,7 @@
         pca: pca,
         pcaa: pcaa,
         citySelected:[],
+        clearCity: true,//城市
       }
     },
     mounted(){
@@ -319,6 +321,15 @@
       _this.getInternetCueList(); //获取互联网线索列表
     },
     methods:{
+      //清空城市
+        cleanCity(){
+          var _this = this;
+          this.clearCity = false;
+          setTimeout(function(){
+            _this.clearCity = true;
+          },100)
+          this.citySelected = [];
+        },
       //确认筛选条件
       confirmFilter() {
         if(this.citySelected.length>0){
@@ -431,15 +442,16 @@
                     data[i].FBSJ=data[i].FBSJ.split(" ")[0];
                 }
               }
-              let ZYstr = '';
-              for(let i = 0;i < data.length; i++){
-                let str = data[i].ZY.split("<br/>");
-                for(let j= 0;j<str.length;j++){
-                  ZYstr += str[j];
-                }
-                data[i].ZY = ZYstr;
-              }
+              // let ZYstr = '';
+              // for(let i = 0;i < data.length; i++){
+              //   let str = data[i].ZY.split("<br/>");
+              //   for(let j= 0;j<str.length;j++){
+              //     ZYstr += str[j];
+              //   }
+              //   data[i].ZY = ZYstr;
+              // }
               _this.internetCueList = data;
+              _this.totalPages = res.data.data.total;
             }else {
               _this.$message.error(res.data.errorMessage);
             }
@@ -744,6 +756,7 @@
             }
           }
           .right{
+            position: relative;
             float: left;
             font-size: 16px;
             height: 100%;
@@ -753,7 +766,13 @@
             overflow:hidden;
             text-overflow:ellipsis;
             white-space:nowrap;
-        
+             .clear-city{
+              position: absolute;
+              top: 0;
+              left: 550px;
+              color: #65afea;
+              cursor: pointer;
+            }
             .site-item{
               height: 100%;
               float: left;
@@ -795,6 +814,7 @@
               margin-right: 0;
             }
           }
+         
         }
         .cue-sort{
           border-top:none;
@@ -902,6 +922,7 @@
             border:1px solid #dcdcdc;
             .right{
               font-size: 14px;
+              padding-top: 0 !important;
             }
           }
           .cue-sort{

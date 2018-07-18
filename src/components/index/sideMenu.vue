@@ -15,19 +15,6 @@
             <span slot="title">审核线索</span>
           </el-menu-item>
         </router-link> -->
-
-        <router-link to="/home/knowledgeInput">
-          <el-menu-item index="1-2" :class="isThisNav == '知识库录入'?'is-active':''" @click="switchNav('知识库录入')">
-            <i class="fa fa-keyboard-o"></i>
-            <span slot="title">知识库录入</span>
-          </el-menu-item>
-        </router-link>
-        <router-link to="/home/newsManage">
-          <el-menu-item index="1-3" :class="isThisNav == '新闻管理'?'is-active':''" @click="switchNav('新闻管理')">
-            <i class="fa fa-newspaper-o"></i>
-            <span slot="title">新闻管理</span>
-          </el-menu-item>
-        </router-link>
         <el-submenu index="1-4">
           <template slot="title">
             <i class="fa fa-database"></i>
@@ -43,12 +30,25 @@
             </router-link>
             <router-link to="/home/internetCueManageYes">
               <el-menu-item index="1-4-2" :class="isThisNav == '互联网已处理'?'is-active':''" @click="switchNav('互联网已处理')">
-                <i class="fa fa-window-restore"></i>
+                <i class="fa fa-connectdevelop"></i>
                 <span slot="title">互联网已处理</span>
               </el-menu-item>
             </router-link>
           </el-menu-item-group>
         </el-submenu>
+
+        <router-link to="/home/knowledgeInput">
+          <el-menu-item index="1-2" :class="isThisNav == '知识库录入'?'is-active':''" @click="switchNav('知识库录入')">
+            <i class="fa fa-keyboard-o"></i>
+            <span slot="title">知识库录入</span>
+          </el-menu-item>
+        </router-link>
+        <router-link to="/home/newsManage">
+          <el-menu-item index="1-3" :class="isThisNav == '新闻管理'?'is-active':''" @click="switchNav('新闻管理')">
+            <i class="fa fa-newspaper-o"></i>
+            <span slot="title">新闻管理</span>
+          </el-menu-item>
+        </router-link>
 
       </el-menu-item-group>
     </el-submenu>

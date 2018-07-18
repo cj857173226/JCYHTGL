@@ -367,7 +367,38 @@
              type:'error'
            });
            return;
+        }else if(this.FBSJ.length == 0){
+           this.$message({
+             message:'请填写发布时间',
+             type:'error'
+           });
+           return;
+        }else if(this.CJNR.length == 0){
+           this.$message({
+             message:'请填写采集内容',
+             type:'error'
+           });
+           return;
+        }else if(this.CJSJ.length == 0){
+           this.$message({
+             message:'请填写采集时间',
+             type:'error'
+           });
+           return;
+        }else if(this.SJLY.length == 0){
+           this.$message({
+             message:'请填写数据网址',
+             type:'error'
+           });
+           return;
+        }else if(this.SJDZ.length == 0){
+           this.$message({
+             message:'请填写数据地址',
+             type:'error'
+           });
+           return;
         }
+        
         this.isDetailLoad = true;
         if(this.place.length > 0){
           this.SSSF = this.place[0];
@@ -423,7 +454,8 @@
           SFSJGZ: this.SFSJGZ
         }
         console.log(bodyParam);
-        if(this.dataId == ''){//修改
+        if(this.dataId == ''){//添加
+        console.log('添加哦');
           this.axios({
             method: 'post',
             url:webApi.Host + webApi.WebData.Add,
@@ -441,6 +473,10 @@
             }
           }).catch(function(error){
             _this.isDetailLoad = false;
+            _this.$message({
+                message:'失败',
+                type: 'error'
+              })
   
           })
         }else{
@@ -462,6 +498,10 @@
             }
           }).catch(function(error){
             _this.isDetailLoad = false;
+            _this.$message({
+                message:'失败',
+                type: 'error'
+              })
           })
         }
       }

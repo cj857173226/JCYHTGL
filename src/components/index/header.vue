@@ -190,7 +190,7 @@
       font-size: 20px;
       line-height: 50px;
       text-align: center;
-      width: 275px;
+      // width: 275px;
       font-family: "Helvetica Neue",Helvetica,Arial,sans-serif;
       padding: 0 15px;
       -webkit-user-select: none;

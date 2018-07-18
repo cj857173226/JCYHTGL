@@ -3,13 +3,13 @@
     <div class="internet-cue-head clearfix">
       <div class="title-wrap clearfix">
         <div class="title-icon">
-          <i class="iconfont icon-changyonglogo46"></i>
+          <i class="fa fa-window-restore"></i>
         </div>
         <div class="title">互联网线索</div>
       </div>
       <div class="search-wrap clearfix">
-        <input class="search-ipt" type="text" v-model="keyword" placeholder="请输入内容" @keyup.13="getInternetCueList">
-        <span class="search-btn" @click="getInternetCueList()">
+        <input class="search-ipt" type="text" v-model="keyword" placeholder="请输入内容" @keyup.13="searchCue">
+        <span class="search-btn" @click="searchCue()">
             <i class="iconfont icon-sousuo"></i>
           </span>
       </div>
@@ -25,7 +25,7 @@
                 <!-- <div v-show="siteList.length>0" class="site-item" :class="{'site-item-on':currSite == item }" @click="clueSiteOder(item)" v-for="(item,index) in siteList" >{{item}}</div> -->
                 <div v-show="siteList.length==0"> 无 </div>
                 <el-select @change="clueSiteOder()" v-model="currSite" style="margin-left:10px;width: 50%;height: 32px">
-                  <el-option :key="index" v-for="(item,index) in siteList" :value="item">{{item}}</el-option>
+                  <el-option v-for="(item,index) in siteList" :value="item" :key="index">{{item}}</el-option>
                 </el-select>
                 <!-- <div v-show="siteList.length > 0" @click="moreSiteFloat"> 更多 </div>
                 <div class="float-box" v-show="moreSite">
@@ -217,6 +217,10 @@ export default {
         this.tableResize();//表格高度自适应
     },
     methods:{
+        //搜索
+        searchCue(){
+            this.getInternetCueList(this.currSite);
+        },
         //显示更多网站
         moreSiteFloat(){
           this.moreSite = true;
