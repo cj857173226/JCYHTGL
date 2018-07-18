@@ -147,8 +147,8 @@
                 label="操作"
                 width="100">
                 <template slot-scope="scope">
-                    <!-- <el-button type="text" size="small">提交</el-button> -->
-                    <el-button @click="checkDetail(scope.row._id)" type="text" size="small">详情</el-button>
+                    <el-button @click="checkDetail(scope.row._id)" type="text" size="small">审核</el-button>
+                    <el-button style="color:#ea2626" @click="delCue(scope.row._id)" type="text" size="small">删除</el-button>
                 </template>
             </el-table-column>
         </el-table>
@@ -217,6 +217,28 @@ export default {
         this.tableResize();//表格高度自适应
     },
     methods:{
+        //删除
+        delCue(id){
+          var _this = this;
+          this.axios({
+            method:'post',
+            url:webApi.WebData.DeleteSourceData.format({id:id,site:this.currSite}),
+            timeout:10000
+          }).then(function(response){
+            if(response.data.code == 0){
+              _this.$message({
+                message:'删除成功',
+                type:'success'
+              });
+              
+              _this.getInternetCueList(_this.currSite);
+            }else{
+
+            }
+          }).catch(function(error){
+
+          })
+        },
         //搜索
         searchCue(){
             this.getInternetCueList(this.currSite);
