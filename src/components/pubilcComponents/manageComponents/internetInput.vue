@@ -100,6 +100,7 @@
             </span>
               <span  class="item-title">摘要</span>
               <textarea class="textarea " v-model="ZY"></textarea>
+              <el-button @click="analysis" type="success">分析</el-button>
             </div>
           </div>
           <div class="detail-item">
@@ -432,7 +433,7 @@
             _this.isDetailLoad = false;
             if(response.data.code == 0){
               _this.$message({
-                message:'修改成功',
+                message:'添加成功',
                 type: 'success'
               })
             }else{
