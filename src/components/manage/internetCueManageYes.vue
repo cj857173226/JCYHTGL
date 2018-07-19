@@ -24,23 +24,12 @@
           </div>
       </div>
       <div class="cue-filter-wrap">
-        <!-- <div class="cue-source clearfix">
-          <div class="left-title">
-            <i class="iconfont icon-caiji"></i>
-            采集网站:
-          </div>
-          <div class="right">
-            <div v-show="siteList.length>0" class="site-item" :class="{'site-item-on':site == item }" @click="clueSiteOder(item)" v-for="(item,index) in siteList" :key=index>{{item}}</div>
-            <div v-show="siteList.length==0"> 无 </div>
-          </div>
-        </div> -->
         <div class="cue-source clearfix">
             <div class="left-title">
                 <i class="iconfont icon-caiji"></i>
                 采集网站:
             </div>
             <div class="right" style="overflow: inherit;position: relative;">
-                <!-- <div v-show="siteList.length>0" class="site-item" :class="{'site-item-on':currSite == item }" @click="clueSiteOder(item)" v-for="(item,index) in siteList" >{{item}}</div> -->
                 <div v-show="siteList.length==0"> 无 </div>
                 <el-select  placeholder="全部" v-model="site" style="width: 50%;vertical-align: text-bottom;">
                   <el-option value="">全部</el-option>
@@ -54,9 +43,9 @@
             <i class="fa fa-map-marker"></i>
             选择省/市/区:
           </div>
-          <div class="right" style="margin-left: -10px;padding-top: 3px;overflow:inherit;">
-            <v-distpicker @province="updataProvince" @city="updataCity" @area="updataCounty" style="height: 100%;display:inline-block"></v-distpicker>
-            <!-- <span class="clear-city" @click="cleanCity">清空</span> -->
+          <div class="right" style="overflow:inherit;">
+            <v-distpicker class="provinceSelect" @province="updataProvince" @city="updataCity" @area="updataCounty" style="height: 100%;display:inline-block;"></v-distpicker>
+       
           </div>
         </div>
         <div class="cue-sort clearfix">
@@ -77,7 +66,7 @@
               所属领域:
             </div>
             <div class="right">
-              <el-select v-model="SJLB" :disabled="SJDL == 2||SJDL == ''">
+              <el-select v-model="SJLB" :disabled="SJDL == 2||SJDL == ''" style="vertical-align:">
                 <el-option :key="item" v-for="item in typeList" :value="item">{{item}}</el-option>
               </el-select>
             </div>
@@ -135,6 +124,8 @@
                               v-model="timeSearch"
                               type="daterange"
                               align="right"
+                              format="yyyy-MM-dd"
+                              value-format="yyyy-MM-dd"
                               range-separator="-"
                               unlink-panels
                               start-placeholder="开始日期"
@@ -154,9 +145,6 @@
                 <el-radio v-model="order" label="asc">升序</el-radio>
                 <el-radio v-model="order" label="desc">降序</el-radio>
               </template>
-              <!-- <div class="sort-item" :class='{"sort-item-on":order== "cjsj"}' @click="clueOrder('cjsj')">采集时间</div>
-              <div class="sort-item" :class='{"sort-item-on":order== "fbsj"}' @click="clueOrder('fbsj')">发布时间</div> -->
-            
             </div>
         </div>
         <div class="cue-source clearfix" style="border:none;margin-top:10px;">
@@ -452,7 +440,7 @@
         let _this = this;
         let endDate = new Date();
         let beginDate = new Date(endDate.getTime() - 3600 * 1000 * 24 * 30);
-        _this.timeSearch = [beginDate,endDate]
+        _this.timeSearch = [_this.timeFormat(beginDate),_this.timeFormat(endDate)]
       },
       timeFormat(date) {
         let time = date;
@@ -471,12 +459,20 @@
       //获取互联网线索列表
       getInternetCueList(){
         let _this = this;
+        if(!_this.timeSearch){
+            _this.$message({
+              message:'请选择日期',
+              type: 'error'
+            })
+            return;
+        }
         if(_this.isLoad ==false){
+
           _this.isLoad = true;
           let url = (webApi.WebData.GetAll).format({
             rqlx: _this.rqlx,//日期类型
-            qsrq: _this.timeFormat(_this.timeSearch[0]),//起始日期
-            jzrq: _this.timeFormat(_this.timeSearch[1]),//截至日期
+            qsrq: _this.timeSearch[0],//起始日期
+            jzrq: _this.timeSearch[1],//截至日期
             order:_this.order,//采集字段,默认采集日期
             province: _this.province,//省份
             city: _this.city,//城市
@@ -491,7 +487,7 @@
             p:_this.page,//页码
             ps:_this.pageSize//页面大小,最大100
           })
-          console.log(url)
+      
           _this.axios({
             methods:'get',
             url:url,
@@ -835,7 +831,7 @@
               left: 550px;
               color: #65afea;
               cursor: pointer;
-            }
+            }     
             .site-item{
               height: 100%;
               float: left;
@@ -985,7 +981,6 @@
             border:1px solid #dcdcdc;
             .right{
               font-size: 14px;
-              padding-top: 0 !important;
             }
           }
           .cue-sort{

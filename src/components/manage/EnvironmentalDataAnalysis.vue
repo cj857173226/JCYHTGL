@@ -1,11 +1,11 @@
 <template>
-  <div id="internetCue">
-    <div class="internet-cue-head clearfix">
+  <div id="DataAnalysis">
+    <div class="DataAnalysis-head clearfix">
       <div class="title-wrap clearfix">
         <div class="title-icon">
-          <i class="fa fa-window-restore"></i>
+          <i class="fa fa-table"></i>
         </div>
-        <div class="title">互联网线索</div>
+        <div class="title">深圳环保数据分析</div>
       </div>
       <div class="search-wrap clearfix">
         <input class="search-ipt" type="text" v-model="keyword" placeholder="请输入内容" @keyup.13="searchCue">
@@ -18,78 +18,73 @@
       <div class="cue-filter-wrap">
           <div class="cue-source clearfix">
             <div class="left-title">
-                <i class="iconfont icon-caiji"></i>
-                采集网站:
+                <i class="fa fa-vine"></i>
+                同步状态:
             </div>
             <div class="right" style="overflow: inherit;position: relative;">
-                <!-- <div v-show="siteList.length>0" class="site-item" :class="{'site-item-on':currSite == item }" @click="clueSiteOder(item)" v-for="(item,index) in siteList" >{{item}}</div> -->
-                <div v-show="siteList.length==0"> 无 </div>
-                <!-- <el-select @change="clueSiteOder()" v-model="currSite" style="margin-left:10px;width: 50%;height: 32px">
-                  <el-option v-for="(item,index) in siteList" :value="item" :key="index">{{item}}</el-option>
-                </el-select> -->
-                 <el-select @change="clueSiteOder()" v-model="currSite" style="height:100%;">
-                  <el-option v-for="(item,index) in siteList" :value="item" :key="index">{{item}}</el-option>
-                </el-select>
-                <!-- <div v-show="siteList.length > 0" @click="moreSiteFloat"> 更多 </div>
-                <div class="float-box" v-show="moreSite">
-                  <div v-show="siteList.length>0" class="site-item" :class="{'site-item-on':currSite == item }" @click="clueSiteOder(item)" v-for="(item,index) in siteList" >{{item}}</div>
-                  <span class="close-float" @click="closeFloat">
-                    <i class="fa fa-times-circle"></i>
-                  </span>
-                </div> -->
+                <template>
+                    <el-radio-group @change="selectState"  v-model="state">
+                        <el-radio  label="success">同步成功</el-radio>
+                        <el-radio  label="error">同步失败</el-radio>
+                        <el-radio  label="no">未同步</el-radio>
+                        <el-radio  label="all">全部</el-radio>
+                    </el-radio-group>
+              </template>
             </div>
           </div>
           <div class="cue-sort clearfix">
             <div class="left-title">
-              <i class="iconfont icon-paixu01"></i>
-              选择省市:
-            </div>
-            <div class="right city-right" style="overflow: inherit;position: relative;">
-              <v-distpicker @province="updataProvince" @city="updataCity" @area="updataCounty" style="height: 100%;display:inline-block"></v-distpicker>
-              <span class="clear-city" @click="confirmCity">确认</span>
-            </div>
-          </div>
-          <div class="cue-sort clearfix">
-            <div class="left-title">
-              <i class="fa fa-calendar" style="margin-right: 12px;"></i>
-              时间段:
+              <i class="fa fa-calendar"></i>
+              同步日期:
             </div>
             <div class="right">
-                <el-date-picker
-                    v-model="timeSearch"
-                    type="daterange"
-                    align="right"
-                    range-separator="-"
-                    unlink-panels
-                    start-placeholder="开始日期"
-                    end-placeholder="结束日期"
-                    format="yyyy-MM-dd"
-                    value-format="yyyy-MM-dd" style="border:none;line-height: 25px;vertical-align: top;">
+                <el-date-picker @change="selectTime" style="height: 100%;border:none;padding:0"
+                              v-model="timeSearch"
+                              type="daterange"
+                              align="right"
+                              format="yyyy-MM-dd"
+                              value-format="yyyy-MM-dd"
+                              range-separator="-"
+                              unlink-panels
+                              start-placeholder="开始日期"
+                              end-placeholder="结束日期">
 
-                </el-date-picker>
-                <span class="comfirm-btn" @click="search">确定</span>
+              </el-date-picker>
+                <!-- <span class="comfirm-btn" @click="search">确定</span> -->
             </div>
           </div>
       </div>
       <div class="cue-list" ref="cueList" v-loading="isLoad">
         <el-table
             ref="oTable"
-            :data=" internetCueList"
+            :data=" dataList"
             :max-height="tableH"
             :height="tableH"
             style="width: 100%">
             <el-table-column
-                prop="Content"
-                label="内容"
-                min-width="300">
-                <template slot-scope="scope">
-                  <el-popover trigger="click" placement="top" width="500">
-                      <div slot="reference" class="td-content">
-                      {{ scope.row.Content}}
-                      </div>
-                      <pre style="white-space: pre-wrap; height: 290px; overflow: auto;" v-html="scope.row.Content"></pre>
-                  </el-popover>
-                </template>
+                prop="Id"
+                label="编号"
+                min-width="170">
+            </el-table-column>
+            <el-table-column
+                prop="DataName"
+                label="数据名称"
+                min-width="170">
+            </el-table-column>
+            <el-table-column
+                prop="DataSource"
+                label="数据提供方"
+                min-width="170">
+            </el-table-column>
+            <el-table-column
+                prop="Keyword"
+                label="关键字"
+                min-width="170">
+            </el-table-column>
+            <el-table-column
+                prop="DataNum"
+                label="数据条数"
+                min-width="170">
             </el-table-column>
             <el-table-column
                 prop="PublishTime"
@@ -97,61 +92,41 @@
                 min-width="170">
             </el-table-column>
             <el-table-column
-                prop="CreatedTime"
-                label="采集时间"
+                prop="UpdateTime"
+                label="更新时间"
                 min-width="170">
             </el-table-column>
             <el-table-column
-                prop="SiteName"
-                label="线索来源"
-                width="150">
-            </el-table-column>
-            <!-- <el-table-column
-                label="所属地域"
-                min-width="300">
-                <template slot-scope="scope">
-                    <el-button style="padding:0" type = "text" @click="chooseCity">{{scope.row.SSDY}}</el-button>
-                </template>
+                prop="UpdateFrequency"
+                label="更新频率"
+                min-width="170">
             </el-table-column>
             <el-table-column
-                label="所属领域"
-                min-width="130">
-                <template slot-scope="scope">
-                    <el-select v-model="scope.row.XSLB">
-                        <el-option value="食药安全">食药安全</el-option>
-                        <el-option value="英烈保护">英烈保护</el-option>
-                        <el-option value="国有财产">国有财产</el-option>
-                        <el-option value="食品安全">食品安全</el-option>
-                        <el-option value="国土资源">国土资源</el-option>
-                        <el-option value="环境保护">环境保护</el-option>
-                        <el-option value="其他">其他</el-option>
-                    </el-select>
-                </template>
+                prop="DataTheme"
+                label="数据主题"
+                min-width="170">
             </el-table-column>
             <el-table-column
-                label="所属门类"
-                min-width="130">
-                <template slot-scope="scope">
-                    <el-select v-model="scope.row.XSML">
-                        <el-option value="公益诉讼">公益诉讼</el-option>
-                        <el-option value="贪污腐败">贪污腐败</el-option>
-                    </el-select>
-                </template>
+                prop="DataApi"
+                label="数据接口地址"
+                min-width="170">
             </el-table-column>
             <el-table-column
-                label="关键词"
-                width="200">
-                <template slot-scope="scope">
-
-                </template>
-            </el-table-column> -->
+                prop="Time"
+                label="同步日期"
+                min-width="170">
+            </el-table-column>       
+            <el-table-column
+                prop="Result"
+                label="是否同步成功"
+                min-width="170">
+            </el-table-column>
             <el-table-column
                 fixed="right"
                 label="操作"
                 width="100">
                 <template slot-scope="scope">
-                    <el-button @click="checkDetail(scope.row._id)" type="text" size="small">审核</el-button>
-                    <el-button style="color:#ea2626" @click="delCue(scope.row._id)" type="text" size="small">删除</el-button>
+                    <el-button  @click="operation" type="text" size="small">同步</el-button>
                 </template>
             </el-table-column>
         </el-table>
@@ -167,241 +142,64 @@
       </div>
     </div>
 
-    <internet-input-d-b 
-        @inputClose="inputClose"
-        :isShow="isCheckDetail"
-        :dataId="BH"
-        :site = "currSite"
-        @complete="completeSubmit"
-    ></internet-input-d-b>
-
   </div>
 </template>
 
 <script>
-import internetInputDB from '../pubilcComponents/manageComponents/internetInputDB';
-import VDistpicker from 'v-distpicker';
 export default {
-    components:{internetInputDB,VDistpicker},
     data(){
         return{
             isLoad:false,
             tableH:0, //表格高度
-            internetCueList: [  //互联网线索列表
+            dataList: [  //数据列表
+                {
+                    Id:'1',//编号
+                    DataName: '名称',//数据名称
+                    DataSource: '提供方',//数据提供方
+                    Keyword: '啊打发',//关键字
+                    DataNum: '22',//数据条数
+                    PublishTime: '2018-07-18',//发布时间
+                    UpdateTime: '2018-07-12',//更新时间
+                    UpdateFrequency: '2',//更新频率
+                    DataTheme: '数据啊打发',//数据主题
+                    DataApi: 'www.cecece.cn',//数据接口地址
+                    Time: "2018-07-19",//同步日期
+                    Result: '1',//是否同步成功 (0:失败,1:成功)
+                }
             ],
-            siteList:[],   //采集网站
-            currSite:'', //当前选择网站
             page:1, //页码
             pageSize: 20,//每页条数
-            totalPages:1000,//总条数
+            totalPages: 10,//总条数
             keyword: '' , //关键字
-            timeSearch:[
-                '2018-01-01',
-                '2018-07-16'
-            ], //时间范围
-
-            isChooseCity:false,
-            isCheckDetail:false, //是否查看详情
-            BH: '' , //选择数据编号
-
-            province:'',
-            city:'',
-            county:'',
-
-            clearCity:true,
-            moreSite:false,
+            timeSearch:[new Date((new Date()).getTime() - 3600 * 1000 * 24 * 30),new Date()],
+            state: 'all'//同步状态
         }
     },
     mounted(){
-        this.getProvince(); //获取省市
-        this.getCueCollection(); //获取可用数据
         this.tableResize();//表格高度自适应
     },
-    methods:{
-        //完成审核
-        completeSubmit(index){
-          this.isCheckDetail = index.isShow;
-          this.getInternetCueList(this.currSite);
+    methods:{   
+        //对数据操作
+        operation() {
+            console.log(1)
         },
-        //省份改变
-        updataProvince(value){
-          if(value.value == '省'){
-            this.province = ''
-          }else{
-            this.province = value.value
-          }
-          console.log(this.province);
+        //选择同步状态
+        selectState(){
+            console.log(this.state);
         },
-        //市改变
-        updataCity(value){
-          if(value.value == '市'){
-            this.city = ''
-          }else{
-            this.city = value.value
-          }
-            console.log(this.city);
-        },
-        //区县改变
-        updataCounty(value){
-          if(value.value == '区'){
-            this.county = ''
-          }else{
-            this.county = value.value
-          }
-            console.log(this.county);
-        },
-        //确认城市
-        confirmCity(){
-            this.getInternetCueList(this.currSite);
-        },
-        //删除
-        delCue(id){
-          var _this = this;
-          this.axios({
-            method:'post',
-            url:webApi.WebData.DeleteSourceData.format({id:id,site:this.currSite}),
-            timeout:10000
-          }).then(function(response){
-            if(response.data.code == 0){
-              _this.$message({
-                message:'删除成功',
-                type:'success'
-              });
-              
-              _this.getInternetCueList(_this.currSite);
-            }else{
-              _this.$message({
-                message:'删除失败',
-                type: 'error'
-              })
+        //选择同步日期
+        selectTime(){
+            if(this.timeSearch) {
+                console.log(this.timeSearch);
             }
-          }).catch(function(error){
-
-          })
         },
         //搜索
         searchCue(){
-            this.getInternetCueList(this.currSite);
-        },
-        //显示更多网站
-        moreSiteFloat(){
-          this.moreSite = true;
-        },
-        //关闭网站选择
-        closeFloat(){
-          this.moreSite = false;
-        },
-        //获取省市
-        getProvince(){
-            this.axios({
-                method:'get',
-                url:webApi.Host + webApi.WebData.GetCities,
-                timeout: 10000
-            }).then(function(response){
-                if(response.data.code == 0){
-                }else{
-
-                }
-            }).catch(function(error){
-
-            })
-        },
-        //时间搜索
-        search(){
-            if(this.province == '省'){
-              this.province = ''
-            }else if(this.city == '市'){
-              this.city = ''
-            }else if(this.county == '区'){
-              this.county = '';
-            }
-            this.getInternetCueList(this.currSite);
-        },
-        //修改详情
-        checkDetail(index){
-            console.log(index);
-            this.isCheckDetail = true;
-            this.BH = index;
-        },
-        //关闭详情
-        inputClose(){
-            this.isCheckDetail = false;
-        },
-        //获取可用数据门类
-        getCueCollection(){
-            var _this = this;
-            this.axios({
-                method:'get',
-                url: webApi.Host + webApi.WebData.GetCollections,
-                timeout: 10000
-            }).then(function(response){
-                if(response.data.code == 0){
-                    _this.siteList = response.data.data;
-                    _this.currSite = _this.siteList[0];
-                    _this.getInternetCueList(_this.currSite);
-                }else {
-                    _this.siteList = [];
-                }
-            }).catch(function(error){
-
-            })
-        },
-        //获取互联网线索列表
-        getInternetCueList(site){
-            let _this = this;
-            var param = {
-                site:site, //网站
-                province:_this.province, //
-                city:_this.city, //
-                county: _this.county, //
-                keyword: _this.keyword, //
-                beginDate: _this.timeSearch[0], //
-                endDate: _this.timeSearch[1], //
-                p: _this.page, // 
-                ps: _this.pageSize, //
-            }
-            let url = webApi.WebData.GetUntreatedData.format(param); 
-            _this.isLoad = true;
-            //获取总量
-            function count(){
-              return _this.axios({
-                      method:'get',
-                      url:webApi.WebData.CountUntreatedData.format(param),
-                      timeout: 10000
-                    })
-            }
-            
-            //获取数据
-            function data(){
-              return _this.axios({
-                        method:'get',
-                        url:webApi.WebData.GetUntreatedData.format(param),
-                        timeout: 10000
-                    })
-            }
-
-            _this.axios.all([count(),data()])
-              .then(_this.axios.spread(function(count,data){
-                _this.isLoad = false;
-                _this.internetCueList = data.data.data;
-                _this.totalPages = count.data.data;
-              })).catch(function(error){
-                _this.isLoad = false;
-              });
-            
-        },
-      //按线索来源筛选
-        clueSiteOder(){
-            let _this = this;
-            if(_this.isLoad == false){
-              _this.getInternetCueList(_this.currSite);
-            }   
+            console.log(this.keyword)
         },
         // 页码跳转
         pageTo(curr) {
-            let _this = this ;
-            _this.page = curr;
-            _this.getInternetCueList(_this.currSite);
+     
         },
         //表格高度自适应
         tableResize(){
@@ -425,12 +223,12 @@ export default {
 
 
 <style lang="scss" scoped>
-  #internetCue{
+  #DataAnalysis{
     height: 100%;
     max-height:100%;
     min-width: 750px;
     overflow-y:hidden;
-    .internet-cue-head{
+    .DataAnalysis-head{
       height: 50px;
       width: 100%;
       line-height: 50px;
@@ -698,7 +496,9 @@ export default {
               margin-right: 0;
             }
           }
-         
+          .city-right{
+            padding-top: 5px;
+          }
         }
         .cue-sort{
           border-top:none;
@@ -706,8 +506,8 @@ export default {
       }
       .cue-list{
         margin-top: 24px;
-        height: calc(100% - 144px - 64px - 15px);
-        max-height: calc(100% - 144px - 64px - 15px);
+        height: calc(100% - 180px);
+        max-height: calc(100% - 180px);
         overflow-y: hidden;
         .isRead{
           color: #F66;
@@ -723,8 +523,8 @@ export default {
 
   @media (max-width: 1440px) {
 
-    #internetCue{
-      .internet-cue-head{
+    #DataAnalysis{
+      .DataAnalysis-head{
         height: 40px;
         line-height: 40px;
         /*标题*/
@@ -807,7 +607,9 @@ export default {
             .right{
               font-size: 14px;
             }
-        
+            .city-right{
+              padding-top: 0;
+            }
           }
           .cue-sort{
             border-top:none;
@@ -816,8 +618,8 @@ export default {
         }
         .cue-list{
             margin-top: 16px;
-            height: calc( 100% - 48px - 40px - 16px - 62px);
-            max-height: calc( 100% - 48px - 40px - 16px - 62px);
+            height: calc( 100% - 140px);
+            max-height: calc( 100% - 140px);
             overflow-y: hidden;
         }
         .page-wrap{
