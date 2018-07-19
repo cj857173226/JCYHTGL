@@ -534,7 +534,7 @@
                 message:'修改成功',
                 type: 'success'
               })
-              _this.$emit('inputClose',{isShow:true,isUpdate:true});
+              _this.$emit('inputClose',{isShow:false,isUpdate:true});
             }else{
               _this.$message({
                 message:'添加失败',
@@ -664,7 +664,7 @@
           .textarea {
             clear: left;
             width: 100%;
-            min-height: 300px;
+            height: 200px;
             border: 1px solid #eae4e4;
             resize: none;
           }

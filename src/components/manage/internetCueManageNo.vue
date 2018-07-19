@@ -80,12 +80,12 @@
                 label="内容"
                 min-width="300">
                 <template slot-scope="scope">
-                <el-popover trigger="click" placement="top" >
-                    <p style="text-indent: 2em;">{{ scope.row.Content }}</p>
-                    <div slot="reference" class="td-content">
-                    {{ scope.row.Content}}
-                    </div>
-                </el-popover>
+                  <el-popover trigger="click" placement="top" width="500">
+                      <div slot="reference" class="td-content">
+                      {{ scope.row.Content}}
+                      </div>
+                      <pre style="white-space: pre-wrap; height: 290px; overflow: auto;" v-html="scope.row.Content"></pre>
+                  </el-popover>
                 </template>
             </el-table-column>
             <el-table-column
@@ -169,7 +169,7 @@
         :isShow="isCheckDetail"
         :dataId="BH"
         :site = "currSite"
-        @complete="complete"
+        @complete="completeSubmit"
     ></internet-input-d-b>
 
   </div>
@@ -216,8 +216,8 @@ export default {
     },
     methods:{
         //完成审核
-        complete(index){
-          this.isCheckDetail = index;
+        completeSubmit(index){
+          this.isCheckDetail = index.isShow;
           this.getInternetCueList(this.currSite);
         },
         //省份改变

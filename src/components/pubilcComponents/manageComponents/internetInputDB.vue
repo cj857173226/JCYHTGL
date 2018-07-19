@@ -355,7 +355,7 @@
             _this.SJDZ = response.data.data.Site;
             _this.SSSF = response.data.data.Province + '省';
             _this.SSCS = response.data.data.City +'市';
-            _this.FBSJ = response.data.data.PublishTime;
+            _this.FBSJ = response.data.data.PublishTime.replace(/\./g,'-') + ' 00:00:00';
             _this.SJLY = response.data.data.SiteName;
           }else{
 
@@ -398,27 +398,6 @@
         if(this.SJDL == 2){
           this.SJLB = '';
         }
-        console.log('原始数据编号:',this.YSSJBH);
-        console.log('采集内容:',this.CJNR);
-        console.log('发布时间:',this.FBSJ);
-        console.log('所属大类:',this.SJDL);
-        console.log('数据类别:',this.SJLB);
-        console.log('数据来源:',this.SJLY);
-        console.log('数据地址:',this.SJDZ);
-        console.log('备注:',this.BZ);
-        console.log('省份:',this.SSSF);
-        console.log('地市:',this.SSCS);
-        console.log('区县:',this.SSQX);
-        console.log('摘要:',this.ZY);
-        console.log('关键词:',this.GJC);
-        console.log('地名:',this.DIM);
-        console.log('人名:',this.RENM);
-        console.log('机构名:',this.JIGOUM);
-        console.log('采集时间:',this.CJSJ);
-        console.log('是否脏数据:',this.SFZSJ);
-        console.log('是否暂存:',this.SFZC);
-        console.log('快照路径:',this.SJKZ);
-        console.log('是否含有事件跟踪:',this.SFSJGZ);
         var bodyParam = {
           YSSJBH:this.YSSJBH,
           CJNR: this.CJNR,
@@ -550,7 +529,7 @@
           .textarea {
             clear: left;
             width: 100%;
-            min-height: 300px;
+            height: 200px;
             border: 1px solid #eae4e4;
             resize: none;
           }

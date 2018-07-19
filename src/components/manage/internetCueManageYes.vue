@@ -175,11 +175,11 @@
             label="内容"
             min-width="300">
             <template slot-scope="scope">
-              <el-popover trigger="click" placement="top" >
-                <p style="text-indent: 2em;">{{ scope.row.ZY }}</p>
+              <el-popover trigger="click" placement="top" width='500'>
                 <div slot="reference" class="td-content">
                   {{ scope.row.ZY}}
                 </div>
+                <pre style="white-space: pre-wrap; height: 290px; overflow: auto;" v-html="scope.row.CJNR"></pre>
               </el-popover>
             </template>
           </el-table-column>
