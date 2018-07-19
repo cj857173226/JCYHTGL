@@ -319,6 +319,10 @@
       _this.getInternetCueList(); //获取互联网线索列表
     },
     methods:{
+      //关闭推送检察院框
+      closeCity(){
+
+      },
       //省份改变
       updataProvince(value){
         if(value.value == '省'){
@@ -387,9 +391,18 @@
       },
       //推送检察院
       confirmPush() {
+        var _this = this;
         if(this.province == ''){
+            _this.$message({
+              message:'请选择省份',
+              type: 'error'
+            })
             return;
         }else if(this.city == ''){
+            _this.$message({
+              message:'请选择地市',
+              type: 'error'
+            })
           return;
         }
         var param = {
@@ -403,7 +416,15 @@
           url: webApi.WebData.PushData.format(param),
           timeout: 10000
         }).then(function(response){
-          console.log(response.data.data);
+          if(response.data.code == 0){
+            _this.$message({
+              message:'推送成功',
+              type: 'success'
+            })
+            _this.isChooseCity = false;
+          }else{
+
+          }
         }).catch(function(error){
 
         })

@@ -13,6 +13,10 @@
         </div>
         <div id="content">
           <div class="detail-item">
+            <span class="item-title">内容</span>
+            <textarea class=" textarea" v-model="CJNR"></textarea>
+          </div>
+          <div class="detail-item">
             <span class="item-title">数据来源</span>
             <span class="item-content">
               <input type="text" v-model="SJLY">
@@ -57,9 +61,12 @@
           </div>
           <div class="detail-item">
             <span class="item-title">所属领域</span>
-            <el-select v-model="SJLB" :disabled="SJDL == 2">
+            <!-- <el-select v-model="SJLB" :disabled="SJDL == 2">
               <el-option :key="item" v-for="item in typeList" :value="item">{{item}}</el-option>
-            </el-select>
+            </el-select> -->
+            <span class="item-content">
+              <el-radio :disabled="SJDL == 2" v-model="SJLB" v-for="item in typeList" :label="item">{{item}}</el-radio>
+            </span>
           </div>
           <div class="detail-item">
             <span class="item-title">是否暂存</span>
@@ -77,35 +84,29 @@
           </div>
           <div class="detail-item" v-loading="isAnalysis">
             <span class="item-title">机器分析</span>
+            <el-button @click="analysis" type="success" style="margin-left: 10px;height: 30px;line-height: 11px;">分析</el-button>
             <div class="Machine" style="clear:both">
-
               <span class="item-title" >关键字</span>
               <span class="item-content">
-              <input type="text" v-model="GJC">
-            </span>
+                <input type="text" v-model="GJC">
+              </span>
 
               <span class="item-title">人名</span>
               <span class="item-content">
-              <input type="text" v-model="RENM">
-            </span>
+                <input type="text" v-model="RENM">
+              </span>
 
               <span class="item-title">地名</span>
               <span class="item-content">
-              <input type="text" v-model="DIM">
-            </span>
-
+                <input type="text" v-model="DIM">
+              </span>
               <span class="item-title">机构名</span>
               <span class="item-content">
-              <input type="text" v-model="JIGOUM">
-            </span>
+                <input type="text" v-model="JIGOUM">
+              </span>
               <span  class="item-title">摘要</span>
               <textarea class="textarea " v-model="ZY"></textarea>
-              <el-button @click="analysis" type="success">分析</el-button>
             </div>
-          </div>
-          <div class="detail-item">
-            <span class="item-title">内容</span>
-            <textarea class=" textarea" v-model="CJNR"></textarea>
           </div>
           <!-- <div class="detail-item">
             <span class="item-title track-title">事态跟踪:</span>
