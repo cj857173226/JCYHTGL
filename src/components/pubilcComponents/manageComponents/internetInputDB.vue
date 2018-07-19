@@ -33,7 +33,7 @@
           <div class="detail-item">
             <span class="item-title">所属地域</span>
             <span class="item-content" style="border: none;">
-              <area-select style="line-height: 15px" type="text" :level="2" v-model="place" :data="pcaa"></area-select>
+             <v-distpicker :province="SSSF" :city="SSCS" :area="SSQX" @province="updataProvince" @city="updataCity" @area="updataCounty" style="height: 100%;display:inline-block"></v-distpicker>
             </span>
           </div>
           <div class="detail-item">
@@ -141,8 +141,9 @@
 </template>
 
 <script>
-  import { pca, pcaa } from 'area-data'; // v5 or higher
+  import VDistpicker from 'v-distpicker';
   export default {
+    components:{VDistpicker},
     props: {
       'isShow': false,//显示
       'dataId': "",//数据id
@@ -150,8 +151,6 @@
     },
     data(){
       return{
-        pca:pca,
-        pcaa:pcaa,
         isDetailLoad: false, 
         isAnalysis: false,
 
@@ -191,6 +190,33 @@
       this.getLabels();
     },
     methods:{
+      //省份改变
+        updataProvince(value){
+          if(value.value == '省'){
+            this.SSSF = ''
+          }else{
+            this.SSSF = value.value
+          }
+          console.log(this.SSSF);
+        },
+        //市改变
+        updataCity(value){
+          if(value.value == '市'){
+            this.SSCS = ''
+          }else{
+            this.SSCS = value.value
+          }
+            console.log(this.SSCS);
+        },
+        //区县改变
+        updataCounty(value){
+          if(value.value == '区'){
+            this.SSQX = ''
+          }else{
+            this.SSQX = value.value
+          }
+            console.log(this.SSQX);
+        },
       //分析
       analysis(){
         var _this = this;
@@ -326,7 +352,8 @@
             _this.CJNR = response.data.data.Content;
             _this.CJSJ = response.data.data.CreatedTime;
             _this.SJDZ = response.data.data.Site;
-            _this.SSSF = response.data.data.Province;
+            _this.SSSF = response.data.data.Province + '省';
+            _this.SSCS = response.data.data.City +'市';
             _this.FBSJ = response.data.data.PublishTime;
             _this.SJLY = response.data.data.SiteName;
           }else{
@@ -338,18 +365,25 @@
         })
       },
       submit() {//提交
-        if(isDetailLoad||isAnalysis){
+      var _this = this;
+        if(this.isDetailLoad||this.isAnalysis){
           return;
         }
-        if(this.place.length == 0){
+        if(this.SSSF == ''){
            this.$message({
-             message:'请选择所属地域',
+             message:'请选择省份',
              type:'error'
            });
            return;
         }else if(this.SJDL == 1&&this.SJLB ==''){
            this.$message({
              message:'请选择所属领域',
+             type:'error'
+           });
+           return;
+        }else if(this.SSCS == ''){
+           this.$message({
+             message:'请选择地市',
              type:'error'
            });
            return;
@@ -419,6 +453,7 @@
               message:'提交成功',
               type: 'success'
             })
+            _this.$emit('complete',{isShow:false});
           }else{
 
           }

@@ -42,8 +42,8 @@
               选择省市:
             </div>
             <div class="right city-right" style="overflow: inherit;position: relative;">
-              <area-select v-if="clearCity" style="line-height: 15px" type="text" :level="2" v-model="place" :data="pcaa"></area-select>
-              <span class="clear-city" @click="cleanCity">清空</span>
+              <v-distpicker @province="updataProvince" @city="updataCity" @area="updataCounty" style="height: 100%;display:inline-block"></v-distpicker>
+              <span class="clear-city" @click="confirmCity">确认</span>
             </div>
           </div>
           <div class="cue-sort clearfix">
@@ -169,16 +169,17 @@
         :isShow="isCheckDetail"
         :dataId="BH"
         :site = "currSite"
+        @complete="complete"
     ></internet-input-d-b>
 
   </div>
 </template>
 
 <script>
-import { pca, pcaa } from 'area-data';
 import internetInputDB from '../pubilcComponents/manageComponents/internetInputDB';
+import VDistpicker from 'v-distpicker';
 export default {
-    components:{internetInputDB},
+    components:{internetInputDB,VDistpicker},
     data(){
         return{
             isLoad:false,
@@ -199,9 +200,6 @@ export default {
             isChooseCity:false,
             isCheckDetail:false, //是否查看详情
             BH: '' , //选择数据编号
-            pca: pca,
-            pcaa: pcaa,
-            place:[], //获取地域
 
             province:'',
             city:'',
@@ -217,6 +215,42 @@ export default {
         this.tableResize();//表格高度自适应
     },
     methods:{
+        //完成审核
+        complete(index){
+          this.isCheckDetail = index;
+          this.getInternetCueList(this.currSite);
+        },
+        //省份改变
+        updataProvince(value){
+          if(value.value == '省'){
+            this.province = ''
+          }else{
+            this.province = value.value
+          }
+          console.log(this.province);
+        },
+        //市改变
+        updataCity(value){
+          if(value.value == '市'){
+            this.city = ''
+          }else{
+            this.city = value.value
+          }
+            console.log(this.city);
+        },
+        //区县改变
+        updataCounty(value){
+          if(value.value == '区'){
+            this.county = ''
+          }else{
+            this.county = value.value
+          }
+            console.log(this.county);
+        },
+        //确认城市
+        confirmCity(){
+            this.getInternetCueList(this.currSite);
+        },
         //删除
         delCue(id){
           var _this = this;
@@ -233,7 +267,10 @@ export default {
               
               _this.getInternetCueList(_this.currSite);
             }else{
-
+              _this.$message({
+                message:'删除失败',
+                type: 'error'
+              })
             }
           }).catch(function(error){
 
@@ -266,27 +303,13 @@ export default {
 
             })
         },
-        //清空城市
-        cleanCity(){
-          var _this = this;
-          this.clearCity = false;
-          setTimeout(function(){
-            _this.clearCity = true;
-          },100)
-          this.place = [];
-          console.log(this.place);
-        },
         //时间搜索
         search(){
-            console.log(this.timeSearch);
-            console.log(this.place);
-            if(this.place.length){
-              this.province = this.place[0];
-              this.city = this.place[1];
-              this.county = this.place[2];
-            }else{
-              this.province = '';
-              this.city = '';
+            if(this.province == '省'){
+              this.province = ''
+            }else if(this.city == '市'){
+              this.city = ''
+            }else if(this.county == '区'){
               this.county = '';
             }
             this.getInternetCueList(this.currSite);
@@ -598,6 +621,11 @@ export default {
             overflow:hidden;
             text-overflow:ellipsis;
             white-space:nowrap;
+            .distpicker-address-wrapper{
+               select{
+                height: 30px!important;
+               }
+            }
             .float-box{
               position: absolute;
               z-index: 99999999;
@@ -615,9 +643,10 @@ export default {
               }
             }
             .clear-city{
-              position: absolute;
-              top: 0;
-              left: 550px;
+              // position: absolute;
+              // top: 0;
+              // left: 550px;
+              margin-left: 10px;
               color: #65afea;
               cursor: pointer;
             }

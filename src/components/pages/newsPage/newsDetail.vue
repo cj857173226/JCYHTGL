@@ -36,9 +36,7 @@ export default {
   methods:{
     //返回
     backNav(){
-      this.$router.push({
-        path:'/home/news'
-      });
+      this.$router.go(-1);
     },
     //查看源地址
     originAddress(){

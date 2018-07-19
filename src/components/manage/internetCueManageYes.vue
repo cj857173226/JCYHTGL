@@ -7,14 +7,14 @@
         </div>
         <div class="title">互联网线索管理</div>
       </div>
+      <div class="manage-icon">
+        <i @click="addInternet"  class="el-icon-circle-plus-outline"></i>
+      </div>
       <div class="search-wrap clearfix">
         <input class="search-ipt" type="text" v-model="keyword" placeholder="请输入内容" @keyup.13="getInternetCueList">
         <span class="search-btn" @click="getInternetCueList()">
             <i class="iconfont icon-sousuo"></i>
           </span>
-      </div>
-      <div class="manage-icon">
-        <i @click="addInternet"  class="el-icon-circle-plus-outline"></i>
       </div>
     </div>
     <div class="main-body">
@@ -55,8 +55,8 @@
             选择省/市/区:
           </div>
           <div class="right" style="margin-left: -10px;padding-top: 3px;overflow:inherit;">
-            <area-select v-if="clearCity" style="margin-left:0;line-height:100%;height:100%;" :level='2' type="text" :data = "pcaa" v-model="citySelected"></area-select>
-            <span class="clear-city" @click="cleanCity">清空</span>
+            <v-distpicker @province="updataProvince" @city="updataCity" @area="updataCounty" style="height: 100%;display:inline-block"></v-distpicker>
+            <!-- <span class="clear-city" @click="cleanCity">清空</span> -->
           </div>
         </div>
         <div class="cue-sort clearfix">
@@ -136,6 +136,7 @@
                               type="daterange"
                               align="right"
                               range-separator="-"
+                              unlink-panels
                               start-placeholder="开始日期"
                               end-placeholder="结束日期">
 
@@ -202,7 +203,6 @@
             min-width="300">
             <template slot-scope="scope">
               {{scope.row.SSSF}}/{{scope.row.SSCS}}/{{scope.row.SSQX}}
-              <!-- <el-button style="padding:0" type = "text" @click="chooseCity"></el-button> -->
             </template>
           </el-table-column>
           <el-table-column
@@ -233,8 +233,8 @@
             label="操作"
             width="100">
             <template slot-scope="scope">
+              <el-button @click='editDetail(scope.row.BH)' type="text" size="small">修改</el-button>
               <el-button @click="deleteClue(scope.row.BH)" style="color:red;" type="text" size="small">删除</el-button>
-              <el-button @click='editDetail(scope.row.BH)' type="text" size="small">详情</el-button>
             </template>
           </el-table-column>
         </el-table>
@@ -256,7 +256,7 @@
 
     <el-dialog @close="closeCity" width="600px" title="选择省市" :visible.sync="isChooseCity">
       <div id="choose-city" style="height: 55px">
-        <area-select  :level="2" type="text" :data = "pcaa" v-model="citySelected"></area-select>
+        <v-distpicker @province="updataProvince" @city="updataCity" @area="updataCounty" style="height: 100%;display:inline-block"></v-distpicker>
         <el-button style="float:right" type="text" @click="confirmPush">确认推送</el-button>
       </div>
     </el-dialog>
@@ -266,9 +266,9 @@
 
 <script>
   import interInput from '../pubilcComponents/manageComponents/internetInput'
-  import { pca, pcaa } from 'area-data';
+  import VDistpicker from 'v-distpicker';
   export default {
-    components: {interInput},
+    components: {interInput,VDistpicker},
     name:'cue-list',
     data(){
       return{
@@ -306,10 +306,8 @@
         city: "",//城市
         county:'',//区县
         isChooseCity:false,
-        pca: pca,
-        pcaa: pcaa,
-        citySelected:[],
         clearCity: true,//城市
+        citySelected:[]
       }
     },
     mounted(){
@@ -321,6 +319,33 @@
       _this.getInternetCueList(); //获取互联网线索列表
     },
     methods:{
+      //省份改变
+      updataProvince(value){
+        if(value.value == '省'){
+          this.province = ''
+        }else{
+          this.province = value.value
+        }
+        console.log(this.province);
+      },
+      //市改变
+      updataCity(value){
+        if(value.value == '市'){
+          this.city = ''
+        }else{
+          this.city = value.value
+        }
+          console.log(this.city);
+      },
+      //区县改变
+      updataCounty(value){
+        if(value.value == '区'){
+          this.county = ''
+        }else{
+          this.county = value.value
+        }
+          console.log(this.county);
+      },
       //删除数据
       deleteClue(id) {
         let _this = this;
@@ -354,27 +379,23 @@
           setTimeout(function(){
             _this.clearCity = true;
           },100)
-          this.citySelected = [];
         },
       //确认筛选条件
       confirmFilter() {
-        if(this.citySelected.length>0){
-          this.province = this.citySelected[0];
-          this.city = this.citySelected[1];
-          this.county = this.citySelected[2];
-        } 
         this.page = 1;
         this.getInternetCueList();
       },
       //推送检察院
       confirmPush() {
-        if(this.citySelected.length == 0){
+        if(this.province == ''){
             return;
+        }else if(this.city == ''){
+          return;
         }
         var param = {
-          province:this.citySelected[0],
-          city: this.citySelected[1],
-          county: this.citySelected[2]
+          province:this.province,
+          city: this.city,
+          county: this.county
         }
         
         this.axios({
@@ -519,19 +540,14 @@
 
         })
       },
-  
-      //关闭选择城市
-      closeCity(){
-        this.citySelected = [];
-      },
-      //查看详情
+      //推送检察院
       chooseCity(){
-        if(this.citySelected.length != 0){
-          console.log(this.citySelected);
-          this.SSDY = this.citySelected[0] + this.citySelected[1];
-        }
-        this.citySelected = [];
-        console.log(this.citySelected);
+        // if(this.citySelected.length != 0){
+        //   console.log(this.citySelected);
+        //   this.SSDY = this.citySelected[0] + this.citySelected[1];
+        // }
+        // this.citySelected = [];
+        // console.log(this.citySelected);
         this.isChooseCity = !this.isChooseCity;
       },
       // 页码跳转
@@ -581,11 +597,11 @@
       line-height: 50px;
       background: #EEEEEE;
       border-bottom: 1px solid #dcdcdc;
-      .manage-icon{
-        position: absolute;
-        right: 14px;
-        top: 50px;
+      .manage-icon{    
         font-size: 25px;
+        float: right;
+        margin-right: 10px;
+        margin-right: 10px;
         &:hover {
           cursor: pointer;
         }
@@ -622,7 +638,7 @@
         background: #FFFFFF;
         height: 42px;
         width: 320px;
-        margin-right: 50px;
+        margin-right: 20px;
         margin-top: 4px;
         border: 1px solid #dcdcdc;
         -webkit-border-radius: 8px;

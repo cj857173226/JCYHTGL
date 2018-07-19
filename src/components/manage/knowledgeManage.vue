@@ -97,9 +97,10 @@
           <el-table-column
             fixed="right"
             label="操作"
-            width="100">
+            width="140">
             <template slot-scope="scope">
               <el-button @click="change(scope.row.BH)"  type="text" size="small">修改</el-button>
+              <el-button @click="check(scope.row.BH)"  type="text" size="small">查看</el-button>
               <el-button @click="deleteKnowledge(scope.row.BH)"  style="color:red;" type="text" size="small">删除</el-button>
             </template>
           </el-table-column>
@@ -157,6 +158,10 @@
       this.getKnowledge();
     },
     methods:{
+      //查看
+      check(id){
+        this.$router.push({path: '/home/knowledgeDetail',query:{id:id}});
+      },
       closeInput(data) {//关闭编辑框
         this.isShow = data;
         this.getKnowledge();

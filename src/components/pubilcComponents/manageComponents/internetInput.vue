@@ -33,7 +33,7 @@
           <div class="detail-item">
             <span class="item-title">所属地域</span>
             <span class="item-content" style="border: none;">
-              <area-select style="line-height: 15px" type="text" :level="2" v-model="place" :data="pcaa"></area-select>
+             <v-distpicker :province="SSSF" :city="SSCS" :area="SSQX" @province="updataProvince" @city="updataCity" @area="updataCounty" style="height: 100%;display:inline-block"></v-distpicker>
             </span>
           </div>
           <div class="detail-item">
@@ -141,8 +141,9 @@
 </template>
 
 <script>
-  import { pca, pcaa } from 'area-data'; // v5 or higher
+  import VDistpicker from 'v-distpicker';
   export default {
+    components:{VDistpicker},
     props: {
       'isShow': false,//显示
       'dataId': "",//数据id
@@ -150,12 +151,8 @@
     },
     data(){
       return{
-        pca:pca,
-        pcaa:pcaa,
         isDetailLoad: false, 
         isAnalysis: false,
-
-        place:[],
 
         YSSJBH:'', //原始数据编号
         BH:'', //数据编号
@@ -191,7 +188,33 @@
       this.getTypes();
       this.getLabels();
     },
-    methods:{
+    methods:{//省份改变
+        updataProvince(value){
+          if(value.value == '省'){
+            this.SSSF = ''
+          }else{
+            this.SSSF = value.value
+          }
+          console.log(this.SSSF);
+        },
+        //市改变
+        updataCity(value){
+          if(value.value == '市'){
+            this.SSCS = ''
+          }else{
+            this.SSCS = value.value
+          }
+            console.log(this.SSCS);
+        },
+        //区县改变
+        updataCounty(value){
+          if(value.value == '区'){
+            this.SSQX = ''
+          }else{
+            this.SSQX = value.value
+          }
+            console.log(this.SSQX);
+        },
       //分析
       analysis(){
         var _this = this;
@@ -344,7 +367,6 @@
             _this.SJLB = response.data.data[0].SJLB;
             _this.BZ = response.data.data[0].BZ;
             _this.SFZSJ = response.data.data[0].SFZSJ;
-            _this.place = [_this.SSSF,_this.SSCS,_this.SSQX]
           }else{
 
           }
@@ -355,9 +377,15 @@
       },
       submit() {//提交
       var _this = this;
-        if(this.place.length == 0){
+        if(this.SSSF == ''){
            this.$message({
-             message:'请选择所属地域',
+             message:'请选择省份',
+             type:'error'
+           });
+           return;
+        }else if(this.SSCS == ''){
+           this.$message({
+             message:'请选择城市',
              type:'error'
            });
            return;
@@ -400,35 +428,9 @@
         }
         
         this.isDetailLoad = true;
-        if(this.place.length > 0){
-          this.SSSF = this.place[0];
-          this.SSCS = this.place[1];
-          this.SSQX = this.place[2];
-        }
         if(this.SJDL == 2){
           this.SJLB = '';
         }
-        console.log('原始数据编号:',this.YSSJBH);
-        console.log('采集内容:',this.CJNR);
-        console.log('发布时间:',this.FBSJ);
-        console.log('所属大类:',this.SJDL);
-        console.log('数据类别:',this.SJLB);
-        console.log('数据来源:',this.SJLY);
-        console.log('数据地址:',this.SJDZ);
-        console.log('备注:',this.BZ);
-        console.log('省份:',this.SSSF);
-        console.log('地市:',this.SSCS);
-        console.log('区县:',this.SSQX);
-        console.log('摘要:',this.ZY);
-        console.log('关键词:',this.GJC);
-        console.log('地名:',this.DIM);
-        console.log('人名:',this.RENM);
-        console.log('机构名:',this.JIGOUM);
-        console.log('采集时间:',this.CJSJ);
-        console.log('是否脏数据:',this.SFZSJ);
-        console.log('是否暂存:',this.SFZC);
-        console.log('快照路径:',this.SJKZ);
-        console.log('是否含有事件跟踪:',this.SFSJGZ);
         var bodyParam = {
           YSSJBH:this.YSSJBH,
           BH:this.BH,
@@ -468,9 +470,37 @@
                 message:'添加成功',
                 type: 'success'
               })
-               _this.$emit('inputClose',{isShow:true,isUpdate:true});
+              _this.YSSJBH = ''; //原始数据编号
+              _this.BH = ''; //数据编号
+              _this.CJNR = ''; //采集内容
+              _this.FBSJ = ''; //发布时间
+              _this.SJDL = '1'; //数据大类
+              _this.SJLB = ''; //数据类别
+              _this.SJLY = ''; //数据来源
+              _this.SJDZ = ''; //数据地址
+              _this.BZ = ''; //备注
+              _this.SSSF = ''; //省份
+              _this.SSCS = ''; //地市
+              _this.SSQX = ''; //区县
+              _this.SSSFDM = ''; //省份代码
+              _this.SSCSDM = ''; //地市代码
+              _this.SSQXDM = ''; //区县代码
+              _this.ZY = ''; //摘要
+              _this.GJC = ''; //关键词
+              _this.DIM = ''; //地名
+              _this.RENM = ''; //人名
+              _this.JIGOUM = ''; //机构名
+              _this.CJSJ = ''; //采集时间
+              _this.SFZSJ = '0'; //是否脏数据
+              _this.SFZC = '0'; //是否暂存
+              _this.SJKZ = ''; //快照
+              _this.SFSJGZ = '0'; //是否含有事件跟踪
+               _this.$emit('inputClose',{isShow:false,isUpdate:true});
             }else{
-  
+              _this.$message({
+                message:'添加失败',
+                type: 'error'
+              })
             }
           }).catch(function(error){
             _this.isDetailLoad = false;
@@ -496,7 +526,10 @@
               })
               _this.$emit('inputClose',{isShow:true,isUpdate:true});
             }else{
-  
+              _this.$message({
+                message:'添加失败',
+                type: 'error'
+              })
             }
           }).catch(function(error){
             _this.isDetailLoad = false;
@@ -511,7 +544,6 @@
     watch: {
       dataId() {
         if(this.dataId == ''){
-          this.place = [];
           this.YSSJBH = ''; //原始数据编号
           this.BH = ''; //数据编号
           this.CJNR = ''; //采集内容
