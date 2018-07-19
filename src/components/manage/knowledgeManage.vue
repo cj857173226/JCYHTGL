@@ -5,14 +5,14 @@
           <i class="iconfont icon-boshimao"></i>
       </div>
       <div class="header-title">知识库</div>
-
+      <div class="ly">来源：<span>公益诉讼研究</span>,<span>公益诉讼研讨</span>,<span>检查公益诉讼</span>,<span>公益诉讼羊皮卷</span></div>
        <!--<div class="search-wrap clearfix">-->
          <!--<i @click="change" style="color:green;width:30px;height:30px;" class="el-icon-circle-plus-outline"></i>-->
       <!--</div>-->
       <div class="manage-icon">
          <i @click="addKnowledge"  class="el-icon-circle-plus-outline"></i>
       </div>
-      
+
     </div>
     <div id="content" v-loading="isLoading">
       <div class="table-list" ref="cueList">
@@ -86,9 +86,9 @@
             label="数据地址"
             min-width="150">
             <template slot-scope="scope">
-              <el-popover trigger="click" placement="top" max-width="400">
-                <p style="text-indent: 2em;">{{ scope.row.SJDZ }}</p>
-                <div slot="reference" class="td-content">
+              <el-popover trigger="click" placement="top">
+                <p style="text-indent: 2em;" >{{ scope.row.SJDZ }}</p>
+                <div slot="reference" class="td-content" >
                   {{ scope.row.SJDZ}}
                 </div>
               </el-popover>
@@ -277,7 +277,12 @@
       .header-title{
         display: inline-block;
         height: 100%;
+        margin-right: 20px;
         padding-left: 10px;
+      }
+      .ly{
+        display: inline-block;
+        font-size: 16px;
       }
       .manage-icon{
         float: right;
