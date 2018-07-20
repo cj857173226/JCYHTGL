@@ -26,6 +26,7 @@ import newsManage from '../components/manage/newsManage'  //新闻管理
 
 //说明
 import explain from '../components/manage/explain'
+import EnvironmentalDataAnalysis from '../components/manage/EnvironmentalDataAnalysis'  //深圳环保数据分析
 Vue.use(Router)
 
 let router =  new Router({
@@ -112,6 +113,14 @@ let router =  new Router({
           component:internetCueManageYes,
           meta:{
             name: '互联网已处理',
+          }
+        },
+        {
+          path:'EnvironmentalDataAnalysis',
+          name:EnvironmentalDataAnalysis,
+          component:EnvironmentalDataAnalysis,
+          meta:{
+            name: '深圳环保数据分析',
           }
         },
       ]

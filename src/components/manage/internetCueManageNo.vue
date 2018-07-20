@@ -25,7 +25,10 @@
             <div class="right" style="overflow: inherit;position: relative;">
                 <!-- <div v-show="siteList.length>0" class="site-item" :class="{'site-item-on':currSite == item }" @click="clueSiteOder(item)" v-for="(item,index) in siteList" >{{item}}</div> -->
                 <div v-show="siteList.length==0"> 无 </div>
-                <el-select @change="clueSiteOder()" v-model="currSite" style="margin-left:10px;width: 50%;height: 32px">
+                <!-- <el-select @change="clueSiteOder()" v-model="currSite" style="margin-left:10px;width: 50%;height: 32px">
+                  <el-option v-for="(item,index) in siteList" :value="item" :key="index">{{item}}</el-option>
+                </el-select> -->
+                 <el-select @change="clueSiteOder()" v-model="currSite" style="height:100%;">
                   <el-option v-for="(item,index) in siteList" :value="item" :key="index">{{item}}</el-option>
                 </el-select>
                 <!-- <div v-show="siteList.length > 0" @click="moreSiteFloat"> 更多 </div>
@@ -756,9 +759,7 @@ export default {
               margin-right: 0;
             }
           }
-          .city-right{
-            padding-top: 5px;
-          }
+         
         }
         .cue-sort{
           border-top:none;
@@ -867,9 +868,7 @@ export default {
             .right{
               font-size: 14px;
             }
-            .city-right{
-              padding-top: 0;
-            }
+        
           }
           .cue-sort{
             border-top:none;
