@@ -125,15 +125,31 @@
                 min-width="170">
             </el-table-column>
             <el-table-column
-                prop="Time"
-                label="TBRQ"
+                prop="TBRQ"
+                label="同步日期"
                 min-width="170">
             </el-table-column>       
             <el-table-column
                 prop="SFTBCG"
                 label="是否同步成功"
                 min-width="170">
+                <template slot-scope="scope">
+                  <span v-text="scope.row.SFTBCG?'成功':'失败'"></span>  
+                </template>
             </el-table-column>
+             <el-table-column
+              prop="TBSBYY"
+              label="同步失败原因"
+              min-width="300">
+              <template slot-scope="scope">
+                <el-popover trigger="click" placement="top" width='500'>
+                  <div slot="reference" class="td-content">
+                    {{ scope.row.TBSBYY}}
+                  </div>
+                  <pre style="white-space: pre-wrap; height: auto; overflow: auto;" v-html="scope.row.TBSBYY"></pre>
+                </el-popover>
+              </template>
+          </el-table-column>
             <el-table-column
                 fixed="right"
                 label="操作"
@@ -235,18 +251,21 @@ export default {
                   message: "成功",
                   type: 'success'
                 })
+                _this.GetExDataIndex();
               }else {
                  _this.$message({
                   message: "失败",
                   type: 'error'
-                })
+                });
+                _this.GetExDataIndex();
               }
             }).catch(function(err){
               console.log(err)
                _this.$message({
                   message: "失败",
                   type: 'error'
-                })
+                });
+                _this.GetExDataIndex();
             })
         },
         //选择同步状态
