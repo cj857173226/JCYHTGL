@@ -5,11 +5,11 @@
           <i class="iconfont icon-boshimao"></i>
       </div>
       <div class="header-title">知识库</div>
-      <div class="ly">来源：<span>公益诉讼研究</span>,<span>公益诉讼研讨</span>,<span>检查公益诉讼</span>,<span>公益诉讼羊皮卷</span></div>
+      <div class="ly">来源(公众号)：<span>公益诉讼研究</span>,<span>公益诉讼研讨</span>,<span>检查公益诉讼</span>,<span>公益诉讼羊皮卷</span></div>
        <!--<div class="search-wrap clearfix">-->
          <!--<i @click="change" style="color:green;width:30px;height:30px;" class="el-icon-circle-plus-outline"></i>-->
       <!--</div>-->
-      <div class="manage-icon">
+      <div class="manage-icon" style="margin-right: 4px;border: none;font-size: 30px;">
          <i @click="addKnowledge"  class="el-icon-circle-plus-outline"></i>
       </div>
 

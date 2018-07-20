@@ -10,8 +10,7 @@
 
         <div class="navbar-right">
             <ul class="navbar-menu clearfix">
-              <li class="navbar-menu-item user-info">您好！您的帐户类型为 :&nbsp;{{userInfo.AccountType}},</li>
-              <li class="navbar-menu-item user-info">到期时间为 :&nbsp;{{userInfo.ExpireTime}}</li>
+              <li class="navbar-menu-item user-info">您好！您的帐户类型为 :&nbsp;{{userInfo.AccountState}}</li>
               <li class="navbar-menu-item user-menu clearfix" :class="{'user-menu-on':userInfoShow}" @click.stop.prevent=" userModal()">
                 <img src="../../assets/adminlte/avatar.png" class="user-avatar" alt="">
                 <span class="user-name">{{userInfo.UserName}}</span>
@@ -74,9 +73,13 @@
             if(res.data.code == 0){
               let data = res.data.data;
               localStorage.setItem('IdentityType', data.IdentityType);
-              data.ExpireTime = data.ExpireTime.split(' ')[0];
               _this.userInfo = data;
-              _this.$root.Bus.$emit('changeIdentity',data.IdentityType);
+              if(_this.userInfo.AccountState == 1){
+                _this.userInfo.AccountState = '管理人员'
+              }else{
+                _this.userInfo.AccountState = '审核人员'
+              }
+              console.log(_this.userInfo);
             }
          }).catch(function(err){
 

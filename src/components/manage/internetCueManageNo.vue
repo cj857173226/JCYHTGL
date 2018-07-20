@@ -13,6 +13,7 @@
             <i class="iconfont icon-sousuo"></i>
           </span>
       </div>
+      <span @click="explain" style="float:right;color: #676767;margin-right:10px;cursor: pointer;"><span style="color:red;margin-right:10px">审核至少从2017年发布的数据</span><i class="fa fa-question-circle"></i>审核说明</span>
     </div>
     <div class="main-body">
       <div class="cue-filter-wrap">
@@ -145,10 +146,11 @@
             <el-table-column
                 fixed="right"
                 label="操作"
-                width="100">
+                min-width="150">
                 <template slot-scope="scope">
+                    <el-button @click="fornow(scope.row)" type="text" size="small">暂存</el-button>
                     <el-button @click="checkDetail(scope.row._id)" type="text" size="small">审核</el-button>
-                    <el-button style="color:#ea2626" @click="delCue(scope.row._id)" type="text" size="small">删除</el-button>
+                    <el-button v-show='IdentityType == 1' style="color:#ea2626" @click="delCue(scope.row._id)" type="text" size="small">删除</el-button>
                 </template>
             </el-table-column>
         </el-table>
@@ -207,14 +209,73 @@ export default {
 
             clearCity:true,
             moreSite:false,
+
+            IdentityType:0, //身份
         }
     },
     mounted(){
+        this.IdentityType = localStorage.getItem('IdentityType');
         this.getProvince(); //获取省市
         this.getCueCollection(); //获取可用数据
         this.tableResize();//表格高度自适应
     },
     methods:{
+        //暂存
+        fornow(index){
+          var _this = this;
+          var bodyParam = {
+            YSSJJHMC:this.currSite,
+            YSSJBH:index._id,
+            CJNR: index.Content,
+            FBSJ: index.PublishTime.replace(/\./g,"-") + " 00:00:00",
+            SJDL: 1,
+            SJLB: '环境保护',
+            SJLY: index.SiteName,
+            SJDZ: index.Site,
+            BZ: '',
+            SSSF: index.Province,
+            SSCS: index.City,
+            SSQX: '',
+            ZY: '',
+            GJC: '',
+            DIM: '',
+            RENM: '',
+            JIGOUM: '',
+            CJSJ: index.CreatedTime,
+            SFZSJ: 0,
+            SFZC: 1,
+            SJKZ: '',
+            SFSJGZ: 0
+          };
+          this.isLoad = true;
+          this.axios({
+            method: 'post',
+            url:webApi.Host + webApi.WebData.Confirm,
+            data:bodyParam,
+            timeout:10000
+          }).then(function(response){
+            _this.isLoad = false;
+            if(response.data.code == 0){
+              _this.$message({
+                message:'提交成功',
+                type: 'success'
+              })
+            _this.getInternetCueList(_this.currSite);
+            }else{
+
+            }
+          }).catch(function(error){
+            _this.isLoad = false;
+
+          })
+        },
+        //说明
+        explain(){
+          let routeData = this.$router.resolve({
+            name: "explain"
+          });
+          window.open(routeData.href,'_blank');
+        },
         //完成审核
         completeSubmit(index){
           this.isCheckDetail = index.isShow;
@@ -316,7 +377,6 @@ export default {
         },
         //修改详情
         checkDetail(index){
-            console.log(index);
             this.isCheckDetail = true;
             this.BH = index;
         },
@@ -622,6 +682,7 @@ export default {
             text-overflow:ellipsis;
             white-space:nowrap;
             .distpicker-address-wrapper{
+              color: red;
                select{
                 height: 30px!important;
                }

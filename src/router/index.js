@@ -23,10 +23,18 @@ import knowledgeInput from '../components/manage/knowledgeManage' //知识库录
 import internetCueManageNo from '../components/manage/internetCueManageNo' //互联网线索管理未审批
 import internetCueManageYes from '../components/manage/internetCueManageYes' //互联网线索管理已审批
 import newsManage from '../components/manage/newsManage'  //新闻管理
+
+//说明
+import explain from '../components/manage/explain'
 Vue.use(Router)
 
 let router =  new Router({
  	routes:[
+     {
+      path:'/explain',
+      component:explain,
+      name:'explain'
+     },
     {
       path:'/home',
       component: indexPage,

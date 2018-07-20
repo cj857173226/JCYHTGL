@@ -65,7 +65,7 @@
               <el-option :key="item" v-for="item in typeList" :value="item">{{item}}</el-option>
             </el-select> -->
             <span class="item-content">
-              <el-radio :disabled="SJDL == 2" v-model="SJLB" :label="item" v-for="item in typeList">{{item}}</el-radio>
+              <el-radio :disabled="SJDL == 2" v-model="SJLB" :label="item" v-for="(item,index) in typeList" :key="index">{{item}}</el-radio>
             </span>
           </div>
           <div class="detail-item">

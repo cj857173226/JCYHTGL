@@ -65,7 +65,7 @@
               <el-option :key="item" v-for="item in typeList" :value="item">{{item}}</el-option>
             </el-select> -->
             <span class="item-content">
-              <el-radio :disabled="SJDL == 2" v-model="SJLB" v-for="item in typeList" :label="item">{{item}}</el-radio>
+              <el-radio :disabled="SJDL == 2" v-model="SJLB" v-for="(item,index) in typeList" :label="item" :key="index">{{item}}</el-radio>
             </span>
           </div>
           <div class="detail-item">
@@ -108,30 +108,44 @@
               <textarea class="textarea " v-model="ZY"></textarea>
             </div>
           </div>
-          <!-- <div class="detail-item">
+          <div class="detail-item">
+            <span class="item-title">是否事态跟踪</span>
+            <span class="item-content">
+              <el-radio v-model="SFSJGZ" label="1">是</el-radio>
+              <el-radio v-model="SFSJGZ" label="0">否</el-radio>
+            </span>
+          </div>
+          <div class="detail-item" v-show="SFSJGZ == 1">
             <span class="item-title track-title">事态跟踪:</span>
             <span class="item-content timeline-content">
                 <ul class="itemline-box">
                     <li v-for="item in trackData"  class="timeline-item">
                         <i class="timeline-icon fa fa-circle-o"></i>
                         <div class="tiemline-text">
-                            <p class="timeline-time">
-                              <input type="text" v-model="item.time">
-                            </p>
-                            <p class="tiemline-name">
-                              <input type="text" v-model="item.name">
-                            </p>
-                            <p>
-                              <textarea style="min-height:100px;" class="textarea" v-model="item.content"></textarea>
-                            </p> -->
+                            <div class="timeline-text-item">
+                              <span>目前回帖数:</span>
+                              <input class="track-input" type="text" v-model="item.num">
+                            </div>
+                            <div class="timeline-text-item timeline-time">
+                              <span>回复时间:</span>
+                              <input class="track-input" type="text" v-model="item.time">
+                            </div>
+                            <div class="timeline-text-item  tiemline-name">
+                              <span>机构名称:</span>
+                              <input class="track-input" type="text" v-model="item.name">
+                            </div>
+                            <div class="timeline-text-item">
+                              <span>回复内容:</span>
+                              <textarea style="min-height:150px;" class="track-input textarea" v-model="item.content"></textarea>
+                            </div>
                           <!--<h3 class="timeline-time" v-model="item.time" contenteditable="true"></h3>-->
                           <!--<h4 class="tiemline-name" v-model="item.name" contenteditable="true"></h4>-->
                           <!--<p v-model="item.content" contenteditable="true"></p>-->
-                        <!-- </div>
+                        </div>
                     </li>
                 </ul>
             </span>
-          </div> -->
+          </div>
           <div class="detail-item">
             <el-button @click="submit" type="success" >提交</el-button>
           </div>
@@ -183,6 +197,7 @@
         SFSJGZ:'0', //是否含有事件跟踪
 
         typeList:[], //类型集合
+        trackData:[{}], //事态跟踪
 
       }
     },
@@ -357,6 +372,7 @@
             _this.SSCS = response.data.data.City +'市';
             _this.FBSJ = response.data.data.PublishTime.replace(/\./g,'-') + ' 00:00:00';
             _this.SJLY = response.data.data.SiteName;
+            _this.analysis();
           }else{
 
           }
@@ -399,6 +415,7 @@
           this.SJLB = '';
         }
         var bodyParam = {
+          YSSJJHMC:this.site,
           YSSJBH:this.YSSJBH,
           CJNR: this.CJNR,
           FBSJ: this.FBSJ,
@@ -646,21 +663,22 @@
                   display: inline-block;
                   padding-left: 30px;
                   width: 100%;
-                  .timeline-time{
+                  .timeline-text-item{
                     margin-bottom: 5px;
                     font-size: 16px;
                     color: #333;
                     font-weight: 500;
-                  }
-                  .tiemline-name{
-                    color: #333;
-                  }
-                  p{
-                    color: #555;
-                    input {
-                      width: auto;
-                      padding: 3px;
-                      border: 1px solid #eae4e4;
+                    span{
+                      display: inline-block;
+                      width: 100px;
+                      color:#333;
+                      vertical-align: top;
+                      text-align: right;
+                    }
+                    .track-input{
+                      border:solid 1px #ddd;
+                      height: 30px;
+                      width: 70%;
                     }
                   }
                 }
