@@ -79,21 +79,46 @@
               </el-popover>
             </template>
           </el-table-column>
-            <el-table-column
-                prop="SJMC"
-                label="数据名称"
-                min-width="170">
-            </el-table-column>
-            <el-table-column
-                prop="SJTGF"
-                label="数据提供方"
-                min-width="170">
-            </el-table-column>
-            <el-table-column
-                prop="GJZ"
-                label="关键字"
-                min-width="170">
-            </el-table-column>
+           <el-table-column
+            prop="SJMC"
+            label="数据名称"
+            min-width="300">
+            <template slot-scope="scope">
+              <el-popover trigger="click" placement="top" width='500'>
+                <div slot="reference" class="td-content">
+                  {{ scope.row.SJMC}}
+                </div>
+                <pre style="white-space: pre-wrap; height: auto; overflow: auto;" v-html="scope.row.SJMC"></pre>
+              </el-popover>
+            </template>
+          </el-table-column>
+           <el-table-column
+            prop="SJTGF"
+            label="数据提供方"
+            min-width="300">
+            <template slot-scope="scope">
+              <el-popover trigger="click" placement="top" width='500'>
+                <div slot="reference" class="td-content">
+                  {{ scope.row.SJTGF}}
+                </div>
+                <pre style="white-space: pre-wrap; height: auto; overflow: auto;" v-html="scope.row.SJTGF"></pre>
+              </el-popover>
+            </template>
+          </el-table-column>
+           <el-table-column
+            prop="GJZ"
+            label="关键字"
+            min-width="300">
+            <template slot-scope="scope">
+              <el-popover trigger="click" placement="top" width='500'>
+                <div slot="reference" class="td-content">
+                  {{ scope.row.GJZ}}
+                </div>
+                <pre style="white-space: pre-wrap; height: auto; overflow: auto;" v-html="scope.row.GJZ"></pre>
+              </el-popover>
+            </template>
+          </el-table-column>
+           
             <el-table-column
                 prop="SJTS"
                 label="数据条数"
@@ -115,15 +140,32 @@
                 min-width="170">
             </el-table-column>
             <el-table-column
-                prop="SJZT"
-                label="数据主题"
-                min-width="170">
-            </el-table-column>
-            <el-table-column
-                prop="SJJKDZ"
-                label="数据接口地址"
-                min-width="170">
-            </el-table-column>
+            prop="SJZT"
+            label="数据主题"
+            min-width="300">
+            <template slot-scope="scope">
+              <el-popover trigger="click" placement="top" width='500'>
+                <div slot="reference" class="td-content">
+                  {{ scope.row.SJZT}}
+                </div>
+                <pre style="white-space: pre-wrap; height: auto; overflow: auto;" v-html="scope.row.SJZT"></pre>
+              </el-popover>
+            </template>
+          </el-table-column>
+           <el-table-column
+            prop="SJJKDZ"
+            label="数据接口地址"
+            min-width="300">
+            <template slot-scope="scope">
+              <el-popover trigger="click" placement="top" width='500'>
+                <div slot="reference" class="td-content">
+                  {{ scope.row.SJJKDZ}}
+                </div>
+                <pre style="white-space: pre-wrap; height: auto; overflow: auto;" v-html="scope.row.SJJKDZ"></pre>
+              </el-popover>
+            </template>
+          </el-table-column>
+          
             <el-table-column
                 prop="TBRQ"
                 label="同步日期"
