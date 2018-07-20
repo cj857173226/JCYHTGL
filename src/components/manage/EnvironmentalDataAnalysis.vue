@@ -246,7 +246,7 @@ export default {
               timeout: 1000
             }).then(function(res){
               console.log(res)
-              if(res.data.code==0){
+              if(res.data.data==true){
                 _this.$message({
                   message: "成功",
                   type: 'success'
