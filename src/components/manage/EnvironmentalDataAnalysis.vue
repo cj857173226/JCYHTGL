@@ -57,76 +57,147 @@
       <div class="cue-list" ref="cueList" v-loading="isLoad">
         <el-table
             ref="oTable"
-            :data=" dataList"
+            :data="dataList"
             :max-height="tableH"
             :height="tableH"
             style="width: 100%">
             <el-table-column
-                prop="Id"
+                prop="BH"
                 label="编号"
                 min-width="170">
             </el-table-column>
             <el-table-column
-                prop="DataName"
-                label="数据名称"
-                min-width="170">
-            </el-table-column>
+            prop="ZY"
+            label="摘要"
+            min-width="300">
+            <template slot-scope="scope">
+              <el-popover trigger="click" placement="top" width='500'>
+                <div slot="reference" class="td-content">
+                  {{ scope.row.ZY}}
+                </div>
+                <pre style="white-space: pre-wrap; height: auto; overflow: auto;" v-html="scope.row.ZY"></pre>
+              </el-popover>
+            </template>
+          </el-table-column>
+           <el-table-column
+            prop="SJMC"
+            label="数据名称"
+            min-width="300">
+            <template slot-scope="scope">
+              <el-popover trigger="click" placement="top" width='500'>
+                <div slot="reference" class="td-content">
+                  {{ scope.row.SJMC}}
+                </div>
+                <pre style="white-space: pre-wrap; height: auto; overflow: auto;" v-html="scope.row.SJMC"></pre>
+              </el-popover>
+            </template>
+          </el-table-column>
+           <el-table-column
+            prop="SJTGF"
+            label="数据提供方"
+            min-width="300">
+            <template slot-scope="scope">
+              <el-popover trigger="click" placement="top" width='500'>
+                <div slot="reference" class="td-content">
+                  {{ scope.row.SJTGF}}
+                </div>
+                <pre style="white-space: pre-wrap; height: auto; overflow: auto;" v-html="scope.row.SJTGF"></pre>
+              </el-popover>
+            </template>
+          </el-table-column>
+           <el-table-column
+            prop="GJZ"
+            label="关键字"
+            min-width="300">
+            <template slot-scope="scope">
+              <el-popover trigger="click" placement="top" width='500'>
+                <div slot="reference" class="td-content">
+                  {{ scope.row.GJZ}}
+                </div>
+                <pre style="white-space: pre-wrap; height: auto; overflow: auto;" v-html="scope.row.GJZ"></pre>
+              </el-popover>
+            </template>
+          </el-table-column>
+           
             <el-table-column
-                prop="DataSource"
-                label="数据提供方"
-                min-width="170">
-            </el-table-column>
-            <el-table-column
-                prop="Keyword"
-                label="关键字"
-                min-width="170">
-            </el-table-column>
-            <el-table-column
-                prop="DataNum"
+                prop="SJTS"
                 label="数据条数"
                 min-width="170">
             </el-table-column>
             <el-table-column
-                prop="PublishTime"
+                prop="FBSJ"
                 label="发布时间"
                 min-width="170">
             </el-table-column>
             <el-table-column
-                prop="UpdateTime"
+                prop="GXSJ"
                 label="更新时间"
                 min-width="170">
             </el-table-column>
             <el-table-column
-                prop="UpdateFrequency"
+                prop="GXPV"
                 label="更新频率"
                 min-width="170">
             </el-table-column>
             <el-table-column
-                prop="DataTheme"
-                label="数据主题"
-                min-width="170">
-            </el-table-column>
+            prop="SJZT"
+            label="数据主题"
+            min-width="300">
+            <template slot-scope="scope">
+              <el-popover trigger="click" placement="top" width='500'>
+                <div slot="reference" class="td-content">
+                  {{ scope.row.SJZT}}
+                </div>
+                <pre style="white-space: pre-wrap; height: auto; overflow: auto;" v-html="scope.row.SJZT"></pre>
+              </el-popover>
+            </template>
+          </el-table-column>
+           <el-table-column
+            prop="SJJKDZ"
+            label="数据接口地址"
+            min-width="300">
+            <template slot-scope="scope">
+              <el-popover trigger="click" placement="top" width='500'>
+                <div slot="reference" class="td-content">
+                  {{ scope.row.SJJKDZ}}
+                </div>
+                <pre style="white-space: pre-wrap; height: auto; overflow: auto;" v-html="scope.row.SJJKDZ"></pre>
+              </el-popover>
+            </template>
+          </el-table-column>
+          
             <el-table-column
-                prop="DataApi"
-                label="数据接口地址"
-                min-width="170">
-            </el-table-column>
-            <el-table-column
-                prop="Time"
+                prop="TBRQ"
                 label="同步日期"
                 min-width="170">
             </el-table-column>       
             <el-table-column
-                prop="Result"
+                prop="SFTBCG"
                 label="是否同步成功"
                 min-width="170">
+                <template slot-scope="scope">
+                  <span v-text="scope.row.SFTBCG?'成功':'失败'"></span>  
+                </template>
             </el-table-column>
+             <el-table-column
+              prop="TBSBYY"
+              label="同步失败原因"
+              min-width="300">
+              <template slot-scope="scope">
+                <el-popover trigger="click" placement="top" width='500'>
+                  <div slot="reference" class="td-content">
+                    {{ scope.row.TBSBYY}}
+                  </div>
+                  <pre style="white-space: pre-wrap; height: auto; overflow: auto;" v-html="scope.row.TBSBYY"></pre>
+                </el-popover>
+              </template>
+          </el-table-column>
             <el-table-column
                 fixed="right"
                 label="操作"
                 width="100">
                 <template slot-scope="scope">
-                    <el-button  @click="operation" type="text" size="small">同步</el-button>
+                    <el-button  @click="operation(scope.row.BH)" type="text" size="small">同步</el-button>
                 </template>
             </el-table-column>
         </el-table>
@@ -177,11 +248,67 @@ export default {
     },
     mounted(){
         this.tableResize();//表格高度自适应
+        this.GetExDataIndex();//获取外部数据索引
     },
-    methods:{   
+    methods:{ 
+        GetExDataIndex(){//获取外部数据索引
+          let _this = this;
+          let url = (webApi.SzOpenData.GetExDataIndex).format({
+            keywords: _this.keyword,//关键字
+            pageNum: _this.page,//页号
+            pageSize: _this.pageSize,//页大小
+          })
+          _this.isLoad = true;
+          _this.axios({
+            url: url,
+            timeout: 10000
+          }).then(function(res){
+            if(res.data.code==0){
+              _this.dataList = res.data.data.result;
+              _this.totalPages =  res.data.data.total;
+              _this.isLoad = false;
+            }else {
+              _this.isLoad = false;
+            }
+            // console.log(res)
+          }).catch(function(err){
+            _this.isLoad = false;
+            console.log(err)
+          })
+        },
         //对数据操作
-        operation() {
-            console.log(1)
+        operation(id) {
+            console.log(id)
+            let _this = this;
+            this.axios({
+              method: 'post',
+              url: (webApi.SzOpenData.PullData).format({
+                sjsybh: id
+              }),
+              timeout: 1000
+            }).then(function(res){
+              console.log(res)
+              if(res.data.data==true){
+                _this.$message({
+                  message: "成功",
+                  type: 'success'
+                })
+                _this.GetExDataIndex();
+              }else {
+                 _this.$message({
+                  message: "失败",
+                  type: 'error'
+                });
+                _this.GetExDataIndex();
+              }
+            }).catch(function(err){
+              console.log(err)
+               _this.$message({
+                  message: "失败",
+                  type: 'error'
+                });
+                _this.GetExDataIndex();
+            })
         },
         //选择同步状态
         selectState(){
@@ -195,11 +322,12 @@ export default {
         },
         //搜索
         searchCue(){
-            console.log(this.keyword)
+            this.GetExDataIndex();
         },
         // 页码跳转
         pageTo(curr) {
-     
+          this.page = curr;
+          this.GetExDataIndex();
         },
         //表格高度自适应
         tableResize(){
