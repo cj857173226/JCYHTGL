@@ -24,6 +24,7 @@
             <div class="right" style="overflow: inherit;position: relative;">
                 <template>
                     <el-radio-group @change="selectState"  v-model="state">
+                        <el-radio  label="">全部</el-radio>
                         <el-radio  label="0">未同步</el-radio>
                         <el-radio  label="1">同步成功</el-radio>
                         <el-radio  label="2">同步失败</el-radio>
@@ -243,7 +244,7 @@ export default {
             totalPages: 10,//总条数
             keyword: '' , //关键字
             timeSearch:[new Date((new Date()).getTime() - 3600 * 1000 * 24 * 30),new Date()],
-            state: '1'//同步状态
+            state: ''//同步状态
         }
     },
     mounted(){
