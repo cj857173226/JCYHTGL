@@ -5,7 +5,7 @@
         <div class="title-icon">
           <i class="fa fa-table"></i>
         </div>
-        <div class="title">深圳环保数据分析</div>
+        <div class="title">深圳数据</div>
       </div>
       <div class="search-wrap clearfix">
         <input class="search-ipt" type="text" v-model="keyword" placeholder="请输入内容" @keyup.13="searchCue">

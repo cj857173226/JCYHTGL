@@ -31,9 +31,9 @@
         </el-menu-item-group>
       </el-submenu>
     <router-link to="/home/EnvironmentalDataAnalysis">
-        <el-menu-item index="1-4" :class="isThisNav == '深圳环保数据分析'?'is-active':''" @click="switchNav('深圳环保数据分析')">
+        <el-menu-item index="1-4" :class="isThisNav == '深圳数据'?'is-active':''" @click="switchNav('深圳数据')">
           <i class="fa fa-table"></i>
-          <span slot="title">深圳环保数据分析</span>
+          <span slot="title">深圳数据</span>
         </el-menu-item>
       </router-link>
       <router-link to="/home/knowledgeInput">
