@@ -24,10 +24,9 @@
             <div class="right" style="overflow: inherit;position: relative;">
                 <template>
                     <el-radio-group @change="selectState"  v-model="state">
-                        <el-radio  label="success">同步成功</el-radio>
-                        <el-radio  label="error">同步失败</el-radio>
-                        <el-radio  label="no">未同步</el-radio>
-                        <el-radio  label="all">全部</el-radio>
+                        <el-radio  label="0">未同步</el-radio>
+                        <el-radio  label="1">同步成功</el-radio>
+                        <el-radio  label="2">同步失败</el-radio>
                     </el-radio-group>
               </template>
             </div>
@@ -176,7 +175,7 @@
                 label="是否同步成功"
                 min-width="170">
                 <template slot-scope="scope">
-                  <span v-text="scope.row.SFTBCG?'成功':'失败'"></span>  
+                  <span v-text="scope.row.SFTBCG==0?'未同步':scope.row.SFTBCG==1?'成功':'失败'"></span>  
                 </template>
             </el-table-column>
              <el-table-column
@@ -243,7 +242,7 @@ export default {
             totalPages: 10,//总条数
             keyword: '' , //关键字
             timeSearch:[new Date((new Date()).getTime() - 3600 * 1000 * 24 * 30),new Date()],
-            state: 'all'//同步状态
+            state: '1'//同步状态
         }
     },
     mounted(){
@@ -257,6 +256,7 @@ export default {
             keywords: _this.keyword,//关键字
             pageNum: _this.page,//页号
             pageSize: _this.pageSize,//页大小
+            tbzt: _this.state,//同步状态
           })
           _this.isLoad = true;
           _this.axios({
@@ -312,7 +312,7 @@ export default {
         },
         //选择同步状态
         selectState(){
-            console.log(this.state);
+            this.GetExDataIndex();
         },
         //选择同步日期
         selectTime(){
