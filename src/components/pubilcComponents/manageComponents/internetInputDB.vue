@@ -339,7 +339,7 @@
             _this.YSSJBH = response.data.data._id;
             _this.CJNR = response.data.data.Content;
             _this.CJSJ = response.data.data.CreatedTime;
-            _this.SJDZ = response.data.data.Site;
+            _this.SJDZ = response.data.data.Link;
             _this.SSSF = response.data.data.Province + '省';
             _this.SSCS = response.data.data.City +'市';
             _this.FBSJ = response.data.data.PublishTime.replace(/\./g,'-') + ' 00:00:00';

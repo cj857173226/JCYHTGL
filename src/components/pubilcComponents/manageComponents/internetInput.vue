@@ -83,6 +83,27 @@
             </span>
           </div>
           <div class="detail-item" v-loading="isAnalysis">
+            <span class="item-title" @click="upLoadImgBtn()">图片上传</span>
+
+            <form id="uploadImg" name="uploadImg" enctype="multipart/form-data">
+
+              <label for="img-input">
+                <i class="fa fa-plus-circle" style="font-size: 30px;margin-left: 10px;color: #7faae4;"></i>
+              </label>
+              <input multiple name="img" style="display:none" @change="chooseImg" id="img-input" type="file">
+
+            </form>
+
+            <div class="Machine" style="clear:both">
+              <div class="resource-item" v-for="(item,index) in TP">
+                <img :src="item">
+                <span class="close-resource" @click="delImg(index)">
+                  <i class="fa fa-times-circle"></i>
+                </span>
+              </div>
+            </div>
+          </div>
+          <div class="detail-item" v-loading="isAnalysis">
             <span class="item-title">机器分析</span>
             <el-button @click="analysis" type="success" style="margin-left: 10px;height: 30px;line-height: 11px;">分析</el-button>
             <div class="Machine" style="clear:both">
@@ -110,30 +131,62 @@
               <textarea class="textarea " v-model="ZY"></textarea>
             </div>
           </div>
-          <!-- <div class="detail-item">
-            <span class="item-title track-title">事态跟踪:</span>
-            <span class="item-content timeline-content">
-                <ul class="itemline-box">
-                    <li v-for="item in trackData"  class="timeline-item">
-                        <i class="timeline-icon fa fa-circle-o"></i>
-                        <div class="tiemline-text">
-                            <p class="timeline-time">
-                              <input type="text" v-model="item.time">
-                            </p>
-                            <p class="tiemline-name">
-                              <input type="text" v-model="item.name">
-                            </p>
-                            <p>
-                              <textarea style="min-height:100px;" class="textarea" v-model="item.content"></textarea>
-                            </p> -->
-                          <!--<h3 class="timeline-time" v-model="item.time" contenteditable="true"></h3>-->
-                          <!--<h4 class="tiemline-name" v-model="item.name" contenteditable="true"></h4>-->
-                          <!--<p v-model="item.content" contenteditable="true"></p>-->
-                        <!-- </div>
-                    </li>
-                </ul>
+          <div class="detail-item">
+            <span class="item-title">是否有事态跟踪</span>
+            <span class="item-content">
+              <el-radio v-model="SFSJGZ" label="1">是</el-radio>
+              <el-radio v-model="SFSJGZ" label="0">否</el-radio>
             </span>
-          </div> -->
+          </div>
+          <div class="detail-item" v-show="SFSJGZ == 1">
+            <span class="item-title track-title">事态跟踪:</span>
+            <span class="item-content timeline-content" style="width:80%">
+                <ul class="itemline-box">
+                  <li class="timeline-item">
+                    <div class="tiemline-text">
+                      <div class="timeline-text-item">
+                        <span>发帖时间：</span>
+                        <input class="track-input" type="text" v-model="trackHead.time">
+                      </div>
+                      <div class="timeline-text-item">
+                        <span>帖子信息：</span>
+                        <input class="track-input" type="text" v-model="trackHead.content">
+                      </div>
+                    </div>
+                  </li>
+                  <li v-for="(item,index) in trackData"  class="timeline-item">
+                      <i class="timeline-icon fa fa-circle-o"></i>
+                      <i @click="delTrack(index)" class="del-track timeline-icon fa fa-times"></i>
+                      <div class="tiemline-text">
+                          <div class="timeline-text-item">
+                            <span>之前回帖数:</span>
+                            <input class="track-input" type="text" v-model="item.preNum">
+                          </div>
+                          <div class="timeline-text-item timeline-time">
+                            <span>回复时间:</span>
+                            <input class="track-input" type="text" v-model="item.time">
+                          </div>
+                          <div class="timeline-text-item  tiemline-name">
+                            <span>机构名称:</span>
+                            <input class="track-input" type="text" v-model="item.name">
+                          </div>
+                          <div class="timeline-text-item">
+                            <span>回复内容:</span>
+                            <textarea style="min-height:150px;" class="track-input textarea" v-model="item.content"></textarea>
+                          </div>
+                          <div class="timeline-text-item" v-show="index == trackData.length - 1">
+                            <span>回复之后跟帖数：</span>
+                            <input class="track-input" type="text" v-model="item.lastReply">
+                          </div>
+                      </div>
+                  </li>
+                  
+              </ul>
+              <span class="add-track" @click="addTrack">
+                <i class="fa fa-plus"></i>
+              </span>
+            </span>
+          </div>
           <div class="detail-item">
             <el-button @click="submit" type="success" >提交</el-button>
           </div>
@@ -182,8 +235,19 @@
         SFZC:'0', //是否暂存
         SJKZ:'', //快照
         SFSJGZ:'0', //是否含有事件跟踪
+        SJGZSJ:'', //事件跟踪数据
+        TPJH:'', //图片集合
 
         typeList:[], //类型集合
+        trackHead:{
+          time:'',
+          content:''
+        }, //事件头
+        trackData:[], //事件跟踪数据
+
+        TP:[], //图片数据
+        fileList:null,
+        SP:[], //视频数据
 
       }
     },
@@ -191,7 +255,40 @@
       this.getTypes();
       this.getLabels();
     },
-    methods:{//省份改变
+    methods:{
+        //删除图片
+        delImg(index){
+          this.TP.splice(index,1);
+          var files = document.getElementById('img-input').files;
+          console.log(files);
+          files = Array.prototype.slice.call(files)
+          files.splice(index,1);
+          this.fileList = files;
+          console.log(files);
+        },
+        //选择图片
+        chooseImg(){
+          var _this = this;
+          var files = document.getElementById('img-input').files;
+          this.fileList = files;
+          for(var i = 0;i<files.length;i++){
+            var file = files[i];
+            var reader = new FileReader();
+            reader.readAsDataURL(file);
+            reader.onload = function(e){
+              _this.TP.push(reader.result)
+            }
+          }
+        },
+        //删除跟踪
+        delTrack(index){
+          this.trackData.splice(index,1);
+        },
+        //添加跟踪
+        addTrack(){
+          this.trackData.push({});
+        },
+        //省份改变
         updataProvince(value){
           if(value.value == '省'){
             this.SSSF = ''
@@ -241,15 +338,6 @@
                   data:bodyParam,
                   timeout: 10000
                 })
-                // .then(function(response){
-                //   if(response.data.code == 0){
-                //     _this.ZY = response.data.data;
-                //   }else{
-
-                //   }
-                // }).catch(function(error){
-
-                // })
         }
         
         //获取关键词
@@ -260,15 +348,6 @@
                   data:bodyParam,
                   timeout: 10000
                 })
-                // .then(function(response){
-                //   if(response.data.code == 0){
-                //     _this.GJC = response.data.data;
-                //   }else{
-
-                //   }
-                // }).catch(function(error){
-
-                // })
         }
         
         //获取人名地名机构名
@@ -279,17 +358,6 @@
                   data:bodyParam,
                   timeout: 10000
                 })
-                // .then(function(response){
-                //   if(response.data.code == 0){
-                //     _this.RENM = response.data.data.renming;
-                //     _this.DIM = response.data.data.diming;
-                //     _this.JIGOUM = response.data.data.jigouming;
-                //   }else{
-
-                //   }
-                // }).catch(function(error){
-
-                // })
         }
         _this.axios.all([summary(),keyword(),name()])
           .then(_this.axios.spread(function(summary,keyword,name){
@@ -344,6 +412,18 @@
 
         })
       },
+      //获取图片
+      getImgFile(TP){
+
+      },
+      //获取事件跟踪
+      getTrack(track){
+        track = JSON.parse(track);
+        console.log(track);
+        this.trackHead = track[0];
+        this.trackData = track.slice(1,track.length);
+        console.log(this.trackData);
+      },
       //获取数据
       getData(){
         var _this = this;
@@ -377,6 +457,14 @@
             _this.SJLB = response.data.data[0].SJLB;
             _this.BZ = response.data.data[0].BZ;
             _this.SFZSJ = response.data.data[0].SFZSJ;
+            _this.SJGZSJ = response.data.data[0].SJGZSJ;
+            _this.TPJH = response.data.data[0].TPJH;
+            if(_this.SJGZSJ != ''){
+              _this.getTrack(_this.SJGZSJ);
+            }
+            if(_this.TPJH != ''){
+              _this.getImgFile(_this.TPJH);
+            }
           }else{
 
           }
@@ -387,6 +475,13 @@
       },
       submit() {//提交
       var _this = this;
+      
+        //判断事件跟踪
+        if(this.SFSJGZ == 1){
+          this.trackData.unshift(this.trackHead);
+          this.SJGZSJ = JSON.stringify(this.trackData);
+          console.log(this.SJGZSJ);
+        }
         if(this.SSSF == ''){
            this.$message({
              message:'请选择省份',
@@ -435,124 +530,186 @@
              type:'error'
            });
            return;
+        }else if(this.SFSJGZ == 1 && this.trackData.length == 0){
+          this.$message({
+             message:'请填写事件跟踪数据',
+             type:'error'
+           });
+           return;
         }
         
         this.isDetailLoad = true;
         if(this.SJDL == 2){
           this.SJLB = '';
         }
-        var bodyParam = {
-          YSSJBH:this.YSSJBH,
-          BH:this.BH,
-          CJNR: this.CJNR,
-          FBSJ: this.FBSJ,
-          SJDL: this.SJDL,
-          SJLB: this.SJLB,
-          SJLY: this.SJLY,
-          SJDZ: this.SJDZ,
-          BZ: this.BZ,
-          SSSF: this.SSSF,
-          SSCS: this.SSCS,
-          SSQX: this.SSQX,
-          ZY: this.ZY,
-          GJC: this.GJC,
-          DIM: this.DIM,
-          RENM: this.RENM,
-          JIGOUM: this.JIGOUM,
-          CJSJ: this.CJSJ,
-          SFZSJ: this.SFZSJ,
-          SFZC: this.SFZC,
-          SJKZ: this.SJKZ,
-          SFSJGZ: this.SFSJGZ
+        if(this.SFSJGZ == 0){
+          this.SJGZSJ = '';
         }
-        console.log(bodyParam);
-        if(this.dataId == ''){//添加
-        console.log('添加哦');
+        //判断是否有图片
+        if(document.getElementById('img-input').files.length > 0){
+          var form = document.getElementById('uploadImg');
+          var formData = new FormData(form);
+          formData.append('img',this.fileList);
           this.axios({
-            method: 'post',
-            url:webApi.Host + webApi.WebData.Add,
-            data:bodyParam,
+            method:'post',
+            url:webApi.Host + webApi.WebData.UploadFile,
+            data:formData,
             timeout:10000
           }).then(function(response){
-            _this.isDetailLoad = false;
             if(response.data.code == 0){
-              _this.$message({
-                message:'添加成功',
-                type: 'success'
-              })
-              _this.YSSJBH = ''; //原始数据编号
-              _this.BH = ''; //数据编号
-              _this.CJNR = ''; //采集内容
-              _this.FBSJ = ''; //发布时间
-              _this.SJDL = '1'; //数据大类
-              _this.SJLB = ''; //数据类别
-              _this.SJLY = ''; //数据来源
-              _this.SJDZ = ''; //数据地址
-              _this.BZ = ''; //备注
-              _this.SSSF = ''; //省份
-              _this.SSCS = ''; //地市
-              _this.SSQX = ''; //区县
-              _this.SSSFDM = ''; //省份代码
-              _this.SSCSDM = ''; //地市代码
-              _this.SSQXDM = ''; //区县代码
-              _this.ZY = ''; //摘要
-              _this.GJC = ''; //关键词
-              _this.DIM = ''; //地名
-              _this.RENM = ''; //人名
-              _this.JIGOUM = ''; //机构名
-              _this.CJSJ = ''; //采集时间
-              _this.SFZSJ = '0'; //是否脏数据
-              _this.SFZC = '0'; //是否暂存
-              _this.SJKZ = ''; //快照
-              _this.SFSJGZ = '0'; //是否含有事件跟踪
-               _this.$emit('inputClose',{isShow:false,isUpdate:true});
+              console.log(1);
+              if(response.data.data.length>0){
+                console.log(1);
+                //如果存在图片集合就加个逗号
+                if(_this.TPJH != null || _this.TPJH != ''){
+                  _this.TPJH += ','
+                }
+                //循环添加图片id
+                for(var i = 0;i<response.data.data.length;i++){
+                  _this.TPJH += response.data.data[i] + ',';
+                }
+                _this.TPJH = _this.TPJH.slice(0,_this.TPJH.length - 1);
+                console.log(_this.TPJH);
+                _this.submitAll();
+              }
             }else{
-              _this.$message({
-                message:'添加失败',
-                type: 'error'
-              })
+
             }
           }).catch(function(error){
+            console.log(error);
             _this.isDetailLoad = false;
-            _this.$message({
-                message:'失败',
-                type: 'error'
-              })
-  
           })
         }else{
-          //修改
-          this.axios({
-            method: 'post',
-            url:webApi.Host + webApi.WebData.Update,
-            data:bodyParam,
-            timeout:10000
-          }).then(function(response){
-            _this.isDetailLoad = false;
-            if(response.data.code == 0){
-              _this.$message({
-                message:'修改成功',
-                type: 'success'
-              })
-              _this.$emit('inputClose',{isShow:false,isUpdate:true});
-            }else{
-              _this.$message({
-                message:'添加失败',
-                type: 'error'
-              })
-            }
-          }).catch(function(error){
-            _this.isDetailLoad = false;
-            _this.$message({
-                message:'失败',
-                type: 'error'
-              })
-          })
+          this.TPJH = '';
+          _this.submitAll();
         }
+      },
+      //提交全部
+      submitAll(){
+        var _this = this;
+        var bodyParam = {
+            YSSJBH:this.YSSJBH,
+            BH:this.BH,
+            CJNR: this.CJNR,
+            FBSJ: this.FBSJ,
+            SJDL: this.SJDL,
+            SJLB: this.SJLB,
+            SJLY: this.SJLY,
+            SJDZ: this.SJDZ,
+            BZ: this.BZ,
+            SSSF: this.SSSF,
+            SSCS: this.SSCS,
+            SSQX: this.SSQX,
+            ZY: this.ZY,
+            GJC: this.GJC,
+            DIM: this.DIM,
+            RENM: this.RENM,
+            JIGOUM: this.JIGOUM,
+            CJSJ: this.CJSJ,
+            SFZSJ: this.SFZSJ,
+            SFZC: this.SFZC,
+            SJKZ: this.SJKZ,
+            SFSJGZ: this.SFSJGZ,
+            SJGZSJ: this.SJGZSJ,
+            TPJH:this.TPJH
+            
+          }
+          console.log(bodyParam);
+          if(this.dataId == ''){//添加
+          console.log('添加哦');
+            this.axios({
+              method: 'post',
+              url:webApi.Host + webApi.WebData.Add,
+              data:bodyParam,
+              timeout:10000
+            }).then(function(response){
+              _this.isDetailLoad = false;
+              if(response.data.code == 0){
+                _this.$message({
+                  message:'添加成功',
+                  type: 'success'
+                })
+                _this.YSSJBH = ''; //原始数据编号
+                _this.BH = ''; //数据编号
+                _this.CJNR = ''; //采集内容
+                _this.FBSJ = ''; //发布时间
+                _this.SJDL = '1'; //数据大类
+                _this.SJLB = ''; //数据类别
+                _this.SJLY = ''; //数据来源
+                _this.SJDZ = ''; //数据地址
+                _this.BZ = ''; //备注
+                _this.SSSF = ''; //省份
+                _this.SSCS = ''; //地市
+                _this.SSQX = ''; //区县
+                _this.SSSFDM = ''; //省份代码
+                _this.SSCSDM = ''; //地市代码
+                _this.SSQXDM = ''; //区县代码
+                _this.ZY = ''; //摘要
+                _this.GJC = ''; //关键词
+                _this.DIM = ''; //地名
+                _this.RENM = ''; //人名
+                _this.JIGOUM = ''; //机构名
+                _this.CJSJ = ''; //采集时间
+                _this.SFZSJ = '0'; //是否脏数据
+                _this.SFZC = '0'; //是否暂存
+                _this.SJKZ = ''; //快照
+                _this.SFSJGZ = '0'; //是否含有事件跟踪
+                _this.SJGZSJ = '';
+                _this.TPJH = ''
+                _this.$emit('inputClose',{isShow:false,isUpdate:true});
+              }else{
+                _this.$message({
+                  message:'添加失败',
+                  type: 'error'
+                })
+              }
+            }).catch(function(error){
+              _this.isDetailLoad = false;
+              _this.$message({
+                  message:'失败',
+                  type: 'error'
+                })
+            });
+          }else{
+            //修改
+            this.axios({
+              method: 'post',
+              url:webApi.Host + webApi.WebData.Update,
+              data:bodyParam,
+              timeout:10000
+            }).then(function(response){
+              _this.isDetailLoad = false;
+              if(response.data.code == 0){
+                _this.$message({
+                  message:'修改成功',
+                  type: 'success'
+                })
+                _this.$emit('inputClose',{isShow:false,isUpdate:true});
+              }else{
+                _this.$message({
+                  message:'添加失败',
+                  type: 'error'
+                })
+              }
+            }).catch(function(error){
+              _this.isDetailLoad = false;
+              _this.$message({
+                  message:'失败',
+                  type: 'error'
+                })
+            })
+          }
       }
     },
     watch: {
       dataId() {
+        // document.getElementById('img-input').value = '';
+        this.TP = [];
+        this.trackHead = {
+          time:'',
+          content:''
+        }; 
+        this.trackData = [];
         if(this.dataId == ''){
           this.YSSJBH = ''; //原始数据编号
           this.BH = ''; //数据编号
@@ -579,6 +736,8 @@
           this.SFZC = '0'; //是否暂存
           this.SJKZ = ''; //快照
           this.SFSJGZ = '0'; //是否含有事件跟踪
+          this.SJGZSJ = '';
+          this.TPJH = ''
         }else{
             this.getData();
         }
@@ -705,6 +864,23 @@
           .Machine {
             padding: 10px;
             border: 1px solid #eae4e4;
+            .resource-item{
+              width: 25%;
+              position: relative;
+              display: inline-block;
+              padding: 10px;
+              img{
+                width: 100%;
+              }
+              .close-resource{    
+                position: absolute;
+                top: -12px;
+                right: -8px;
+                font-size: 20px;
+                color: red;
+                cursor: pointer;
+              }
+            }
             .item-title {
               width: 150px;
               margin-bottom: 15px;
@@ -741,8 +917,6 @@
               vertical-align: top;
             }
             img{
-              width: 200px;
-              height: 300px;
             }
             video{
               width: 300px;
@@ -757,6 +931,19 @@
           }
           .timeline-content{
             border: none;
+            .add-track{
+              display: block;
+              width: 30px;
+              height: 30px;
+              line-height: 30px;
+              text-align: center;
+              border: solid 1px #ddd;
+              border-radius: 50px;
+              cursor: pointer;
+              color: #fff;
+              background: #67c23a;
+              margin-left: 50px;
+            }
             .itemline-box{
               padding: 0;
               .timeline-item{
@@ -776,26 +963,33 @@
                   text-align: center;
                   cursor: pointer;
                 }
+                .del-track{
+                  left: 25px;
+                  font-size: 20px;
+                  color: #c71010;
+                }
                 .tiemline-text{
                   line-height: 22px;
                   display: inline-block;
                   padding-left: 30px;
                   width: 100%;
-                  .timeline-time{
+                  .timeline-text-item{
                     margin-bottom: 5px;
                     font-size: 16px;
                     color: #333;
                     font-weight: 500;
-                  }
-                  .tiemline-name{
-                    color: #333;
-                  }
-                  p{
-                    color: #555;
-                    input {
-                      width: auto;
-                      padding: 3px;
-                      border: 1px solid #eae4e4;
+                    span{
+                      display: inline-block;
+                      width: 100px;
+                      color:#333;
+                      vertical-align: top;
+                      text-align: right;
+                      font-size: 14px;
+                    }
+                    .track-input{
+                      border:solid 1px rgb(158, 158, 158);
+                      height: 30px;
+                      width: 70%;
                     }
                   }
                 }

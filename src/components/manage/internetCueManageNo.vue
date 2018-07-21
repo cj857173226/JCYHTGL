@@ -13,7 +13,7 @@
             <i class="iconfont icon-sousuo"></i>
           </span>
       </div>
-      <span @click="explain" style="float:right;color: #676767;margin-right:10px;cursor: pointer;"><span style="color:red;margin-right:10px">审核至少从2017年发布的数据</span><i class="fa fa-question-circle"></i>审核说明</span>
+      <span @click="explain" style="float:right;color: #676767;margin-right:10px;cursor: pointer;"><i class="fa fa-question-circle"></i>审核说明</span>
     </div>
     <div class="main-body">
       <div class="cue-filter-wrap">
