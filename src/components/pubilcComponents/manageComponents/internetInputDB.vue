@@ -109,13 +109,10 @@
             </div>
           </div>
           <div class="detail-item">
-            <span class="item-title">是否事态跟踪</span>
-            <span class="item-content">
-              <el-radio v-model="SFSJGZ" label="1">是</el-radio>
-              <el-radio v-model="SFSJGZ" label="0">否</el-radio>
-            </span>
+            <span class="item-title">事态跟踪</span>
+            <el-button @click="trackAnalysis" type="success" style="margin-left: 10px;height: 30px;line-height: 11px;">分析</el-button>
           </div>
-          <div class="detail-item" v-show="SFSJGZ == 1">
+          <div class="detail-item">
             <span class="item-title track-title">事态跟踪:</span>
             <span class="item-content timeline-content">
                 <ul class="itemline-box">
@@ -123,8 +120,12 @@
                         <i class="timeline-icon fa fa-circle-o"></i>
                         <div class="tiemline-text">
                             <div class="timeline-text-item">
-                              <span>目前回帖数:</span>
-                              <input class="track-input" type="text" v-model="item.num">
+                              <span>之前回帖数:</span>
+                              <input class="track-input" type="text" v-model="item.preNum">
+                            </div>
+                            <div class="timeline-text-item">
+                              <span>之后回帖数:</span>
+                              <input class="track-input" type="text" v-model="item.nextNum">
                             </div>
                             <div class="timeline-text-item timeline-time">
                               <span>回复时间:</span>
@@ -138,9 +139,6 @@
                               <span>回复内容:</span>
                               <textarea style="min-height:150px;" class="track-input textarea" v-model="item.content"></textarea>
                             </div>
-                          <!--<h3 class="timeline-time" v-model="item.time" contenteditable="true"></h3>-->
-                          <!--<h4 class="tiemline-name" v-model="item.name" contenteditable="true"></h4>-->
-                          <!--<p v-model="item.content" contenteditable="true"></p>-->
                         </div>
                     </li>
                 </ul>
@@ -168,8 +166,7 @@
       return{
         isDetailLoad: false, 
         isAnalysis: false,
-
-        place:[],
+        isTrackAnalysis: false,
 
         YSSJBH:'', //原始数据编号
         CJNR:'', //采集内容
@@ -206,7 +203,11 @@
       this.getLabels();
     },
     methods:{
-      //省份改变
+        //事件跟踪分析
+        trackAnalysis(){
+          
+        },
+        //省份改变
         updataProvince(value){
           if(value.value == '省'){
             this.SSSF = ''
@@ -249,15 +250,6 @@
                   data:bodyParam,
                   timeout: 10000
                 })
-                // .then(function(response){
-                //   if(response.data.code == 0){
-                //     _this.ZY = response.data.data;
-                //   }else{
-
-                //   }
-                // }).catch(function(error){
-
-                // })
         }
         
         //获取关键词
@@ -268,15 +260,6 @@
                   data:bodyParam,
                   timeout: 10000
                 })
-                // .then(function(response){
-                //   if(response.data.code == 0){
-                //     _this.GJC = response.data.data;
-                //   }else{
-
-                //   }
-                // }).catch(function(error){
-
-                // })
         }
         
         //获取人名地名机构名
@@ -287,17 +270,6 @@
                   data:bodyParam,
                   timeout: 10000
                 })
-                // .then(function(response){
-                //   if(response.data.code == 0){
-                //     _this.RENM = response.data.data.renming;
-                //     _this.DIM = response.data.data.diming;
-                //     _this.JIGOUM = response.data.data.jigouming;
-                //   }else{
-
-                //   }
-                // }).catch(function(error){
-
-                // })
         }
         _this.axios.all([summary(),keyword(),name()])
           .then(_this.axios.spread(function(summary,keyword,name){
@@ -406,11 +378,6 @@
            return;
         }
         this.isDetailLoad = true;
-        if(this.place.length > 0){
-          this.SSSF = this.place[0];
-          this.SSCS = this.place[1];
-          this.SSQX = this.place[2];
-        }
         if(this.SJDL == 2){
           this.SJLB = '';
         }
@@ -661,7 +628,7 @@
                 .tiemline-text{
                   line-height: 22px;
                   display: inline-block;
-                  padding-left: 30px;
+                  padding-left: 10px;
                   width: 100%;
                   .timeline-text-item{
                     margin-bottom: 5px;
@@ -674,9 +641,10 @@
                       color:#333;
                       vertical-align: top;
                       text-align: right;
+                      font-size: 14px;
                     }
                     .track-input{
-                      border:solid 1px #ddd;
+                      border:solid 1px rgb(158, 158, 158);
                       height: 30px;
                       width: 70%;
                     }
@@ -714,7 +682,7 @@
             .item-content{
               height: 32px;
               line-height: 32px;    
-              padding: 2px 0;
+              padding: 2px 5px;
             }
           }
         }
