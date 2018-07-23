@@ -90,7 +90,7 @@
               <label for="img-input">
                 <i class="fa fa-plus-circle" style="font-size: 30px;margin-left: 10px;color: #7faae4;"></i>
               </label>
-              <input multiple name="img" style="display:none" @change="chooseImg" id="img-input" type="file">
+              <input name="img" style="display:none" @change="chooseImg" id="img-input" type="file">
 
             </form>
 
@@ -258,25 +258,56 @@
     methods:{
         //删除图片
         delImg(index){
-          this.TP.splice(index,1);
-          var files = document.getElementById('img-input').files;
-          console.log(files);
-          files = Array.prototype.slice.call(files)
-          files.splice(index,1);
-          this.fileList = files;
-          console.log(files);
+          var _this = this;
+          _this.TP.splice(index,1);
+          var tpjh = '';
+          if(_this.TPJH.indexOf(',') != -1){
+            var obj = _this.TPJH.split(',');
+            obj = obj.splice(index,1);
+            for(var i = 0;i<obj.length;i++){
+              tpjh += obj[i] + ',';
+            }
+            tpjh = tpjh.slice(0,tpjh.length-1);
+          }
+          _this.TPJH = tpjh;
+          console.log("图片集合:",_this.TP);
+          console.log("图片集合:",_this.TPJH);
         },
         //选择图片
         chooseImg(){
           var _this = this;
-          var files = document.getElementById('img-input').files;
-          this.fileList = files;
-          for(var i = 0;i<files.length;i++){
-            var file = files[i];
-            var reader = new FileReader();
-            reader.readAsDataURL(file);
-            reader.onload = function(e){
-              _this.TP.push(reader.result)
+          var form = document.getElementById('uploadImg');
+          var formData = new FormData(form);
+          // formData.append('img',this.fileList);
+          this.axios({
+            method:'post',
+            url:webApi.Host + webApi.WebData.UploadFile,
+            data:formData,
+            timeout:10000
+          }).then(function(response){
+            if(response.data.code == 0){
+              if(response.data.data.length > 0){
+                _this.TPJH += ',' + response.data.data[0];
+                var src = webApi.WebData.DownLoadFile.format({id:response.data.data[0]});
+                _this.TP.push(src);
+                console.log(_this.TP);
+              }
+            }else{
+
+            }
+          }).catch(function(error){
+            console.log(error);
+            _this.isDetailLoad = false;
+          })
+        },
+        //获取图片
+        getImgData(imgs){
+          var _this = this;
+          imgs = imgs.split(',');
+          for(var i=0;i<imgs.length;i++){
+            if(imgs[i] != 'null'){
+              var src = webApi.WebData.DownLoadFile.format({id:imgs[i]});
+              _this.TP.push(src);
             }
           }
         },
@@ -362,9 +393,6 @@
         _this.axios.all([summary(),keyword(),name()])
           .then(_this.axios.spread(function(summary,keyword,name){
             _this.isAnalysis = false;
-            console.log(summary);
-            console.log(keyword);
-            console.log(name);
             _this.GJC = keyword.data.data;
             _this.ZY = summary.data.data;
             _this.RENM = name.data.data.renming;
@@ -459,6 +487,9 @@
             _this.SFZSJ = response.data.data[0].SFZSJ;
             _this.SJGZSJ = response.data.data[0].SJGZSJ;
             _this.TPJH = response.data.data[0].TPJH;
+            if(_this.TPJH != ''){
+              _this.getImgData(_this.TPJH);
+            }
             if(_this.SJGZSJ != ''){
               _this.getTrack(_this.SJGZSJ);
             }
@@ -545,44 +576,7 @@
         if(this.SFSJGZ == 0){
           this.SJGZSJ = '';
         }
-        //判断是否有图片
-        if(document.getElementById('img-input').files.length > 0){
-          var form = document.getElementById('uploadImg');
-          var formData = new FormData(form);
-          formData.append('img',this.fileList);
-          this.axios({
-            method:'post',
-            url:webApi.Host + webApi.WebData.UploadFile,
-            data:formData,
-            timeout:10000
-          }).then(function(response){
-            if(response.data.code == 0){
-              console.log(1);
-              if(response.data.data.length>0){
-                console.log(1);
-                //如果存在图片集合就加个逗号
-                if(_this.TPJH != null || _this.TPJH != ''){
-                  _this.TPJH += ','
-                }
-                //循环添加图片id
-                for(var i = 0;i<response.data.data.length;i++){
-                  _this.TPJH += response.data.data[i] + ',';
-                }
-                _this.TPJH = _this.TPJH.slice(0,_this.TPJH.length - 1);
-                console.log(_this.TPJH);
-                _this.submitAll();
-              }
-            }else{
-
-            }
-          }).catch(function(error){
-            console.log(error);
-            _this.isDetailLoad = false;
-          })
-        }else{
-          this.TPJH = '';
-          _this.submitAll();
-        }
+        _this.submitAll();
       },
       //提交全部
       submitAll(){
