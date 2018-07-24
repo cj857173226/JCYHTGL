@@ -18,18 +18,16 @@
       </div>
     </div>
     <div class="main-body">
-      <div class="cue-types-wrap" style="border:none;">
-        <div class="pushBtn">
-            <el-button @click="chooseCity" type="success" plain>推送至检察院</el-button>
+       <div class="switch-btn" @click="hiddenBtn">
+              <i v-show="!isHidden" class="fa fa-angle-double-up"></i>
+              <i v-show="isHidden" class="fa fa-angle-double-down"></i>
+        </div>
+      <div class="cue-filter-wrap" v-show="!isHidden">
+        <div class="cue-source clearfix" style="margin-bottom:15px;border:none;">
+          <div class="pushBtn">
+            <el-button @click="chooseCity" type="success" plain style="vertical-align:text-bottom;">推送至检察院</el-button>   
           </div>
-      </div>
-    <!-- <div class="cue-types-wrap" style="border:none;">
-        <div class="pushBtn">
-            <el-button @click="chooseCity" type="success" plain>筛选条件</el-button>
-            <el-button @click="toggleFilter" type="success" plain>收起</el-button>
-          </div>
-      </div> -->
-      <div class="cue-filter-wrap">
+        </div>
         <div class="cue-source clearfix">
             <div class="left-title">
                 <i class="iconfont icon-caiji"></i>
@@ -43,7 +41,7 @@
                 </el-select>
               
             </div>
-          </div>
+        </div>
         <div class="cue-source clearfix">
           <div class="left-title">
             <i class="fa fa-map-marker"></i>
@@ -248,7 +246,7 @@
                  :isShow="interInputProps.isShow"
                  :dataId="interInputProps.dataId"></inter-input>
 
-    <el-dialog @close="closeCity" width="600px" title="选择省市" :visible.sync="isChooseCity">
+    <el-dialog  width="600px" title="选择省市" :visible.sync="isChooseCity">
       <div id="choose-city" style="height: 55px">
         <v-distpicker @province="updataProvince" @city="updataCity" @area="updataCounty" style="height: 100%;display:inline-block"></v-distpicker>
         <el-button style="float:right" type="text" @click="confirmPush">确认推送</el-button>
@@ -266,6 +264,7 @@
     name:'cue-list',
     data(){
       return{
+        isHidden: true,//筛选框显示
         interInputProps: {
           isShow: false,//是否显示
           dataId: '',//数据id
@@ -313,13 +312,9 @@
       _this.getInternetCueList(); //获取互联网线索列表
     },
     methods:{
-      //切换toggleFilte
-      toggleFilte(){
-
-      },
-      //关闭推送检察院框
-      closeCity(){
-
+      //筛选条件显示
+      hiddenBtn() {
+        this.isHidden = !this.isHidden;
       },
       //省份改变
       updataProvince(value){
@@ -386,6 +381,7 @@
       confirmFilter() {
         this.page = 1;
         this.getInternetCueList();
+        this.hiddenBtn();
       },
       //推送检察院
       confirmPush() {
@@ -703,10 +699,23 @@
 
     }
     .main-body{
-      margin-top: 5px;
+      position: relative;
+      margin-top: 15px;
       height: calc(100% - 74px);
       max-height: calc(100% - 74px);
       padding: 0 50px;
+      .switch-btn{    
+          width: 40px;
+          height: 40px;
+          text-align: center;
+          line-height: 40px;
+          background: #f4f4f4;
+          color: #00a65a;
+          font-size: 25px;
+          cursor: pointer;
+          box-shadow: 2px 0px 10px #e0e0e0;
+          border-radius: 5px;
+        }
       .cue-types-wrap{
         border: 1px solid #dcdcdc;
         .title-wrap{
@@ -791,8 +800,17 @@
         }
 
       }
-      .cue-filter-wrap{
-        margin-top: 5px;
+      .cue-filter-wrap{      
+        position: absolute;
+        top: 45px;
+        left: 50px;
+        width: calc(100% - 100px);
+        padding: 0 0 15px 0;
+        z-index: 999;
+        background-color: #fff;
+        border-bottom:1px solid #dcdcdc;
+        box-sizing: border-box;
+        user-select: none;
         .cue-source,
         .cue-sort{
           height: 40px;
@@ -810,7 +828,7 @@
           }
           .left-title{
             float: left;
-            padding-left: 20px;
+            padding-left: 15px;
             height: 100%;
             width: 144px;
             background:#EEEEEE;
@@ -820,7 +838,7 @@
             .iconfont{
               font-size: 16px;
               font-weight: 800;
-              margin-right: 10px;
+              // margin-right: 10px;
             }
           }
           .right{
@@ -890,8 +908,8 @@
       }
       .cue-list{
         margin-top: 10px;
-        height: calc( 100% - 403px);
-        max-height: calc( 100% - 403px);
+        height: calc( 100% - 115px);
+        max-height: calc( 100% - 115px);
         overflow-y: hidden;
         .isRead{
           color: #F66;
@@ -982,7 +1000,7 @@
           }
         }
         .cue-filter-wrap{
-          margin-top: 16px;
+          margin-top: 0;
           .cue-source,
           .cue-sort{
             height: 32px;
@@ -999,8 +1017,8 @@
         }
         .cue-list{
           margin-top: 10px;
-          height: calc( 100% - 365px);
-          max-height: calc( 100% - 365px);
+          height: calc( 100% - 105px);
+          max-height: calc( 100% - 105px);
           overflow-y: hidden;
         }
         .page-wrap{
