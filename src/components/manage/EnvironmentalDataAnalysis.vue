@@ -198,6 +198,7 @@
                 width="100"
                 >
                 <template slot-scope="scope"  >
+                    <el-button @click="check(scope.row.BH)" type="text" size="small">修改</el-button>
                     <el-button @click="operation(scope.row.BH)" type="text" size="small">同步</el-button>
                 </template>
             </el-table-column>
@@ -213,12 +214,15 @@
         </el-pagination>
       </div>
     </div>
-
+    
+    <table-more v-show="isShow"></table-more>
   </div>
 </template>
 
 <script>
+import tableMore from '../pubilcComponents/manageComponents/environmentDataCheck'
 export default {
+    components:{tableMore},
     data(){
         return{
             isLoad:false,
@@ -244,14 +248,24 @@ export default {
             totalPages: 10,//总条数
             keyword: '' , //关键字
             timeSearch:[new Date((new Date()).getTime() - 3600 * 1000 * 24 * 30),new Date()],
-            state: ''//同步状态
+            state: '',//同步状态
+            isShow:false,
         }
     },
     mounted(){
-        this.tableResize();//表格高度自适应
-        this.GetExDataIndex();//获取外部数据索引
+      var _this = this;
+      this.tableResize();//表格高度自适应
+      this.GetExDataIndex();//获取外部数据索引
+      this.$root.Bus.$on('closeMore',function(){
+        _this.isShow = false;
+      })
     },
     methods:{ 
+        //修改表格
+        check(id){
+          this.isShow = true;
+          this.$root.Bus.$emit('showMore',id);
+        },
         GetExDataIndex(){//获取外部数据索引
           let _this = this;
           let url = (webApi.SzOpenData.GetExDataIndex).format({

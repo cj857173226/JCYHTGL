@@ -83,7 +83,7 @@
             </span>
           </div>
           <div class="detail-item" v-loading="isAnalysis">
-            <span class="item-title" @click="upLoadImgBtn()">图片上传</span>
+            <span class="item-title">图片上传</span>
 
             <form id="uploadImg" name="uploadImg" enctype="multipart/form-data">
 
@@ -440,10 +440,6 @@
 
         })
       },
-      //获取图片
-      getImgFile(TP){
-
-      },
       //获取事件跟踪
       getTrack(track){
         track = JSON.parse(track);
@@ -492,9 +488,6 @@
             }
             if(_this.SJGZSJ != ''){
               _this.getTrack(_this.SJGZSJ);
-            }
-            if(_this.TPJH != ''){
-              _this.getImgFile(_this.TPJH);
             }
           }else{
 

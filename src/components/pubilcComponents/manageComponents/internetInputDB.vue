@@ -83,6 +83,27 @@
             </span>
           </div>
           <div class="detail-item" v-loading="isAnalysis">
+            <span class="item-title">图片上传</span>
+
+            <form id="uploadImg" name="uploadImg" enctype="multipart/form-data">
+
+              <label for="img-input">
+                <i class="fa fa-plus-circle" style="font-size: 30px;margin-left: 10px;color: #7faae4;"></i>
+              </label>
+              <input name="img" style="display:none" @change="chooseImg" id="img-input" type="file">
+
+            </form>
+
+            <div class="Machine" style="clear:both">
+              <div class="resource-item" v-for="(item,index) in TP">
+                <img :src="item">
+                <span class="close-resource" @click="delImg(index)">
+                  <i class="fa fa-times-circle"></i>
+                </span>
+              </div>
+            </div>
+          </div>
+          <div class="detail-item" v-loading="isAnalysis">
             <span class="item-title">机器分析</span>
             <el-button @click="analysis" type="success" style="margin-left: 10px;height: 30px;line-height: 11px;">分析</el-button>
             <div class="Machine" style="clear:both">
@@ -116,31 +137,43 @@
             <span class="item-title track-title">事态跟踪:</span>
             <span class="item-content timeline-content">
                 <ul class="itemline-box">
-                    <li v-for="item in trackData"  class="timeline-item">
-                        <i class="timeline-icon fa fa-circle-o"></i>
-                        <div class="tiemline-text">
-                            <div class="timeline-text-item">
-                              <span>之前回帖数:</span>
-                              <input class="track-input" type="text" v-model="item.preNum">
-                            </div>
-                            <div class="timeline-text-item">
-                              <span>之后回帖数:</span>
-                              <input class="track-input" type="text" v-model="item.nextNum">
-                            </div>
-                            <div class="timeline-text-item timeline-time">
-                              <span>回复时间:</span>
-                              <input class="track-input" type="text" v-model="item.time">
-                            </div>
-                            <div class="timeline-text-item  tiemline-name">
-                              <span>机构名称:</span>
-                              <input class="track-input" type="text" v-model="item.name">
-                            </div>
-                            <div class="timeline-text-item">
-                              <span>回复内容:</span>
-                              <textarea style="min-height:150px;" class="track-input textarea" v-model="item.content"></textarea>
-                            </div>
-                        </div>
-                    </li>
+                  <li class="timeline-item">
+                    <div class="tiemline-text">
+                      <div class="timeline-text-item">
+                        <span>发帖时间：</span>
+                        <input class="track-input" type="text" v-model="trackHead.time">
+                      </div>
+                      <div class="timeline-text-item">
+                        <span>帖子信息：</span>
+                        <input class="track-input" type="text" v-model="trackHead.content">
+                      </div>
+                    </div>
+                  </li>
+                  <li v-for="item in trackData"  class="timeline-item">
+                      <i class="timeline-icon fa fa-circle-o"></i>
+                      <div class="tiemline-text">
+                          <div class="timeline-text-item">
+                            <span>之前回帖数:</span>
+                            <input class="track-input" type="text" v-model="item.preNum">
+                          </div>
+                          <div class="timeline-text-item">
+                            <span>之后回帖数:</span>
+                            <input class="track-input" type="text" v-model="item.nextNum">
+                          </div>
+                          <div class="timeline-text-item timeline-time">
+                            <span>回复时间:</span>
+                            <input class="track-input" type="text" v-model="item.time">
+                          </div>
+                          <div class="timeline-text-item  tiemline-name">
+                            <span>机构名称:</span>
+                            <input class="track-input" type="text" v-model="item.name">
+                          </div>
+                          <div class="timeline-text-item">
+                            <span>回复内容:</span>
+                            <textarea style="min-height:150px;" class="track-input textarea" v-model="item.content"></textarea>
+                          </div>
+                      </div>
+                  </li>
                 </ul>
             </span>
           </div>
@@ -192,9 +225,14 @@
         SFZC:'0', //是否暂存
         SJKZ:'', //快照
         SFSJGZ:'0', //是否含有事件跟踪
+        SJGZSJ:'', //事件跟踪数据
+        TPJH:'', //图片集合
 
         typeList:[], //类型集合
         trackData:[{}], //事态跟踪
+        trackHead:{}, //事态跟踪头部
+
+        TP:[], //图片
 
       }
     },
@@ -202,7 +240,50 @@
       this.getTypes();
       this.getLabels();
     },
-    methods:{
+    methods:{//删除图片
+        delImg(index){
+          var _this = this;
+          _this.TP.splice(index,1);
+          var tpjh = '';
+          if(_this.TPJH.indexOf(',') != -1){
+            var obj = _this.TPJH.split(',');
+            obj = obj.splice(index,1);
+            for(var i = 0;i<obj.length;i++){
+              tpjh += obj[i] + ',';
+            }
+            tpjh = tpjh.slice(0,tpjh.length-1);
+          }
+          _this.TPJH = tpjh;
+          console.log("图片集合:",_this.TP);
+          console.log("图片集合:",_this.TPJH);
+        },
+        //选择图片
+        chooseImg(){
+          var _this = this;
+          var form = document.getElementById('uploadImg');
+          var formData = new FormData(form);
+          // formData.append('img',this.fileList);
+          this.axios({
+            method:'post',
+            url:webApi.Host + webApi.WebData.UploadFile,
+            data:formData,
+            timeout:10000
+          }).then(function(response){
+            if(response.data.code == 0){
+              if(response.data.data.length > 0){
+                _this.TPJH += ',' + response.data.data[0];
+                var src = webApi.WebData.DownLoadFile.format({id:response.data.data[0]});
+                _this.TP.push(src);
+                console.log(_this.TP);
+              }
+            }else{
+
+            }
+          }).catch(function(error){
+            console.log(error);
+            _this.isDetailLoad = false;
+          })
+        },
         //事件跟踪分析
         trackAnalysis(){
           
@@ -554,6 +635,23 @@
           .Machine {
             padding: 10px;
             border: 1px solid #eae4e4;
+            .resource-item{
+              width: 25%;
+              position: relative;
+              display: inline-block;
+              padding: 10px;
+              img{
+                width: 100%;
+              }
+              .close-resource{    
+                position: absolute;
+                top: -12px;
+                right: -8px;
+                font-size: 20px;
+                color: red;
+                cursor: pointer;
+              }
+            }
             .item-title {
               width: 150px;
               margin-bottom: 15px;
