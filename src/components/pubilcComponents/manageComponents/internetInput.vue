@@ -83,7 +83,7 @@
             </span>
           </div>
           <div class="detail-item" v-loading="isAnalysis">
-            <span class="item-title" @click="upLoadImgBtn()">图片上传</span>
+            <span class="item-title">图片上传</span>
 
             <form id="uploadImg" name="uploadImg" enctype="multipart/form-data">
 

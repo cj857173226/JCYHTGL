@@ -1,7 +1,7 @@
 var webApi = {
           Host:  'http://daniu.51vip.biz:10698/gyssAdminApp',
           //深圳开放平台数据。根据方法设置token
-SzOpenData : { 
+    SzOpenData : { 
     PullData: '/api/SzOpenData/PullData?sjsybh={sjsybh}', //数据索引编号; 方式:POST; 是否需要token:不需要；参数说明:[sjsybh=》数据索引编号；]
     GetExDataIndex: '/api/SzOpenData/GetExDataIndex?keywords={keywords}&tbzt={tbzt}&pageNum={pageNum}&pageSize={pageSize}', //获取外部数据索引; 方式:GET; 是否需要token:不需要；参数说明:[keywords=》关键字；tbzt=》同步状态；pageNum=》页号；pageSize=》页大小；]
     },
