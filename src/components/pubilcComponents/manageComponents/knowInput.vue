@@ -94,7 +94,7 @@
       },
       //关闭
       close() {
-        this.$emit("closeInput",false);
+        this.$emit("closeInput",{isShow:false,isUpdate:false});
       },
       //修改编写内容
       onContentChange(val){
@@ -140,8 +140,8 @@
             });
             btn.removeAttribute('disabled');
             btn.style.cursor = 'pointer';
+            _this.$emit("closeInput",{isShow:false,isUpdate:true});
           }
-          console.log(res)
         }).catch(function(err){
           _this.$message({
             showClose: true,
@@ -196,7 +196,6 @@
           _this.editorText = "";
           _this.editor.setContent("");
         }
-        console.log(this.knowledgeData)
       }
     },
     destroyed() {
@@ -213,7 +212,7 @@
     height: 100%;
     width: 100%;
     background-color: rgba(0,0,0,.4);
-    z-index: 1000;
+    z-index: 2000;
     &.toggleShow-enter-active,
     &.toggleShow-leave-active {
       transition: opacity .5s;

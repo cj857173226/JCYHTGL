@@ -138,6 +138,10 @@ button:active{
     text-align: center !important;;
   }
 
+  /*地区三级联动插件 */
+.distpicker-address-wrapper select {
+  vertical-align: text-bottom;
+}
   @media (max-width: 1440px) {
     .el-table td,
     .el-table th{
@@ -153,8 +157,12 @@ button:active{
       white-space: nowrap !important;;
     }
     .el-input__inner {
-      height: 32px !important;;
-      line-height: 32px !important;;
+      height: 32px !important;
+      line-height: 32px !important;
+    }
+    .distpicker-address-wrapper select {
+      height: 32px !important;
+      line-height: 32px !important;
     }
 
   }

@@ -115,8 +115,8 @@
           :total="totalPages">
         </el-pagination>
       </div>
-      <know-input :type="knowledgeType" :knowledgeId="knowledgeId" :isShow="isShow" @closeInput="closeInput">{{editorTitle}}</know-input>
     </div>
+    <know-input :type="knowledgeType" :knowledgeId="knowledgeId" :isShow="isShow" @closeInput="closeInput">{{editorTitle}}</know-input>
   </div>
 </template>
 
@@ -163,8 +163,10 @@
         this.$router.push({path: '/home/knowledgeDetail',query:{id:id}});
       },
       closeInput(data) {//关闭编辑框
-        this.isShow = data;
-        this.getKnowledge();
+        this.isShow = data.isShow;
+        if(data.isUpdate){
+          this.getKnowledge();
+        }   
       },
       change(id) {//修改
         let _this = this;
@@ -257,7 +259,6 @@
 
 <style lang="scss" scoped>
   #knowledgeManage{
-    position: relative;
     height: 100%;
     overflow: hidden;
     #header{

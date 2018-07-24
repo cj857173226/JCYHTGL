@@ -23,6 +23,12 @@
             <el-button @click="chooseCity" type="success" plain>推送至检察院</el-button>
           </div>
       </div>
+    <!-- <div class="cue-types-wrap" style="border:none;">
+        <div class="pushBtn">
+            <el-button @click="chooseCity" type="success" plain>筛选条件</el-button>
+            <el-button @click="toggleFilter" type="success" plain>收起</el-button>
+          </div>
+      </div> -->
       <div class="cue-filter-wrap">
         <div class="cue-source clearfix">
             <div class="left-title">
@@ -307,6 +313,10 @@
       _this.getInternetCueList(); //获取互联网线索列表
     },
     methods:{
+      //切换toggleFilte
+      toggleFilte(){
+
+      },
       //关闭推送检察院框
       closeCity(){
 
@@ -502,9 +512,9 @@
                 }else if(data[i].SJDL=='2') {
                   data[i].SJDL = '贪污腐败';
                 }
-                if(data[i].FBSJ.split(" ")[1]=="00:00:00") {
-                    data[i].FBSJ=data[i].FBSJ.split(" ")[0];
-                }
+                // if(data[i].FBSJ.split(" ")[1]=="00:00:00") {
+                //     data[i].FBSJ=data[i].FBSJ.split(" ")[0];
+                // }
               }
               // let ZYstr = '';
               // for(let i = 0;i < data.length; i++){
@@ -617,7 +627,6 @@
       .manage-icon{    
         font-size: 25px;
         float: right;
-        margin-right: 10px;
         margin-right: 10px;
         &:hover {
           cursor: pointer;

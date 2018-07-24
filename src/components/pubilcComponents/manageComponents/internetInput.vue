@@ -440,12 +440,9 @@
 
         })
       },
-      //获取图片
-      getImgFile(TP){
-
-      },
       //获取事件跟踪
       getTrack(track){
+        console.log("事件")
         track = JSON.parse(track);
         console.log(track);
         this.trackHead = track[0];
@@ -487,14 +484,11 @@
             _this.SFZSJ = response.data.data[0].SFZSJ;
             _this.SJGZSJ = response.data.data[0].SJGZSJ;
             _this.TPJH = response.data.data[0].TPJH;
-            if(_this.TPJH != ''){
+            if(_this.TPJH){
               _this.getImgData(_this.TPJH);
             }
-            if(_this.SJGZSJ != ''){
+            if(_this.SJGZSJ){
               _this.getTrack(_this.SJGZSJ);
-            }
-            if(_this.TPJH != ''){
-              _this.getImgFile(_this.TPJH);
             }
           }else{
 

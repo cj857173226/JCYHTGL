@@ -656,8 +656,8 @@ export default {
         margin-top: 24px;
         .cue-source,
         .cue-sort{
-          height: 45px;
-          line-height: 45px;
+          height: 40px;
+          line-height: 40px;
           border:1px solid #dcdcdc;
           .left-title{
             float: left;
