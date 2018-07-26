@@ -123,12 +123,16 @@ export default {
     data(){
         return{
             id:'',
+            pageNum:1,
+            pageSize:20,
+            isLoad:false, //数据加载
         }
     },
     mounted(){
         var _this = this;
         this.$root.Bus.$on('showMore',function(id){
             _this.id = id;
+            _this.getData();
         })
     },
     methods:{
@@ -139,6 +143,22 @@ export default {
         //获取数据
         getData(){
             var _this = this;
+            this.isLoad = true;
+            console.log(1);
+            this.axios({
+                method:'get',
+                url:webApi.SzOpenData.GetData.format({sjsybh:_this.id,p:_this.pageNum,ps:_this.pageSize}),
+                timeout:10000
+            }).then(function(response){
+                _this.isLoad = false;
+                if(response.data.code == 0){
+                    console.log(response.data.data);
+                }else{
+
+                }
+            }).catch(function(error){
+                _this.isLoad = false;
+            })
         },
         //滚动条
         scrollEvent(){

@@ -170,7 +170,7 @@
                 prop="TBRQ"
                 label="同步日期"
                 min-width="170">
-            </el-table-column>       
+            </el-table-column>
             <el-table-column
                 prop="SFTBCG"
                 label="是否同步成功"

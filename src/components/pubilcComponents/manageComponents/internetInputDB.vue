@@ -439,24 +439,26 @@
         if(this.isDetailLoad||this.isAnalysis){
           return;
         }
-        if(this.SSSF == ''){
-           this.$message({
-             message:'请选择省份',
-             type:'error'
-           });
-           return;
-        }else if(this.SJDL == 1&&this.SJLB ==''){
-           this.$message({
-             message:'请选择所属领域',
-             type:'error'
-           });
-           return;
-        }else if(this.SSCS == ''){
-           this.$message({
-             message:'请选择地市',
-             type:'error'
-           });
-           return;
+        if(this.SFZSJ == 0&&this.SFZC == 0){
+          if(this.SSSF == ''){
+            this.$message({
+              message:'请选择省份',
+              type:'error'
+            });
+            return;
+          }else if(this.SJDL == 1&&this.SJLB ==''){
+            this.$message({
+              message:'请选择所属领域',
+              type:'error'
+            });
+            return;
+          }else if(this.SSCS == ''){
+            this.$message({
+              message:'请选择地市',
+              type:'error'
+            });
+            return;
+          }
         }
         this.isDetailLoad = true;
         if(this.SJDL == 2){
@@ -498,6 +500,13 @@
               message:'提交成功',
               type: 'success'
             })
+            
+            _this.SJLB = '', //数据类别
+            _this.SSSF = '', //省份
+            _this.SSCS = '', //地市
+            _this.SSQX = '', //区县
+            _this.SFZC = '0',
+            _this.SFZSJ = '0',
             _this.$emit('complete',{isShow:false});
           }else{
 
