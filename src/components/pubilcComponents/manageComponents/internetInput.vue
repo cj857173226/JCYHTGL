@@ -142,7 +142,7 @@
             <span class="item-title track-title">事态跟踪:</span>
             <span class="item-content timeline-content" style="width:80%">
                 <ul class="itemline-box">
-                  <li class="timeline-item">
+                  <!-- <li class="timeline-item">
                     <div class="tiemline-text">
                       <div class="timeline-text-item">
                         <span>发帖时间：</span>
@@ -153,22 +153,22 @@
                         <input class="track-input" type="text" v-model="trackHead.content">
                       </div>
                     </div>
-                  </li>
+                  </li> -->
                   <li v-for="(item,index) in trackData"  class="timeline-item">
                       <i class="timeline-icon fa fa-circle-o"></i>
                       <i @click="delTrack(index)" class="del-track timeline-icon fa fa-times"></i>
                       <div class="tiemline-text">
-                          <div class="timeline-text-item">
+                          <div class="timeline-text-item" v-show="index > 0">
                             <span>之前回帖数:</span>
                             <input class="track-input" type="text" v-model="item.preNum">
                           </div>
                           <div class="timeline-text-item timeline-time">
                             <span>回复时间:</span>
-                            <input class="track-input" type="text" v-model="item.time">
+                            <input class="track-input" type="text" v-model="item.fbsj">
                           </div>
                           <div class="timeline-text-item  tiemline-name">
-                            <span>机构名称:</span>
-                            <input class="track-input" type="text" v-model="item.name">
+                            <span>名称:</span>
+                            <input class="track-input" type="text" v-model="item.fbrmc">
                           </div>
                           <div class="timeline-text-item">
                             <span>回复内容:</span>
@@ -176,7 +176,7 @@
                           </div>
                           <div class="timeline-text-item" v-show="index == trackData.length - 1">
                             <span>回复之后跟帖数：</span>
-                            <input class="track-input" type="text" v-model="item.lastReply">
+                            <input class="track-input" type="text" v-model="item.nextNum">
                           </div>
                       </div>
                   </li>
@@ -442,12 +442,8 @@
       },
       //获取事件跟踪
       getTrack(track){
-        console.log("事件")
-        track = JSON.parse(track);
-        console.log(track);
-        this.trackHead = track[0];
-        this.trackData = track.slice(1,track.length);
-        console.log(this.trackData);
+        var track = JSON.parse(track);
+        this.trackData = track;
       },
       //获取数据
       getData(){

@@ -131,13 +131,15 @@
           </div>
           <div class="detail-item">
             <span class="item-title">事态跟踪</span>
-            <el-button @click="trackAnalysis" type="success" style="margin-left: 10px;height: 30px;line-height: 11px;">分析</el-button>
+            <el-radio v-model="SFSJGZ" label="1">是</el-radio>
+            <el-radio v-model="SFSJGZ" label="0">否</el-radio>
+            <el-button v-show="SFSJGZ == 1" @click="trackAnalysis" type="success" style="margin-left: 10px;height: 30px;line-height: 11px;">分析</el-button>
           </div>
-          <div class="detail-item">
-            <span class="item-title track-title">事态跟踪:</span>
+          <div class="detail-item" v-show="SFSJGZ == 1">
             <span class="item-content timeline-content">
-                <ul class="itemline-box">
-                  <li class="timeline-item">
+                <div v-show="trackData.length == 0">请点击分析按钮获取事件跟踪数据</div>
+                <ul class="itemline-box" v-show="trackData.length > 0">
+                  <!-- <li class="timeline-item">
                     <div class="tiemline-text">
                       <div class="timeline-text-item">
                         <span>发帖时间：</span>
@@ -148,11 +150,13 @@
                         <input class="track-input" type="text" v-model="trackHead.content">
                       </div>
                     </div>
-                  </li>
-                  <li v-for="item in trackData"  class="timeline-item">
+                  </li> -->
+                  <li v-for="(item,index) in trackData"  class="timeline-item">
                       <i class="timeline-icon fa fa-circle-o"></i>
+                      <!-- <span class="timeline-index">{{index + 1}}</span> -->
+                      <i @click="delTrack(index)" class="del-track timeline-icon fa fa-times"></i>
                       <div class="tiemline-text">
-                          <div class="timeline-text-item">
+                          <div class="timeline-text-item" v-show="index > 0">
                             <span>之前回帖数:</span>
                             <input class="track-input" type="text" v-model="item.preNum">
                           </div>
@@ -162,27 +166,105 @@
                           </div>
                           <div class="timeline-text-item timeline-time">
                             <span>回复时间:</span>
-                            <input class="track-input" type="text" v-model="item.time">
+                            <input class="track-input" type="text" v-model="item.fbsj">
                           </div>
                           <div class="timeline-text-item  tiemline-name">
-                            <span>机构名称:</span>
-                            <input class="track-input" type="text" v-model="item.name">
+                            <span>名称:</span>
+                            <input class="track-input" type="text" v-model="item.fbrmc">
                           </div>
                           <div class="timeline-text-item">
                             <span>回复内容:</span>
                             <textarea style="min-height:150px;" class="track-input textarea" v-model="item.content"></textarea>
+                          </div>
+                          <div class="timeline-text-item">
+                            <span>图片:</span>
+                            <ul id="imgViewer" class="img-box">
+                              <li class="img-content" v-for="img in item.imgs">
+                                <img :src="img" />
+                              </li>
+                            </ul>
                           </div>
                       </div>
                   </li>
                 </ul>
             </span>
           </div>
-          <div class="detail-item">
+          <div class="detail-item" style="margin-top: 30px;">
             <el-button @click="submit" type="success" >提交</el-button>
           </div>
         </div>
       </div>
+      
+    <div id="track-box" v-show="isShowTrackBox">
+      <div id="track-box-header">
+        <div class="track-title">事件跟踪</div>
+        <div class="manage-icon">
+          <i @click="closeTrack"  class="el-icon-close"></i>
+        </div>
+      </div>
+      <div id="track-box-content">
+        <div v-show="trackData2.length==0">此条数据暂无数据跟踪</div>
+        <div class="detail-item"  v-show="trackData2.length>0">
+            <span class="item-content timeline-content">
+                <ul class="itemline-box">
+                  <!-- <li class="timeline-item">
+                    <div class="tiemline-text">
+                      <div class="timeline-text-item">
+                        <span>发帖时间：</span>
+                        <input class="track-input" type="text" v-model="trackHead.time">
+                      </div>
+                      <div class="timeline-text-item">
+                        <span>帖子信息：</span>
+                        <input class="track-input" type="text" v-model="trackHead.content">
+                      </div>
+                    </div>
+                  </li> -->
+                  <li v-for="(item,index) in trackData2"  class="timeline-item" >
+                      <i class="timeline-icon fa fa-circle-o" @click="chooseTrack(item,index)"></i>
+                      <!-- <span class="timeline-index">{{index + 1}}</span> -->
+                      <i v-show="item.isChecked" class="del-track timeline-icon fa fa-check"></i>
+                      <div class="tiemline-text">
+                          <div class="timeline-text-item" v-show="index > 0">
+                            <span>之前回帖数:</span>
+                            <input class="track-input" type="text" v-model="item.preNum">
+                          </div>
+                          <div class="timeline-text-item">
+                            <span>之后回帖数:</span>
+                            <input class="track-input" type="text" v-model="item.nextNum">
+                          </div>
+                          <div class="timeline-text-item timeline-time">
+                            <span>回复时间:</span>
+                            <input class="track-input" type="text" v-model="item.fbsj">
+                          </div>
+                          <div class="timeline-text-item  tiemline-name">
+                            <span>名称:</span>
+                            <input class="track-input" type="text" v-model="item.fbrmc">
+                          </div>
+                          <div class="timeline-text-item">
+                            <span>回复内容:</span>
+                            <textarea style="min-height:150px;" class="track-input textarea" v-model="item.content"></textarea>
+                          </div>
+                          <div class="timeline-text-item">
+                            <span>图片:</span>
+                            <ul id="imgViewer2" class="img-box">
+                              <li class="img-content" v-for="img in item.imgs">
+                                <img :src="img" />
+                              </li>
+                            </ul>
+                          </div>
+                      </div>
+                  </li>
+                </ul>
+            </span>
+          </div>
+      </div>
+      <div id="track-btn">
+        <el-button @click="trackAnalysisConfirm" class="track-btn-confirm" type="success" plain>分析</el-button>
+      </div>
+    </div>
+
   </div>
+
   </transition>
 </template>
 
@@ -229,10 +311,14 @@
         TPJH:'', //图片集合
 
         typeList:[], //类型集合
-        trackData:[{}], //事态跟踪
+        trackData:[], //事态跟踪
         trackHead:{}, //事态跟踪头部
 
-        TP:[], //图片
+        trackData2:[], //事件跟踪元数据
+        TP:[], //图片储存文件获取的图片
+
+        isShowTrackBox:false, //是否显示事件跟踪
+        trackChoose:[]
 
       }
     },
@@ -240,7 +326,45 @@
       this.getTypes();
       this.getLabels();
     },
-    methods:{//删除图片
+    methods:{
+        //分析事态跟踪
+        trackAnalysisConfirm(){
+          this.isShowTrackBox = false;
+          this.trackData = this.trackData2;
+          this.$nextTick(()=>{
+            let viewer = new Viewer(document.getElementById('imgViewer'));
+          })
+        },
+        //选择事态跟踪
+        chooseTrack(item,index){
+          var _this = this;
+          // this.trackData2[index].isChecked = !this.trackData2[index].isChecked;
+          this.$set(this.trackData2[index],'isChecked',!item.isChecked);
+          this.trackData2 = this.trackData2.slice();
+          if(this.trackData2[index].isChecked){
+            this.trackChoose.push(this.trackData2[index]);
+          }else{
+            if(this.trackChoose.length > 0){
+              for(var i=0;i<this.trackChoose.length;i++){
+                if(_this.trackChoose[i].content == this.trackData2[index].content){
+                  _this.trackChoose.splice(i,1);
+                  i -= 1;
+                }
+              }
+            }else{
+              this.trackChoose =  [];
+            }
+          }
+        },
+        //关闭事件跟踪模块
+        closeTrack(){
+          this.isShowTrackBox = false;
+        },
+        //删除跟踪
+        delTrack(index){
+          this.trackData.splice(index,1);
+        },
+        //删除图片
         delImg(index){
           var _this = this;
           _this.TP.splice(index,1);
@@ -254,8 +378,6 @@
             tpjh = tpjh.slice(0,tpjh.length-1);
           }
           _this.TPJH = tpjh;
-          console.log("图片集合:",_this.TP);
-          console.log("图片集合:",_this.TPJH);
         },
         //选择图片
         chooseImg(){
@@ -274,7 +396,6 @@
                 _this.TPJH += ',' + response.data.data[0];
                 var src = webApi.WebData.DownLoadFile.format({id:response.data.data[0]});
                 _this.TP.push(src);
-                console.log(_this.TP);
               }
             }else{
 
@@ -286,7 +407,7 @@
         },
         //事件跟踪分析
         trackAnalysis(){
-          
+          this.isShowTrackBox = true;
         },
         //省份改变
         updataProvince(value){
@@ -295,7 +416,6 @@
           }else{
             this.SSSF = value.value
           }
-          console.log(this.SSSF);
         },
         //市改变
         updataCity(value){
@@ -304,7 +424,6 @@
           }else{
             this.SSCS = value.value
           }
-            console.log(this.SSCS);
         },
         //区县改变
         updataCounty(value){
@@ -313,7 +432,6 @@
           }else{
             this.SSQX = value.value
           }
-            console.log(this.SSQX);
         },
       //分析
       analysis(){
@@ -355,9 +473,6 @@
         _this.axios.all([summary(),keyword(),name()])
           .then(_this.axios.spread(function(summary,keyword,name){
             _this.isAnalysis = false;
-            console.log(summary);
-            console.log(keyword);
-            console.log(name);
             _this.GJC = keyword.data.data;
             _this.ZY = summary.data.data;
             _this.RENM = name.data.data.renming;
@@ -369,7 +484,14 @@
         
       },
       close() {//关闭
+        this.SJLB = '', //数据类别
+        this.SSSF = '', //省份
+        this.SSCS = '', //地市
+        this.SSQX = '', //区县
+        this.SFZC = '0',
+        this.SFZSJ = '0',
         this.$emit('inputClose',{isShow:false,isUpdate:false});
+        this.isShowTrackBox = false;
       },
       //获取类型集合
       getTypes(){
@@ -380,7 +502,6 @@
           timeout: 10000
         }).then(function(response){
           if(response.data.code == 0){
-            console.log(response.data.data);
             _this.typeList = response.data.data;
           }else{
 
@@ -416,18 +537,78 @@
         }).then(function(response){
           _this.isDetailLoad = false;
           if(response.data.code == 0){
-            console.log(response.data.data);
             _this.YSSJBH = response.data.data._id;
             _this.CJNR = response.data.data.Content;
             _this.CJSJ = response.data.data.CreatedTime;
             _this.SJDZ = response.data.data.Link;
-            _this.SSSF = response.data.data.Province + '省';
-            _this.SSCS = response.data.data.City +'市';
-            _this.FBSJ = response.data.data.PublishTime.replace(/\./g,'-') + ' 00:00:00';
+            if(response.data.data.Province.indexOf('省') == -1){
+              _this.SSSF = response.data.data.Province + '省';
+            }else{
+              _this.SSSF = response.data.data.Province;
+            }
+            if(response.data.data.City.indexOf('市') == -1){
+              _this.SSCS = response.data.data.City +'市';
+            }else{
+              _this.SSCS = response.data.data.City;
+            }
+            if(response.data.data.PublishTime){
+              console.log(3);
+              
+              console.log(response.data.data.PublishTime.indexOf(':') != -1);
+              if(response.data.data.PublishTime.indexOf(':') != -1){
+                console.log(1);
+                var fbsj = response.data.data.PublishTime.split(' ')[0].split('-');
+                var time = response.data.data.PublishTime.split(' ')[1]
+                if(fbsj[1]<10 && fbsj[1].indexOf('0') == -1){
+                  response.data.data.PublishTime = fbsj[0] + '-' + addZero(fbsj[1]) + '-' + addZero(fbsj[2]) + ' ' +time;
+                }
+              }else{
+                console.log(2);
+                if(response.data.data.PublishTime.indexOf('.') != -1){
+                  response.data.data.PublishTime = response.data.data.PublishTime.replace(/\./g,'-') + ' 00:00:00';
+                }else{
+                  response.data.data.PublishTime = response.data.data.PublishTime + ' 00:00:00';
+                }
+              }
+              console.log(4);
+              console.log(response.data.data.PublishTime);
+              _this.FBSJ = response.data.data.PublishTime;
+              function addZero(obj){
+                if(obj<10){
+                  return '0' + obj;
+                }else{
+                  return obj;
+                }
+              }
+            }
+            // if(response.data.data.PublishTime.indexOf('.') != -1){
+            //   _this.FBSJ = response.data.data.PublishTime.replace(/\./g,'-') + ' 00:00:00';
+            // }else{
+            //   _this.FBSJ = response.data.data.PublishTime;
+            // }
             _this.SJLY = response.data.data.SiteName;
             _this.analysis();
+            if(response.data.data.Notes != undefined&&response.data.data.Notes.length > 0){
+              _this.SFSJGZ = '1';
+              _this.trackData2 = response.data.data.Notes;
+              for(var i=0;i<_this.trackData2.length;i++){
+                _this.trackData2[i].isChecked = false;
+                if(i >= 2){
+                  _this.trackData2[i].preNum = i - 1;
+                  _this.trackData2[i].nextNum = _this.trackData2.length - i - 1;
+                }else if(i < 2){
+                  _this.trackData2[i].preNum = 0;
+                  _this.trackData2[i].nextNum = _this.trackData2.length - i - 1;
+                }
+              }
+              _this.$nextTick(function(){
+                  let viewer2 = new Viewer(document.getElementById('imgViewer2'));
+              })
+            }else{
+              _this.SFSJGZ = '0';
+              _this.trackData2 = [];
+            }
           }else{
-
           }
         }).catch(function(error){
           _this.isDetailLoad = false;
@@ -464,6 +645,11 @@
         if(this.SJDL == 2){
           this.SJLB = '';
         }
+        if(this.SFSJGZ == 1){
+          this.SJGZSJ = JSON.stringify(this.trackData);
+        }else{
+          this.SJGZSJ = '';
+        }
         var bodyParam = {
           YSSJJHMC:this.site,
           YSSJBH:this.YSSJBH,
@@ -486,7 +672,8 @@
           SFZSJ: this.SFZSJ,
           SFZC: this.SFZC,
           SJKZ: this.SJKZ,
-          SFSJGZ: this.SFSJGZ
+          SFSJGZ: this.SFSJGZ,
+          SJGZSJ: this.SJGZSJ
         }
         this.axios({
           method: 'post',
@@ -519,7 +706,6 @@
     },
     watch: {
       dataId() {
-        console.log(this.dataId);
         this.getData();
       }
     }
@@ -543,6 +729,162 @@
     &.toggleShow-enter,
     &.toggleShow-leave-to {
       opacity: 0;
+    }
+    #track-box{    
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      width: 70%;
+      height: 70%;
+      background: #fff;
+      transform: translate(-50%,-50%);
+      box-shadow: 0 0 10px #ddd;
+      #track-box-header{
+        width: 100%;
+        height: 30px;
+        line-height: 30px;
+        background: #EEEEEE;
+        border-bottom: 1px solid #dcdcdc;
+        .track-title{
+          padding-left: 10px;
+          display: inline-block;
+          height: 100%;
+          font-size: 12px;
+        }
+        .manage-icon{
+          float: right;
+          height: 100%;
+          width: 40px;
+          line-height: 30px;
+          text-align: center;
+          border-right:solid 1px #ddd;
+          &:hover {
+            cursor: pointer;
+          }
+          i {
+            color: red;
+          }
+        }
+      }
+      #track-box-content{
+        width: 100%;
+        height: calc(100% - 80px);
+        overflow: auto;
+        .detail-item{
+          margin: 15px 0;
+          .item-content{
+            border: solid 1px #ddd;
+            height: 40px;
+            line-height: 40px;
+            padding: 0px 10px;
+            width: calc(100% - 300px);
+          }
+          .timeline-content{
+            border: none;
+            .itemline-box{
+              padding: 0;
+              padding-left: 51px;
+              .timeline-item{
+                padding-bottom: 10px;
+                position: relative;
+                .timeline-icon{
+                  position: absolute;
+                  left: -5px;
+                  top: 0;
+                  z-index: 10;
+                  width: 20px;
+                  height: 20px;
+                  line-height: 20px;
+                  background-color: #fff;
+                  color: #5FB878;
+                  border-radius: 50%;
+                  text-align: center;
+                  font-size: 20px;
+                  cursor: pointer;
+                }
+                .timeline-index{
+                  position: absolute;
+                  left: -3px;
+                  top: -4px;
+                  z-index: 10;
+                  height: 27px;
+                  line-height: 28px;
+                }
+                .del-track{
+                  left: -35px;
+                  font-size: 20px;
+                  color: #4de688;
+                }
+                .tiemline-text{
+                  line-height: 22px;
+                  display: inline-block;
+                  padding-left: 10px;
+                  width: 100%;
+                  vertical-align: text-bottom;
+                  .timeline-text-item{
+                    margin-bottom: 5px;
+                    font-size: 16px;
+                    color: #333;
+                    font-weight: 500;
+                    .img-box{
+                      display: inline-block;
+                      width: 80%;
+                      .img-content{
+                        width: 20%;
+                        height: 165px;
+                        text-align: center;
+                        line-height: 300px;
+                        padding: 5px;
+                        display: inline-block;
+                        img{
+                          width: 100%;
+                          height: 100%;
+                        }
+                      }
+                    }
+                    span{
+                      display: inline-block;
+                      width: 100px;
+                      color:#333;
+                      vertical-align: top;
+                      text-align: right;
+                      font-size: 14px;
+                    }
+                    .track-input{
+                      border:solid 1px rgb(158, 158, 158);
+                      height: 30px;
+                      width: 80%;
+                    }
+                  }
+                }
+              }
+              .timeline-item:before{
+                content: '';
+                position: absolute;
+                left: 5px;
+                top: 0;
+                z-index: 0;
+                width: 1px;
+                height: 100%;
+                background-color: #e6e6e6;
+              }
+              .timeline-item:last-child:before{
+                display: none;
+              }
+            }
+          }
+        }
+      }
+      #track-btn{
+        width: 100%;
+        height: 50px;
+        line-height: 50px;
+        border-top: solid 1px #ddd;
+        .track-btn-confirm{
+          float: right;    
+          margin: 5px 10px 0 0;
+        }
+      }
     }
     #main{
       position: relative;
@@ -598,6 +940,7 @@
         overflow-y: auto;
         padding: 15px;
         height: calc(100% - 50px);
+        position: relative;
         .detail-item{
           margin: 15px 0;
           .textarea {
@@ -715,6 +1058,7 @@
             border: none;
             .itemline-box{
               padding: 0;
+              padding-left: 51px;
               .timeline-item{
                 padding-bottom: 10px;
                 position: relative;
@@ -730,18 +1074,49 @@
                   color: #5FB878;
                   border-radius: 50%;
                   text-align: center;
+                  font-size: 20px;
                   cursor: pointer;
+                }
+                .timeline-index{
+                  position: absolute;
+                  left: -3px;
+                  top: -4px;
+                  z-index: 10;
+                  height: 27px;
+                  line-height: 28px;
+                }
+                .del-track{
+                  left: -35px;
+                  font-size: 20px;
+                  color: #c71010;
                 }
                 .tiemline-text{
                   line-height: 22px;
                   display: inline-block;
                   padding-left: 10px;
                   width: 100%;
+                  vertical-align: text-bottom;
                   .timeline-text-item{
                     margin-bottom: 5px;
                     font-size: 16px;
                     color: #333;
                     font-weight: 500;
+                    .img-box{
+                      display: inline-block;
+                      width: 80%;
+                      .img-content{
+                        width: 20%;
+                        height: 165px;
+                        text-align: center;
+                        line-height: 300px;
+                        padding: 5px;
+                        display: inline-block;
+                        img{
+                          width: 100%;
+                          height: 100%;
+                        }
+                      }
+                    }
                     span{
                       display: inline-block;
                       width: 100px;
@@ -753,7 +1128,7 @@
                     .track-input{
                       border:solid 1px rgb(158, 158, 158);
                       height: 30px;
-                      width: 70%;
+                      width: 80%;
                     }
                   }
                 }

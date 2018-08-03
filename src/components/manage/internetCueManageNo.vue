@@ -151,8 +151,8 @@
                 label="操作"
                 min-width="150">
                 <template slot-scope="scope">
-                    <el-button @click="fornow(scope.row)" type="text" size="small">暂存</el-button>
                     <el-button @click="checkDetail(scope.row._id)" type="text" size="small">审核</el-button>
+                    <el-button style="color:#30bf86" @click="fornow(scope.row)" type="text" size="small">暂存</el-button>
                     <el-button v-show='IdentityType == 1' style="color:#ea2626" @click="delCue(scope.row._id)" type="text" size="small">删除</el-button>
                 </template>
             </el-table-column>
@@ -218,11 +218,26 @@ export default {
     },
     mounted(){
         this.IdentityType = localStorage.getItem('IdentityType');
+        this.initTime(); //初始化时间
         this.getProvince(); //获取省市
         this.getCueCollection(); //获取可用数据
         this.tableResize();//表格高度自适应
     },
     methods:{
+        //初始化时间
+        initTime(){
+          var date = new Date();
+          var start = date.getFullYear() + '-' + addZero(date.getMonth() + 1) + '-' + addZero(date.getDate());
+          this.timeSearch = ['2018-01-01'];
+          this.timeSearch.push(start);
+          function addZero(obj){
+            if(obj > 10){
+              return obj;
+            }else{
+              return '0' + obj;
+            }
+          }
+        },
         //暂存
         fornow(index){
           var _this = this;
@@ -255,7 +270,7 @@ export default {
             method: 'post',
             url:webApi.Host + webApi.WebData.Confirm,
             data:bodyParam,
-            timeout:10000
+            timeout:30000
           }).then(function(response){
             _this.isLoad = false;
             if(response.data.code == 0){
@@ -291,7 +306,6 @@ export default {
           }else{
             this.province = value.value
           }
-          console.log(this.province);
         },
         //市改变
         updataCity(value){
@@ -300,7 +314,6 @@ export default {
           }else{
             this.city = value.value
           }
-            console.log(this.city);
         },
         //区县改变
         updataCounty(value){
@@ -309,7 +322,6 @@ export default {
           }else{
             this.county = value.value
           }
-            console.log(this.county);
         },
         //确认城市
         confirmCity(){
@@ -427,7 +439,7 @@ export default {
               return _this.axios({
                       method:'get',
                       url:webApi.WebData.CountUntreatedData.format(param),
-                      timeout: 10000
+                      // timeout: 30000
                     })
             }
             
@@ -436,7 +448,7 @@ export default {
               return _this.axios({
                         method:'get',
                         url:webApi.WebData.GetUntreatedData.format(param),
-                        timeout: 10000
+                        timeout: 300000
                     })
             }
 

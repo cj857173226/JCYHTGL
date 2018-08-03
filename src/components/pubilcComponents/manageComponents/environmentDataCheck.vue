@@ -10,7 +10,7 @@
                     <i @click="close"  class="el-icon-close"></i>
                 </div>
             </div>
-            <div id="content">
+            <div id="content" v-loading="isLoad">
                 <div class="table-div" id="table-header">
                     <table cellpadding="0" cellspacing="0">
                         <thead>
@@ -148,7 +148,7 @@ export default {
             this.axios({
                 method:'get',
                 url:webApi.SzOpenData.GetData.format({sjsybh:_this.id,p:_this.pageNum,ps:_this.pageSize}),
-                timeout:10000
+                timeout:60000
             }).then(function(response){
                 _this.isLoad = false;
                 if(response.data.code == 0){
