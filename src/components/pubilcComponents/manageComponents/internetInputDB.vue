@@ -650,6 +650,18 @@
         }else{
           this.SJGZSJ = '';
         }
+        var obj = this.JIGOUM.split(',');
+        if(obj.length > 18){
+          var jigou = '';
+          for(var i = 0;i<18;i++){
+            if(i<17){
+              jigou += obj[i] + ',';
+            }else if(i == 17){
+              jigou += obj[i];
+            }
+          }
+          this.JIGOUM = jigou;
+        }
         var bodyParam = {
           YSSJJHMC:this.site,
           YSSJBH:this.YSSJBH,
@@ -672,7 +684,7 @@
           SFZSJ: this.SFZSJ,
           SFZC: this.SFZC,
           SJKZ: this.SJKZ,
-          SFSJGZ: this.SFSJGZ,
+          SFSJGZ: '0',
           SJGZSJ: this.SJGZSJ
         }
         this.axios({

@@ -15,32 +15,11 @@
                     <table cellpadding="0" cellspacing="0">
                         <thead>
                             <tr class="tr-box">
-                                <th class="td-box">
-                                    <div>标题一</div>
+                                <th class="td-box" style="width:50px">
+                                    <div>操作</div>
                                 </th>
-                                <th class="td-box">
-                                    <div>标题一</div>
-                                </th>
-                                <th class="td-box">
-                                    <div>标题一</div>
-                                </th>
-                                <th class="td-box">
-                                    <div>标题一</div>
-                                </th>
-                                <th class="td-box">
-                                    <div>标题一</div>
-                                </th>
-                                <th class="td-box">
-                                    <div>标题一</div>
-                                </th>
-                                <th class="td-box">
-                                    <div>标题一</div>
-                                </th>
-                                <th class="td-box">
-                                    <div>标题一</div>
-                                </th>
-                                <th class="td-box">
-                                    <div>标题一</div>
+                                <th class="td-box" v-for="item in tableHead">
+                                    <div>{{item}}</div>
                                 </th>
                             </tr>
                         </thead>
@@ -49,62 +28,14 @@
                 <div class="table-div" id="table-content" @scroll="scrollEvent">
                     <table cellpadding="0" cellspacing="0">
                         <tbody>
-                            <tr class="tr-box">
-                                <td class="td-box">
-                                    <input class="td-content" type="text" value="内容" />
+                            <tr class="tr-box" v-for="(item,index) in tableContent">
+                                <td class="td-box" style="width:50px">
+                                    <div style="color: #d42c2c;cursor: pointer;" @click="delBtn(index)">
+                                        删除
+                                    </div>
                                 </td>
-                                <td class="td-box">
-                                    <input class="td-content" type="text" value="内容" />
-                                </td>
-                                <td class="td-box">
-                                    <input class="td-content" type="text" value="内容" />
-                                </td>
-                                <td class="td-box">
-                                    <input class="td-content" type="text" value="内容" />
-                                </td>
-                                <td class="td-box">
-                                    <input class="td-content" type="text" value="内容" />
-                                </td>
-                                <td class="td-box">
-                                    <input class="td-content" type="text" value="内容" />
-                                </td>
-                                <td class="td-box">
-                                    <input class="td-content" type="text" value="内容" />
-                                </td>
-                                <td class="td-box">
-                                    <input class="td-content" type="text" value="内容" />
-                                </td>
-                                <td class="td-box">
-                                    <input class="td-content" type="text" value="内容" />
-                                </td>
-                            </tr>
-                            <tr class="tr-box">
-                                <td class="td-box">
-                                    <input class="td-content" type="text" value="内容" />
-                                </td>
-                                <td class="td-box">
-                                    <input class="td-content" type="text" value="内容" />
-                                </td>
-                                <td class="td-box">
-                                    <input class="td-content" type="text" value="内容" />
-                                </td>
-                                <td class="td-box">
-                                    <input class="td-content" type="text" value="内容" />
-                                </td>
-                                <td class="td-box">
-                                    <input class="td-content" type="text" value="内容" />
-                                </td>
-                                <td class="td-box">
-                                    <input class="td-content" type="text" value="内容" />
-                                </td>
-                                <td class="td-box">
-                                    <input class="td-content" type="text" value="内容" />
-                                </td>
-                                <td class="td-box">
-                                    <input class="td-content" type="text" value="内容" />
-                                </td>
-                                <td class="td-box">
-                                    <input class="td-content" type="text" value="内容" />
+                                <td class="td-box" v-for="(i,index2) in item">
+                                    <input disabled="disabled" @change="changeData(index,index2)" class="td-content" type="text" :value="i" />
                                 </td>
                             </tr>
                         </tbody>
@@ -112,7 +43,13 @@
                 </div>
             </div>
             <div id="footer">
-                <el-button type="success">提交</el-button>
+                <el-pagination
+                @current-change="pageTo"
+                :page-size="pageSize"
+                :current-page="pageNum"
+                layout="total, prev, pager, next, jumper"
+                :total="totalPages">
+                </el-pagination>
             </div>
         </div>
     </div>
@@ -125,17 +62,36 @@ export default {
             id:'',
             pageNum:1,
             pageSize:20,
+            totalPages:10, //总条数
             isLoad:false, //数据加载
+            tableHead:[], //表头
+            tableContent:[], //表内容
         }
     },
     mounted(){
         var _this = this;
-        this.$root.Bus.$on('showMore',function(id){
-            _this.id = id;
+        this.$root.Bus.$on('showMore',function(obj){
+            console.log(obj);
+            _this.id = obj.id;
+            _this.totalPages = parseInt(obj.total);
             _this.getData();
         })
     },
     methods:{
+        delBtn(val){
+            console.log(val);
+        },
+        //页码跳转
+        pageTo(val){
+            console.log(val);
+            this.pageNum = val;
+            this.getData();
+        },
+        //修改
+        changeData(index,index2){
+            console.log(index);
+            console.log(index2);
+        },
         //关闭框框
         close(){
             this.$root.Bus.$emit('closeMore');
@@ -144,7 +100,6 @@ export default {
         getData(){
             var _this = this;
             this.isLoad = true;
-            console.log(1);
             this.axios({
                 method:'get',
                 url:webApi.SzOpenData.GetData.format({sjsybh:_this.id,p:_this.pageNum,ps:_this.pageSize}),
@@ -152,7 +107,11 @@ export default {
             }).then(function(response){
                 _this.isLoad = false;
                 if(response.data.code == 0){
-                    console.log(response.data.data);
+                    _this.tableHead = [];
+                    for(var i in response.data.data[0]){
+                        _this.tableHead.push(i);
+                    }
+                    _this.tableContent = response.data.data;
                 }else{
 
                 }
@@ -164,7 +123,6 @@ export default {
         scrollEvent(){
             var header = document.getElementById('table-header'); //获取表格头部
             var content = document.getElementById('table-content'); //获取表格内容
-            console.log(content.scrollLeft);
             header.scrollLeft = content.scrollLeft;
         }
     }
@@ -269,6 +227,7 @@ export default {
                                 height: 90%;
                                 border: none;
                                 width: 90%;
+                                background: none;
                             }
                         }
                     }
@@ -278,7 +237,6 @@ export default {
         #footer{
             height: 50px;
             line-height: 50px;
-            float: right;
             margin-right: 20px;
         }
     }

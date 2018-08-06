@@ -198,7 +198,7 @@
                 width="100"
                 >
                 <template slot-scope="scope"  >
-                    <el-button @click="check(scope.row.BH)" type="text" size="small">修改</el-button>
+                    <el-button @click="check(scope.row.BH,scope.row.SJTS)" type="text" size="small">修改</el-button>
                     <el-button @click="operation(scope.row.BH)" type="text" size="small">同步</el-button>
                 </template>
             </el-table-column>
@@ -262,9 +262,10 @@ export default {
     },
     methods:{ 
         //修改表格
-        check(id){
+        check(id,total){
           this.isShow = true;
-          this.$root.Bus.$emit('showMore',id);
+          console.log(total);
+          this.$root.Bus.$emit('showMore',{id:id,total:total});
         },
         GetExDataIndex(){//获取外部数据索引
           let _this = this;
