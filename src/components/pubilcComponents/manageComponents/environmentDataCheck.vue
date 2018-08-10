@@ -30,7 +30,7 @@
                         <tbody>
                             <tr class="tr-box" v-for="(item,index) in tableContent">
                                 <td class="td-box" style="width:50px">
-                                    <div style="color: #d42c2c;cursor: pointer;" @click="delBtn(index)">
+                                    <div style="color: #d42c2c;cursor: pointer;" @click="delBtn(item)">
                                         删除
                                     </div>
                                 </td>
@@ -71,6 +71,7 @@ export default {
     mounted(){
         var _this = this;
         this.$root.Bus.$on('showMore',function(obj){
+            _this.pageNum = 1;
             console.log(obj);
             _this.id = obj.id;
             _this.totalPages = parseInt(obj.total);
@@ -78,8 +79,25 @@ export default {
         })
     },
     methods:{
-        delBtn(val){
-            console.log(val);
+        delBtn(item){
+            var _this = this;
+            this.isLoad = true;
+            this.axios({
+                method:"POST",
+                url:webApi.SzOpenData.DeleteData.format({id:item._id,sjsybh:this.id}),
+                timeout:10000
+            }).then(function(response){
+                _this.isLoad = false;
+                if(response.data.code == 0){
+                    _this.getData();
+                    _this.$message({
+                        message:'删除成功',
+                        type:'success'
+                    })
+                }
+            }).catch(function(error){
+                _this.isLoad = false;
+            })
         },
         //页码跳转
         pageTo(val){

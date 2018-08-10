@@ -533,7 +533,7 @@
         this.axios({
           method:'get',
           url:webApi.WebData.GetSourceData.format({id:this.dataId,site:this.site}),
-          timeout:10000
+          timeout:15000
         }).then(function(response){
           _this.isDetailLoad = false;
           if(response.data.code == 0){
@@ -541,15 +541,19 @@
             _this.CJNR = response.data.data.Content;
             _this.CJSJ = response.data.data.CreatedTime;
             _this.SJDZ = response.data.data.Link;
+            console.log("test");
             if(response.data.data.Province.indexOf('省') == -1){
               _this.SSSF = response.data.data.Province + '省';
             }else{
               _this.SSSF = response.data.data.Province;
             }
-            if(response.data.data.City.indexOf('市') == -1){
-              _this.SSCS = response.data.data.City +'市';
-            }else{
-              _this.SSCS = response.data.data.City;
+            console.log("test2");
+            if(response.data.data.City){
+              if(response.data.data.City.indexOf('市') == -1){
+                _this.SSCS = response.data.data.City +'市';
+              }else{
+                _this.SSCS = response.data.data.City;
+              }
             }
             if(response.data.data.PublishTime){
               console.log(3);
@@ -587,6 +591,7 @@
             //   _this.FBSJ = response.data.data.PublishTime;
             // }
             _this.SJLY = response.data.data.SiteName;
+            console.log(_this.SJLY);
             _this.analysis();
             if(response.data.data.Notes != undefined&&response.data.data.Notes.length > 0){
               _this.SFSJGZ = '1';
@@ -750,7 +755,7 @@
       height: 70%;
       background: #fff;
       transform: translate(-50%,-50%);
-      box-shadow: 0 0 10px #ddd;
+      box-shadow: 0 0 15px #828282;
       #track-box-header{
         width: 100%;
         height: 30px;

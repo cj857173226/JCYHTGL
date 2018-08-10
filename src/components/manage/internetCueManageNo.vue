@@ -231,7 +231,7 @@ export default {
           this.timeSearch = ['2018-01-01'];
           this.timeSearch.push(start);
           function addZero(obj){
-            if(obj > 10){
+            if(obj >= 10){
               return obj;
             }else{
               return '0' + obj;
